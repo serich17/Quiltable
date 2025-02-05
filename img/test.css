@@ -1,0 +1,23 @@
+.card {
+    width: 150px;
+    height: 150px;
+    display: inline-block;    
+}
+.no_card {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+}
+
+
+#grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto;
+    justify-content: center;
+    
+}
+
+
+/*Card positions on sprite image*/
+.AAA {background-image: url(front.png);}
+.ABA {background-image: url(back.png);}

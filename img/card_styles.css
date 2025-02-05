@@ -1,0 +1,1560 @@
+/* card 1 */
+.AAA {
+  background-image: url(front.png);
+  background-position: 0px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAAB {
+  background-image: url(back.png);
+  background-position: 0px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 2 */
+.AAB {
+  background-image: url(front.png);
+  background-position: -150px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AABB {
+  background-image: url(back.png);
+  background-position: -150px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 3 */
+.AAC {
+  background-image: url(front.png);
+  background-position: -300px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AACB {
+  background-image: url(back.png);
+  background-position: -300px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 4 */
+.AAD {
+  background-image: url(front.png);
+  background-position: -450px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AADB {
+  background-image: url(back.png);
+  background-position: -450px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 5 */
+.AAE {
+  background-image: url(front.png);
+  background-position: -600px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAEB {
+  background-image: url(back.png);
+  background-position: -600px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 6 */
+.AAF {
+  background-image: url(front.png);
+  background-position: -750px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAFB {
+  background-image: url(back.png);
+  background-position: -750px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 7 */
+.AAG {
+  background-image: url(front.png);
+  background-position: -900px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAGB {
+  background-image: url(back.png);
+  background-position: -900px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 8 */
+.AAH {
+  background-image: url(front.png);
+  background-position: -1050px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAHB {
+  background-image: url(back.png);
+  background-position: -1050px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 9 */
+.AAI {
+  background-image: url(front.png);
+  background-position: -1200px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAIB {
+  background-image: url(back.png);
+  background-position: -1200px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 10 */
+.AAJ {
+  background-image: url(front.png);
+  background-position: -1350px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAJB {
+  background-image: url(back.png);
+  background-position: -1350px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 11 */
+.AAK {
+  background-image: url(front.png);
+  background-position: -1500px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAKB {
+  background-image: url(back.png);
+  background-position: -1500px 0px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 12 */
+.AAL {
+  background-image: url(front.png);
+  background-position: 0px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AALB {
+  background-image: url(back.png);
+  background-position: 0px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 13 */
+.AAM {
+  background-image: url(front.png);
+  background-position: -150px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAMB {
+  background-image: url(back.png);
+  background-position: -150px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 14 */
+.AAN {
+  background-image: url(front.png);
+  background-position: -300px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AANB {
+  background-image: url(back.png);
+  background-position: -300px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 15 */
+.AAO {
+  background-image: url(front.png);
+  background-position: -450px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAOB {
+  background-image: url(back.png);
+  background-position: -450px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 16 */
+.AAP {
+  background-image: url(front.png);
+  background-position: -600px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAPB {
+  background-image: url(back.png);
+  background-position: -600px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 17 */
+.AAQ {
+  background-image: url(front.png);
+  background-position: -750px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAQB {
+  background-image: url(back.png);
+  background-position: -750px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 18 */
+.AAR {
+  background-image: url(front.png);
+  background-position: -900px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AARB {
+  background-image: url(back.png);
+  background-position: -900px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 19 */
+.AAS {
+  background-image: url(front.png);
+  background-position: -1050px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AASB {
+  background-image: url(back.png);
+  background-position: -1050px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 20 */
+.AAT {
+  background-image: url(front.png);
+  background-position: -1200px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AATB {
+  background-image: url(back.png);
+  background-position: -1200px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 21 */
+.AAU {
+  background-image: url(front.png);
+  background-position: -1350px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAUB {
+  background-image: url(back.png);
+  background-position: -1350px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 22 */
+.AAV {
+  background-image: url(front.png);
+  background-position: -1500px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAVB {
+  background-image: url(back.png);
+  background-position: -1500px -150px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 23 */
+.AAW {
+  background-image: url(front.png);
+  background-position: 0px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAWB {
+  background-image: url(back.png);
+  background-position: 0px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 24 */
+.AAX {
+  background-image: url(front.png);
+  background-position: -150px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAXB {
+  background-image: url(back.png);
+  background-position: -150px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 25 */
+.AAY {
+  background-image: url(front.png);
+  background-position: -300px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAYB {
+  background-image: url(back.png);
+  background-position: -300px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 26 */
+.AAZ {
+  background-image: url(front.png);
+  background-position: -450px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.AAZB {
+  background-image: url(back.png);
+  background-position: -450px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 27 */
+.ABA {
+  background-image: url(front.png);
+  background-position: -600px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABAB {
+  background-image: url(back.png);
+  background-position: -600px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 28 */
+.ABB {
+  background-image: url(front.png);
+  background-position: -750px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABBB {
+  background-image: url(back.png);
+  background-position: -750px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 29 */
+.ABC {
+  background-image: url(front.png);
+  background-position: -900px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABCB {
+  background-image: url(back.png);
+  background-position: -900px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 30 */
+.ABD {
+  background-image: url(front.png);
+  background-position: -1050px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABDB {
+  background-image: url(back.png);
+  background-position: -1050px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 31 */
+.ABE {
+  background-image: url(front.png);
+  background-position: -1200px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABEB {
+  background-image: url(back.png);
+  background-position: -1200px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 32 */
+.ABF {
+  background-image: url(front.png);
+  background-position: -1350px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABFB {
+  background-image: url(back.png);
+  background-position: -1350px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 33 */
+.ABG {
+  background-image: url(front.png);
+  background-position: -1500px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABGB {
+  background-image: url(back.png);
+  background-position: -1500px -300px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 34 */
+.ABH {
+  background-image: url(front.png);
+  background-position: 0px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABHB {
+  background-image: url(back.png);
+  background-position: 0px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 35 */
+.ABI {
+  background-image: url(front.png);
+  background-position: -150px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABIB {
+  background-image: url(back.png);
+  background-position: -150px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 36 */
+.ABJ {
+  background-image: url(front.png);
+  background-position: -300px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABJB {
+  background-image: url(back.png);
+  background-position: -300px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 37 */
+.ABK {
+  background-image: url(front.png);
+  background-position: -450px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABKB {
+  background-image: url(back.png);
+  background-position: -450px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 38 */
+.ABL {
+  background-image: url(front.png);
+  background-position: -600px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABLB {
+  background-image: url(back.png);
+  background-position: -600px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 39 */
+.ABM {
+  background-image: url(front.png);
+  background-position: -750px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABMB {
+  background-image: url(back.png);
+  background-position: -750px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 40 */
+.ABN {
+  background-image: url(front.png);
+  background-position: -900px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABNB {
+  background-image: url(back.png);
+  background-position: -900px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 41 */
+.ABO {
+  background-image: url(front.png);
+  background-position: -1050px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABOB {
+  background-image: url(back.png);
+  background-position: -1050px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 42 */
+.ABP {
+  background-image: url(front.png);
+  background-position: -1200px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABPB {
+  background-image: url(back.png);
+  background-position: -1200px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 43 */
+.ABQ {
+  background-image: url(front.png);
+  background-position: -1350px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABQB {
+  background-image: url(back.png);
+  background-position: -1350px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 44 */
+.ABR {
+  background-image: url(front.png);
+  background-position: -1500px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABRB {
+  background-image: url(back.png);
+  background-position: -1500px -450px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 45 */
+.ABS {
+  background-image: url(front.png);
+  background-position: 0px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABSB {
+  background-image: url(back.png);
+  background-position: 0px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 46 */
+.ABT {
+  background-image: url(front.png);
+  background-position: -150px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABTB {
+  background-image: url(back.png);
+  background-position: -150px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 47 */
+.ABU {
+  background-image: url(front.png);
+  background-position: -300px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABUB {
+  background-image: url(back.png);
+  background-position: -300px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 48 */
+.ABV {
+  background-image: url(front.png);
+  background-position: -450px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABVB {
+  background-image: url(back.png);
+  background-position: -450px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 49 */
+.ABW {
+  background-image: url(front.png);
+  background-position: -600px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABWB {
+  background-image: url(back.png);
+  background-position: -600px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 50 */
+.ABX {
+  background-image: url(front.png);
+  background-position: -750px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABXB {
+  background-image: url(back.png);
+  background-position: -750px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 51 */
+.ABY {
+  background-image: url(front.png);
+  background-position: -900px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABYB {
+  background-image: url(back.png);
+  background-position: -900px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 52 */
+.ABZ {
+  background-image: url(front.png);
+  background-position: -1050px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ABZB {
+  background-image: url(back.png);
+  background-position: -1050px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 53 */
+.ACA {
+  background-image: url(front.png);
+  background-position: -1200px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACAB {
+  background-image: url(back.png);
+  background-position: -1200px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 54 */
+.ACB {
+  background-image: url(front.png);
+  background-position: -1350px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACBB {
+  background-image: url(back.png);
+  background-position: -1350px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 55 */
+.ACC {
+  background-image: url(front.png);
+  background-position: -1500px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACCB {
+  background-image: url(back.png);
+  background-position: -1500px -600px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 56 */
+.ACD {
+  background-image: url(front.png);
+  background-position: 0px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACDB {
+  background-image: url(back.png);
+  background-position: 0px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 57 */
+.ACE {
+  background-image: url(front.png);
+  background-position: -150px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACEB {
+  background-image: url(back.png);
+  background-position: -150px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 58 */
+.ACF {
+  background-image: url(front.png);
+  background-position: -300px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACFB {
+  background-image: url(back.png);
+  background-position: -300px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 59 */
+.ACG {
+  background-image: url(front.png);
+  background-position: -450px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACGB {
+  background-image: url(back.png);
+  background-position: -450px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 60 */
+.ACH {
+  background-image: url(front.png);
+  background-position: -600px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACHB {
+  background-image: url(back.png);
+  background-position: -600px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 61 */
+.ACI {
+  background-image: url(front.png);
+  background-position: -750px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACIB {
+  background-image: url(back.png);
+  background-position: -750px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 62 */
+.ACJ {
+  background-image: url(front.png);
+  background-position: -900px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACJB {
+  background-image: url(back.png);
+  background-position: -900px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 63 */
+.ACK {
+  background-image: url(front.png);
+  background-position: -1050px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACKB {
+  background-image: url(back.png);
+  background-position: -1050px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 64 */
+.ACL {
+  background-image: url(front.png);
+  background-position: -1200px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACLB {
+  background-image: url(back.png);
+  background-position: -1200px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 65 */
+.ACM {
+  background-image: url(front.png);
+  background-position: -1350px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACMB {
+  background-image: url(back.png);
+  background-position: -1350px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 66 */
+.ACN {
+  background-image: url(front.png);
+  background-position: -1500px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACNB {
+  background-image: url(back.png);
+  background-position: -1500px -750px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 67 */
+.ACO {
+  background-image: url(front.png);
+  background-position: 0px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACOB {
+  background-image: url(back.png);
+  background-position: 0px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 68 */
+.ACP {
+  background-image: url(front.png);
+  background-position: -150px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACPB {
+  background-image: url(back.png);
+  background-position: -150px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 69 */
+.ACQ {
+  background-image: url(front.png);
+  background-position: -300px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACQB {
+  background-image: url(back.png);
+  background-position: -300px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 70 */
+.ACR {
+  background-image: url(front.png);
+  background-position: -450px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACRB {
+  background-image: url(back.png);
+  background-position: -450px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 71 */
+.ACS {
+  background-image: url(front.png);
+  background-position: -600px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACSB {
+  background-image: url(back.png);
+  background-position: -600px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 72 */
+.ACT {
+  background-image: url(front.png);
+  background-position: -750px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACTB {
+  background-image: url(back.png);
+  background-position: -750px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 73 */
+.ACU {
+  background-image: url(front.png);
+  background-position: -900px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACUB {
+  background-image: url(back.png);
+  background-position: -900px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 74 */
+.ACV {
+  background-image: url(front.png);
+  background-position: -1050px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACVB {
+  background-image: url(back.png);
+  background-position: -1050px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 75 */
+.ACW {
+  background-image: url(front.png);
+  background-position: -1200px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACWB {
+  background-image: url(back.png);
+  background-position: -1200px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 76 */
+.ACX {
+  background-image: url(front.png);
+  background-position: -1350px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACXB {
+  background-image: url(back.png);
+  background-position: -1350px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 77 */
+.ACY {
+  background-image: url(front.png);
+  background-position: -1500px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACYB {
+  background-image: url(back.png);
+  background-position: -1500px -900px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 78 */
+.ACZ {
+  background-image: url(front.png);
+  background-position: 0px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ACZB {
+  background-image: url(back.png);
+  background-position: 0px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 79 */
+.ADA {
+  background-image: url(front.png);
+  background-position: -150px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADAB {
+  background-image: url(back.png);
+  background-position: -150px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 80 */
+.ADB {
+  background-image: url(front.png);
+  background-position: -300px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADBB {
+  background-image: url(back.png);
+  background-position: -300px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 81 */
+.ADC {
+  background-image: url(front.png);
+  background-position: -450px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADCB {
+  background-image: url(back.png);
+  background-position: -450px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 82 */
+.ADD {
+  background-image: url(front.png);
+  background-position: -600px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADDB {
+  background-image: url(back.png);
+  background-position: -600px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 83 */
+.ADE {
+  background-image: url(front.png);
+  background-position: -750px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADEB {
+  background-image: url(back.png);
+  background-position: -750px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 84 */
+.ADF {
+  background-image: url(front.png);
+  background-position: -900px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADFB {
+  background-image: url(back.png);
+  background-position: -900px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 85 */
+.ADG {
+  background-image: url(front.png);
+  background-position: -1050px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADGB {
+  background-image: url(back.png);
+  background-position: -1050px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 86 */
+.ADH {
+  background-image: url(front.png);
+  background-position: -1200px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADHB {
+  background-image: url(back.png);
+  background-position: -1200px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 87 */
+.ADI {
+  background-image: url(front.png);
+  background-position: -1350px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADIB {
+  background-image: url(back.png);
+  background-position: -1350px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 88 */
+.ADJ {
+  background-image: url(front.png);
+  background-position: -1500px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADJB {
+  background-image: url(back.png);
+  background-position: -1500px -1050px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 89 */
+.ADK {
+  background-image: url(front.png);
+  background-position: 0px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADKB {
+  background-image: url(back.png);
+  background-position: 0px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 90 */
+.ADL {
+  background-image: url(front.png);
+  background-position: -150px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADLB {
+  background-image: url(back.png);
+  background-position: -150px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 91 */
+.ADM {
+  background-image: url(front.png);
+  background-position: -300px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADMB {
+  background-image: url(back.png);
+  background-position: -300px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 92 */
+.ADN {
+  background-image: url(front.png);
+  background-position: -450px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADNB {
+  background-image: url(back.png);
+  background-position: -450px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 93 */
+.ADO {
+  background-image: url(front.png);
+  background-position: -600px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADOB {
+  background-image: url(back.png);
+  background-position: -600px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 94 */
+.ADP {
+  background-image: url(front.png);
+  background-position: -750px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADPB {
+  background-image: url(back.png);
+  background-position: -750px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 95 */
+.ADQ {
+  background-image: url(front.png);
+  background-position: -900px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADQB {
+  background-image: url(back.png);
+  background-position: -900px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 96 */
+.ADR {
+  background-image: url(front.png);
+  background-position: -1050px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADRB {
+  background-image: url(back.png);
+  background-position: -1050px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 97 */
+.ADS {
+  background-image: url(front.png);
+  background-position: -1200px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADSB {
+  background-image: url(back.png);
+  background-position: -1200px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 98 */
+.ADT {
+  background-image: url(front.png);
+  background-position: -1350px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADTB {
+  background-image: url(back.png);
+  background-position: -1350px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 99 */
+.ADU {
+  background-image: url(front.png);
+  background-position: -1500px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADUB {
+  background-image: url(back.png);
+  background-position: -1500px -1200px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 100 */
+.ADV {
+  background-image: url(front.png);
+  background-position: 0px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADVB {
+  background-image: url(back.png);
+  background-position: 0px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 101 */
+.ADW {
+  background-image: url(front.png);
+  background-position: -150px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADWB {
+  background-image: url(back.png);
+  background-position: -150px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 102 */
+.ADX {
+  background-image: url(front.png);
+  background-position: -300px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADXB {
+  background-image: url(back.png);
+  background-position: -300px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 103 */
+.ADY {
+  background-image: url(front.png);
+  background-position: -450px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADYB {
+  background-image: url(back.png);
+  background-position: -450px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+/* card 104 */
+.ADZ {
+  background-image: url(front.png);
+  background-position: -600px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
+.ADZB {
+  background-image: url(back.png);
+  background-position: -600px -1350px;
+  width: 150px;
+  height: 150px;
+}
+
