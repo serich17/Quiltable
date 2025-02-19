@@ -25,9 +25,81 @@ body {
   width: 150px;
   height: 150px;
 }
+
+:root {
+  --gap: 3px;
+  --size: 150px;
+}
+
+.quilt {
+  display: grid;
+  grid-template-columns: repeat(4, var(--size));
+  grid-template-rows: repeat(4, var(--size));
+  gap: var(--gap);
+  width: fit-content;
+  position: relative;
+  margin: auto;
+}
+
+.item {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  background-color: rgb(219, 219, 219);
+  border: 1px solid black; /* Borders for inner grid lines */
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+/* Position items using grid calculations */
+.a { top: 0; left: 0; }
+.b { top: 0; left: calc(var(--size) + var(--gap)); }
+.c { top: 0; left: calc(2 * var(--size) + 2 * var(--gap)); }
+.d { top: 0; left: calc(3 * var(--size) + 3 * var(--gap)); }
+
+.e { top: calc(var(--size) + var(--gap)); left: 0; }
+.f { top: calc(var(--size) + var(--gap)); left: calc(var(--size) + var(--gap)); }
+.g { top: calc(var(--size) + var(--gap)); left: calc(2 * var(--size) + 2 * var(--gap)); }
+.h { top: calc(var(--size) + var(--gap)); left: calc(3 * var(--size) + 3 * var(--gap)); }
+
+.i  { top: calc(2 * var(--size) + 2 * var(--gap)); left: 0; }
+.j  { top: calc(2 * var(--size) + 2 * var(--gap)); left: calc(var(--size) + var(--gap)); }
+.k  { top: calc(2 * var(--size) + 2 * var(--gap)); left: calc(2 * var(--size) + 2 * var(--gap)); }
+.l  { top: calc(2 * var(--size) + 2 * var(--gap)); left: calc(3 * var(--size) + 3 * var(--gap)); }
+
+.m  { top: calc(3 * var(--size) + 3 * var(--gap)); left: 0; }
+.n  { top: calc(3 * var(--size) + 3 * var(--gap)); left: calc(var(--size) + var(--gap)); }
+.o  { top: calc(3 * var(--size) + 3 * var(--gap)); left: calc(2 * var(--size) + 2 * var(--gap)); }
+.p  { top: calc(3 * var(--size) + 3 * var(--gap)); left: calc(3 * var(--size) + 3 * var(--gap)); }
+
+
+
 </style>
 </head>
 <body>
+
+  <div class="quilt">
+    <div class="item a AAAB"></div>
+    <div class="item b AAIB"></div>
+    <div class="item c AAZB"></div>
+    <div class="item d AAPB"></div>
+  
+    <div class="item e ABZB"></div>
+    <div class="item f ACIB"></div>
+    <div class="item g ADIB"></div>
+    <div class="item h ADAB"></div>
+  
+    <div class="item i"></div>
+    <div class="item j"></div>
+    <div class="item k"></div>
+    <div class="item l"></div>
+  
+    <div class="item m"></div>
+    <div class="item n"></div>
+    <div class="item o"></div>
+    <div class="item p"></div>
+  </div>
+  
 
 <div class="grid-container">
     <div class="card AAA"></div>

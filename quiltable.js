@@ -1,7 +1,7 @@
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * Quiltable implementation : © <Your name here> <Your email address here>
+ * Quiltable implementation : © Sam Richardson samedr16@gmail.com
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -63,11 +63,66 @@ function (dojo, declare) {
                 // example of adding a div for each player
                 document.getElementById('player-tables').insertAdjacentHTML('beforeend', `
                     <div id="player-table-${player.id}">
-                        <strong>${player.name}</strong>
-                        <div>Player zone content goes here</div>
+                        <strong>${player.name} Quilt Area</strong>
+                        <div class="quilt-board">
+                            <div class="item AAAB"></div>
+                            <div class="item AAIB"></div>
+                            <div class="item AAZB"></div>
+                            <div class="item AAPB"></div>
+                        
+                            <div class="item ABZB"></div>
+                            <div class="item ACIB"></div>
+                            <div class="item ADIB"></div>
+                            <div class="item ADAB"></div>
+                        
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        </div>
                     </div>
                 `);
             });
+
+            console.log(gamedatas)
+
+            // populate the pattern area with cards
+            const pattern_area = document.querySelector(".quilt-board")
+            const maxZIndex = 200
+            Object.keys(gamedatas.decks).forEach((deck) => {
+                deck = gamedatas.decks[deck]
+
+                Object.keys(deck).forEach((card) => {
+                    card = deck[card]
+                    const card_cont = document.createElement("div")
+                    card_cont.classList.add("card")
+                    card_cont.id = card.id
+                    card_cont.style.zIndex = maxZIndex-card.id
+                    card_cont.classList.add(gamedatas.type_arg[card.type_arg].class)
+                    card_cont.style.left = gamedatas.locations[card.location_arg].x + "px"
+                    card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
+                    pattern_area.appendChild(card_cont)
+                })
+            })
+
+            Object.keys(gamedatas.pattern_area).forEach((card) => {
+                card = gamedatas.pattern_area[card]
+
+                const card_cont = document.createElement("div")
+                card_cont.classList.add("card")
+                card_cont.classList.add(gamedatas.type_arg[card.type_arg].class)
+                card_cont.id = card.id
+                card_cont.style.left = gamedatas.locations[card.location_arg].x + "px"
+                card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
+                pattern_area.appendChild(card_cont)
+            })
+
+
             
             // TODO: Set up your game interface here, according to "gamedatas"
             

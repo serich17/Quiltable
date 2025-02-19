@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * Quiltable implementation : © <Your name here> <Your email address here>
+ * Quiltable implementation : © Sam Richardson samedr16@gmail.com
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -23,6 +23,7 @@ require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
 class Game extends \Table
 {
     private static array $CARD_TYPES;
+    protected $cards;
 
     /**
      * Your global variables labels:
@@ -37,6 +38,8 @@ class Game extends \Table
     public function __construct()
     {
         parent::__construct();
+        $this->cards = self::getNew("module.common.deck");
+        $this->cards->init("card");
 
         $this->initGameStateLabels([
             "my_first_global_variable" => 10,
@@ -228,6 +231,21 @@ class Game extends \Table
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
+        // Retrieve all cards in decks
+        $deck_positions = ["deck_0", "deck_1", "deck_2", "deck_3"];
+        foreach ($deck_positions as $deck) {
+            $result["decks"][$deck] = $this->cards->getCardsInLocation($deck);
+        }
+        // Retrieve all cards in pattern area
+        $result["pattern_area"] = $this->cards->getCardsInLocation("pattern_area");
+
+
+        $result["locations"] = array_slice($this->quilt_cards, 208, 36, true);
+
+        $result["type_arg"] = array_slice($this->quilt_cards, 0, 208, true);
+
+
+
         return $result;
     }
 
@@ -292,6 +310,54 @@ class Game extends \Table
 
         // TODO: Setup the initial game situation here.
 
+        // create new deck
+
+        $cards = [];
+        foreach ($this->quilt_cards as $card_id => $card) {
+            // Only add pattern cards (even IDs) and within the card range (0-190)
+            if ($card_id % 2 == 0 && $card_id <= 190) {
+                $cards[] = [
+                    'id' => $card_id,
+                    'type' => $card['type'], // "pattern"
+                    'type_arg' => $card['type_arg'], // Identifier
+                    'location' => 'deck',
+                    'location_arg' => 0,
+                    'nbr' => 1 // Each card should have at least one instance
+                ];
+            }
+        }
+
+
+        $this->cards->createCards($cards, 'deck');
+        $this->cards->shuffle('deck'); // Shuffle entire deck
+
+        // deal the cards into 4 decks
+        $deck_positions = [213, 214, 217, 218]; // The defined positions in your materials file
+
+        // Get all cards currently in the main deck
+        $all_deck_cards = $this->cards->getCardsInLocation('deck', null, null);
+        $card_ids = array_keys($all_deck_cards);
+
+        // Divide the cards into 4 equal decks (24 cards each)
+        $deck_size = count($cards) / 4;
+        $deck_chunks = array_chunk($card_ids, $deck_size); 
+
+        // Move cards to the respective decks and set their location_arg
+        foreach ($deck_chunks as $i => $chunk) {
+            $deck_id = "deck_{$i}";
+            $position = $deck_positions[$i];
+
+            foreach ($chunk as $card_id) {
+                $this->cards->moveCard($card_id, $deck_id, $position);
+            }
+        }
+
+        $this->refillPatternArea();
+
+
+
+
+
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();
     }
@@ -336,4 +402,107 @@ class Game extends \Table
 
         throw new \feException("Zombie mode not supported at this game state: \"{$state_name}\".");
     }
+
+
+    // UTILITY FUNCTIONS
+
+    function refillPatternArea() {
+        $pattern_grid = [
+            213 => [208, 209, 212], // Closest to top-left deck
+            214 => [210, 211, 215], // Closest to top-right deck
+            217 => [216, 220, 221], // Closest to bottom-left deck
+            218 => [219, 222, 223]  // Closest to bottom-right deck
+        ];
+    
+        $deck_neighbors = [
+            'deck_0' => ['deck_1'],
+            'deck_1' => ['deck_0', 'deck_2'],
+            'deck_2' => ['deck_1', 'deck_3'],
+            'deck_3' => ['deck_2'],
+        ];
+    
+        $deck_positions = [213 => 'deck_0', 214 => 'deck_1', 217 => 'deck_2', 218 => 'deck_3'];
+    
+        // Step 1: Identify empty locations
+        $empty_spots = [];
+        foreach (array_merge(...array_values($pattern_grid)) as $loc) {
+            if (empty($this->cards->getCardsInLocation('pattern_area', $loc))) {
+                $empty_spots[] = $loc;
+            }
+        }
+    
+        // Step 2: Find available decks
+        $available_decks = [];
+        foreach ($deck_positions as $pos => $deck_id) {
+            $available_decks[$deck_id] = $this->cards->getCardsInLocation($deck_id);
+        }
+    
+        // Step 3: Refill pattern area spots
+        foreach ($empty_spots as $loc) {
+            foreach ($pattern_grid as $deck_pos => $locations) {
+                if (in_array($loc, $locations)) {
+                    $deck_id = $deck_positions[$deck_pos];
+    
+                    $source_deck = null;
+                    if (!empty($available_decks[$deck_id])) {
+                        $source_deck = $deck_id;
+                    } else {
+                        foreach ($deck_neighbors[$deck_id] as $neighbor) {
+                            if (!empty($available_decks[$neighbor])) {
+                                $source_deck = $neighbor;
+                                break;
+                            }
+                        }
+                    }
+    
+                    if ($source_deck === null) continue;
+    
+                    // Get the card
+                    $card_id = array_key_first($available_decks[$source_deck]);
+                    $card = $available_decks[$source_deck][$card_id];
+                    unset($available_decks[$source_deck][$card_id]);
+    
+                    // Look up the "other side" in $this->quilt_cards
+                    $current_type_arg = $card['type_arg'];
+                    $new_type_arg = $this->quilt_cards[$current_type_arg]['other_side'] ?? null;
+    
+                    if ($new_type_arg === null) {
+                        throw new feException("Error: Unable to find other side for card type_arg {$current_type_arg}");
+                    }
+    
+                    // Move to pattern area and update type_arg
+                    $this->cards->moveCard($card_id, 'pattern_area', $loc);
+                    $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg WHERE card_id = $card_id");
+    
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Refill empty deck positions
+        foreach ($deck_positions as $pos => $deck_id) {
+            if (!empty($available_decks[$deck_id])) continue;
+    
+            foreach ($deck_neighbors[$deck_id] as $neighbor) {
+                if (!empty($available_decks[$neighbor])) {
+                    $source_deck = $neighbor;
+                    break;
+                }
+            }
+    
+            if (!isset($source_deck)) continue;
+    
+            $card_id = array_key_first($available_decks[$source_deck]);
+            $card = $available_decks[$source_deck][$card_id];
+            unset($available_decks[$source_deck][$card_id]);
+    
+            // Keep it as a deck card (do not flip)
+            $this->cards->moveCard($card_id, $deck_id, $pos);
+        }
+    }
+    
+    
+
+
+
 }
