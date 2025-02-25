@@ -72,9 +72,26 @@
     --size: 150px
 }
 
-.selected {
-  background-color: rgb(1, 2, 2); 
+.selectable-card {
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  border: 2px solid yellow; /* Initial border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px; /* Card padding */
+  cursor: pointer; /* Indicate that the card is clickable */
 }
+
+.selectable-card:hover, 
+.selectable-card:focus {
+  border-color: #4CAF50; /* Highlight border on hover/focus */
+  background-color: rgba(76, 175, 80, 0.1); /* Light green background on hover/focus */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+.selectable-card.selected {
+  border-color: #4CAF50; /* Highlight border when selected */
+  background-color: rgba(76, 175, 80, 0.2); /* Slightly darker background when selected */
+}
+
 
 #player-tables {
     display: flex;
@@ -100,14 +117,14 @@
     width: var(--size);
     height: var(--size);
     background-color: rgb(219, 219, 219);
-    border: 1px solid black; /* Borders for inner grid lines */
     box-sizing: border-box;
     border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow to mimic a border */
+
   }
 
   .card {
     position: absolute;
-    border: 1px solid black;
     box-sizing: border-box;
     border-radius: 5px;
   }

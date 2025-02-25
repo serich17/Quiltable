@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace Bga\Games\Quiltable;
 
+use function PHPSTORM_META\type;
+
 require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
 
 class Game extends \Table
@@ -116,13 +118,42 @@ class Game extends \Table
         $player_id = (int)$this->getActivePlayerId();
 
         // Notify all players about the choice to pass.
-        $this->notify->all("pass", clienttranslate('${player_name} passes'), [
+        $this->notify->all("pass", clienttranslate('${player_name} passes second action'), [
             "player_id" => $player_id,
             "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
         ]);
 
         // at the end of the action, move to the next state
         $this->gamestate->nextState("pass");
+    }
+
+    public function plan(): void {
+        $this->checkAction("plan");
+        $this->gamestate->nextState("plan");
+    }
+    public function choose() {
+        $this->checkAction("choose");
+        $this->gamestate->nextState("choose");
+    }
+    public function return() {
+        $this->checkAction("return");
+        $this->gamestate->nextState("return");
+    }
+    public function back() {
+        $this->checkAction("back");
+        $this->gamestate->nextState("back");
+    }
+
+    public function choosePattern(int $card_id) {
+        if(!$this->checkIfTopCard($card_id)) {                                
+            // Throw an exception to stop further processing
+            throw new \BgaUserException('Invalid card choice');
+        }
+        
+        $this->cards->moveCard($card_id, $this->getActivePlayerId());
+
+
+        $this->gamestate->nextState("nextTurn");
     }
 
     /**
@@ -140,6 +171,21 @@ class Game extends \Table
         return [
             "playableCardsIds" => [1, 2],
         ];
+    }
+    public function argPlan() {
+            $top_cards = [];
+            
+            for ($i = 0; $i < 4; $i++) {
+                $deck_name = "deck_{$i}";
+        
+                // Get the top card from this deck (smallest location_order is on top)
+                $cards = $this->cards->getCardsInLocation($deck_name, null, 'card_id ASC');
+        
+                // Store the top card ID if the deck is not empty
+                $top_cards[$deck_name] = !empty($cards) ? reset($cards)['id'] : null;
+            }
+        
+            return $top_cards; // Example output: ['deck_0' => 5, 'deck_1' => 12, 'deck_2' => 8, 'deck_3' => null]
     }
 
     /**
@@ -406,6 +452,31 @@ class Game extends \Table
 
     // UTILITY FUNCTIONS
 
+    function checkIfTopCard($card_id) {
+        for ($i = 0; $i < 4; $i++) {
+            $deck_name = "deck_{$i}";
+    
+            // Get the top card from this deck (smallest location_order is on top)
+            $cards = $this->cards->getCardsInLocation($deck_name, null, 'card_id ASC');
+    
+            if (!empty($cards)) {
+                // Get the top card's id
+                $top_card_id = reset($cards)['id'];
+    
+                // Check if the given card_id is the top card
+                if ($top_card_id == $card_id) {
+                    return true; // card_id is the top card in this deck
+                }
+            }
+        }
+    
+        // If we reached here, card_id was not the top card in any deck
+        return false;
+
+
+    }
+    
+
     function refillPatternArea() {
         $pattern_grid = [
             213 => [208, 209, 212], // Closest to top-left deck
@@ -469,10 +540,12 @@ class Game extends \Table
                     if ($new_type_arg === null) {
                         throw new feException("Error: Unable to find other side for card type_arg {$current_type_arg}");
                     }
+
+                    $new_card_type = $this->quilt_cards[$new_type_arg]["type"];
     
                     // Move to pattern area and update type_arg
                     $this->cards->moveCard($card_id, 'pattern_area', $loc);
-                    $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg WHERE card_id = $card_id");
+                    $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = '$new_card_type' WHERE card_id = $card_id");
     
                     break;
                 }

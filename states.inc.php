@@ -66,16 +66,14 @@ $machinestates = [
 
     2 => [
         "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card or pass'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
+        "description" => clienttranslate('${actplayer} must choose an action'),
+        "descriptionmyturn" => clienttranslate('${you} must choose an action'),
         "type" => "activeplayer",
         "args" => "argPlayerTurn",
         "possibleactions" => [
             // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            "actPlayCard", 
-            "actPass",
-        ],
-        "transitions" => ["playCard" => 3, "pass" => 3]
+            "plan", "choose", "return"],
+        "transitions" => ["plan" => 5, "choose" => 6, "return" => 7]
     ],
 
     3 => [
@@ -85,6 +83,66 @@ $machinestates = [
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
         "transitions" => ["endGame" => 99, "nextPlayer" => 2]
+    ],
+
+    4 => [
+        "name" => "playerTurn2",
+        "description" => clienttranslate('${actplayer} must choose a second action or pass'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a second action or pass'),
+        "type" => "activeplayer",
+        "possibleactions" => ["plan", "choose", "return", "actPass"],
+        "transitions" => ["plan" => 8, "choose" => 9, "return" => 10, "pass" => 3]
+    ],
+
+    5 => [
+        "name" => "plan",
+        "description" => clienttranslate('${actplayer} must choose a pattern'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a pattern'),
+        "type" => "activeplayer",
+        "args" => "argPlan",
+        "possibleactions" => ["choosePattern", "back"],
+        "transitions" => ["back" => 2, "nextTurn" => 4]
+    ],
+    6 => [
+        "name" => "choose",
+        "description" => clienttranslate('${actplayer} must choose quilt blocks'),
+        "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
+        "type" => "activeplayer",
+        "possibleactions" => ["chooseBlock", "back"],
+        "transitions" => ["back" => 2, "nextTurn" => 4]
+    ],
+    7 => [
+        "name" => "return",
+        "description" => clienttranslate('${actplayer} must return 1-4 tiles'),
+        "descriptionmyturn" => clienttranslate('${you} must return 1-4 tiles'),
+        "type" => "activeplayer",
+        "possibleactions" => ["returnTile", "back"],
+        "transitions" => ["back" => 2, "nextTurn" => 4]
+    ],
+    8 => [
+        "name" => "plan2",
+        "description" => clienttranslate('${actplayer} must choose a pattern'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a pattern'),
+        "type" => "activeplayer",
+        "args" => "argPlan",
+        "possibleactions" => ["choosePattern", "back"],
+        "transitions" => ["back" => 4, "nextTurn" => 3]
+    ],
+    9 => [
+        "name" => "choose2",
+        "description" => clienttranslate('${actplayer} must choose quilt blocks'),
+        "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
+        "type" => "activeplayer",
+        "possibleactions" => ["chooseBlock", "back"],
+        "transitions" => ["back" => 4, "nextTurn" => 3]
+    ],
+    10 => [
+        "name" => "return2",
+        "description" => clienttranslate('${actplayer} must return 1-4 tiles'),
+        "descriptionmyturn" => clienttranslate('${you} must return 1-4 tiles'),
+        "type" => "activeplayer",
+        "possibleactions" => ["returnTile", "back"],
+        "transitions" => ["back" => 4, "nextTurn" => 3]
     ],
 
     // Final state.

@@ -157,6 +157,12 @@ function (dojo, declare) {
                 break;
            */
            
+            case 'plan':
+                this.selectPatterns(args)
+                break;
+            case 'plan2':
+                this.selectPatterns(args)
+                break;
            
             case 'dummy':
                 break;
@@ -182,7 +188,12 @@ function (dojo, declare) {
                 
                 break;
            */
-           
+          case 'plan':
+            this.removePatterns()
+            break;
+          case 'plan2':
+            this.removePatterns()
+            break;
            
             case 'dummy':
                 break;
@@ -200,15 +211,34 @@ function (dojo, declare) {
             {            
                 switch( stateName )
                 {
-                 case 'playerTurn':    
-                    const playableCardsIds = args.playableCardsIds; // returned by the argPlayerTurn
-
-                    // Add test action buttons in the action status bar, simulating a card click:
-                    playableCardsIds.forEach(
-                        cardId => this.statusBar.addActionButton(_('Play card with id ${card_id}').replace('${card_id}', cardId), () => this.onCardClick(cardId))
-                    ); 
-
+                 case 'playerTurn':
+                    this.addActionButton(('planButton'), _('Plan'), () => this.bgaPerformAction("plan"))
+                    this.addActionButton(('chooseButton'), _('Choose'), () => this.bgaPerformAction("choose"))
+                    this.addActionButton(('returnButton'), _('Return'), () => this.bgaPerformAction("return"))
+                    break;
+                 case 'playerTurn2':
+                    this.addActionButton(('planButton'), _('Plan'), () => this.bgaPerformAction("plan"))
+                    this.addActionButton(('chooseButton'), _('Choose'), () => this.bgaPerformAction("choose"))
+                    this.addActionButton(('returnButton'), _('Return'), () => this.bgaPerformAction("return"))
                     this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), { color: 'secondary' }); 
+                    break;
+                 case 'plan':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    break;
+                 case 'choose':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    break;
+                 case 'return':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    break;
+                 case 'plan2':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    break;
+                 case 'choose2':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    break;
+                 case 'return2':
+                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
                     break;
                 }
             }
@@ -223,6 +253,31 @@ function (dojo, declare) {
             script.
         
         */
+       selectPatterns: function (args) {
+                console.log(args)
+                if (this.player_id == args.active_player) {
+                  for (let i = 0; i < 4; i++) {
+                    let deck_name = "deck_" + i;
+                    if (args.args[deck_name] != null) {
+                        const card = document.getElementById(args.args[deck_name])
+                        card.classList.add("selectable-card")
+                        card.boundSelectPlan = this.selectPlan.bind(this);
+                        card.addEventListener("click", card.boundSelectPlan)
+                    }
+                }
+
+                }
+       },
+       removePatterns: function () {
+            const cards = document.querySelectorAll('.selectable-card');
+            cards.forEach(card => {
+                card.classList.remove('selectable-card');
+                if (card.boundSelectPlan) {
+                    card.removeEventListener('click', card.boundSelectPlan);
+                    delete card.boundSelectPlan
+                }
+            });
+       },
 
 
         ///////////////////////////////////////////////////
@@ -251,8 +306,14 @@ function (dojo, declare) {
                 // What to do after the server call if it succeeded
                 // (most of the time, nothing, as the game will react to notifs / change of state instead)
             });        
-        },    
+        },
 
+        selectPlan: function(element) {
+            let card_id = parseInt(element.target.id)
+            this.bgaPerformAction("choosePattern", { 
+                card: card_id,
+            }).then(() => {});  
+        },
         
         ///////////////////////////////////////////////////
         //// Reaction to cometD notifications
