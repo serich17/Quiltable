@@ -28,7 +28,7 @@ function (dojo, declare) {
             // Here, you can init the global variables of your user interface
             // Example:
             // this.myGlobalValue = 0;
-
+            this.selectableBlocks = []
         },
         
         /*
@@ -117,6 +117,7 @@ function (dojo, declare) {
                 card_cont.classList.add("card")
                 card_cont.classList.add(gamedatas.type_arg[card.type_arg].class)
                 card_cont.id = card.id
+                card_cont.setAttribute("location", card.location_arg)
                 card_cont.style.left = gamedatas.locations[card.location_arg].x + "px"
                 card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
                 pattern_area.appendChild(card_cont)
@@ -163,6 +164,25 @@ function (dojo, declare) {
             case 'plan2':
                 this.selectPatterns(args)
                 break;
+
+            case 'choose':
+                if (this.player_id == args.active_player) {
+                    this.selectableBlocks = args.args
+                    args.args.forEach((item) => {const card = document.getElementById(item.id)
+                        card.classList.add("selectable-card")
+                        card.boundSelectPlan = this.chooseBlocks.bind(this);
+                        card.addEventListener("click", card.boundSelectPlan)})
+                }
+                break;
+            case 'choose2':
+                if (this.player_id == args.active_player) {
+                    this.selectableBlocks = args.args
+                    args.args.forEach((item) => {const card = document.getElementById(item.id)
+                        card.classList.add("selectable-card")
+                        card.boundSelectPlan = this.chooseBlocks.bind(this);
+                        card.addEventListener("click", card.boundSelectPlan)})
+                }
+                break;
            
             case 'dummy':
                 break;
@@ -192,6 +212,12 @@ function (dojo, declare) {
             this.removePatterns()
             break;
           case 'plan2':
+            this.removePatterns()
+            break;
+          case 'choose':
+            this.removePatterns()
+            break;
+          case 'choose2':
             this.removePatterns()
             break;
            
@@ -254,7 +280,6 @@ function (dojo, declare) {
         
         */
        selectPatterns: function (args) {
-                console.log(args)
                 if (this.player_id == args.active_player) {
                   for (let i = 0; i < 4; i++) {
                     let deck_name = "deck_" + i;
@@ -269,15 +294,18 @@ function (dojo, declare) {
                 }
        },
        removePatterns: function () {
-            const cards = document.querySelectorAll('.selectable-card');
+            const cards = document.querySelectorAll('.card');
             cards.forEach(card => {
-                card.classList.remove('selectable-card');
+                card.classList.remove('selectable-card')
+                card.classList.remove('selected')
                 if (card.boundSelectPlan) {
                     card.removeEventListener('click', card.boundSelectPlan);
                     delete card.boundSelectPlan
                 }
             });
        },
+
+       
 
 
         ///////////////////////////////////////////////////
@@ -314,6 +342,123 @@ function (dojo, declare) {
                 card: card_id,
             }).then(() => {});  
         },
+
+        chooseBlocks: function (element) {
+            let card = element.target;
+        
+            // If the card is already selected and selectable, attempt to unselect
+            if (card.classList.contains("selected") && card.classList.contains("selectable-card")) {
+                let selectedCards = Array.from(document.querySelectorAll(".selected"))
+                    .map(card => parseInt(card.getAttribute("location"), 10))
+                    .filter(loc => !isNaN(loc));
+        
+                let cardLoc = parseInt(card.getAttribute("location"), 10);
+        
+                // Remove the clicked card from selected list temporarily
+                let updatedSelected = selectedCards.filter(loc => loc !== cardLoc);
+        
+                // Check if all remaining selected cards are still connected
+                if (this.isConnected(updatedSelected)) {
+                    card.classList.remove("selected"); // Safe to unselect
+                }
+            } 
+            // Otherwise, select the card if it's not already selected
+            else if (!card.classList.contains("selected") && card.classList.contains("selectable-card")) {
+                card.classList.add("selected");
+            }
+        
+            this.changeSelectables(3);
+        },
+        isConnected: function (selectedLocations) {
+            if (selectedLocations.length < 2) return true; // Single card is always connected
+        
+            let visited = new Set();
+            let toVisit = [selectedLocations[0]]; // Start from any selected card
+        
+            while (toVisit.length > 0) {
+                let current = toVisit.pop();
+                visited.add(current);
+        
+                // Get adjacent cards and filter only the ones in selectedLocations
+                let neighbors = this.getAdjacentLocations(current)
+                    .filter(loc => selectedLocations.includes(loc) && !visited.has(loc));
+        
+                toVisit.push(...neighbors);
+            }
+        
+            // If all selected locations are visited, they are connected
+            return visited.size === selectedLocations.length;
+        },
+        
+        
+
+
+        changeSelectables: function (maxSelected) {
+            const pattern_board = document.querySelector(".pattern-board")
+            let selectedCards = pattern_board.querySelectorAll(".selected"); // Use correct class name
+            // Retrieving it correctly inside changeSelectables()
+            let selectedLocations = Array.from(pattern_board.querySelectorAll(".selected"))
+            .map(card => card.getAttribute("location")) // Now correctly retrieves the attribute
+            .filter(loc => loc !== null) // Ensure location exists
+            .map(loc => parseInt(loc, 10)); // Convert to integer safely
+
+            console.log("Selected Locations:", selectedLocations); // Check if it works now
+
+        
+            let adjacentLocations = new Set();
+        
+            // Find all adjacent locations from selected cards
+            selectedLocations.forEach(loc => {
+                let adjacents = this.getAdjacentLocations(loc);
+                adjacents.forEach(adj => adjacentLocations.add(adj));
+            });
+        
+            console.log("Adjacent Locations:", adjacentLocations); // Debugging line
+        
+            // Get all turned-over cards
+            let allFaceUpCards = pattern_board.querySelectorAll(".card");
+        
+            allFaceUpCards.forEach(card => {
+                let locAttr = card.getAttribute("location");
+                if (locAttr === null) return; // Skip cards without a location attribute
+        
+                let loc = parseInt(locAttr, 10);
+        
+                if (selectedCards.length >= maxSelected) {
+                    // If max selected, disable all except already selected ones
+                    if (!card.classList.contains("selected")) {
+                        card.classList.remove("selectable-card");
+                    }
+                } else {
+                    // Otherwise, allow only adjacent cards to be selectable
+                    if (adjacentLocations.has(loc) || card.classList.contains("selected")) {
+                        card.classList.add("selectable-card");
+                    } else {
+                        card.classList.remove("selectable-card");
+                    }
+                }
+            });
+
+            console.log(Object.keys(selectedCards).length)
+            if (Object.keys(selectedCards).length == 0) {
+                this.selectableBlocks.forEach((item) => {const card = document.getElementById(item.id)
+                    card.classList.add("selectable-card")})
+            }
+        },
+        
+        getAdjacentLocations: function (loc) {
+            let adjacencyMap = {
+                208: [209, 212], 209: [208, 210], 210: [209, 211], 211: [210, 215],
+                212: [208, 216], 215: [211, 219],
+                216: [212, 220], 219: [215, 223],
+                220: [216, 221], 221: [220, 222], 222: [221, 223], 223: [222, 219]
+            };
+        
+            return adjacencyMap[loc] || []; // Return adjacent locations or empty array if unmapped
+        },
+        
+        
+        
         
         ///////////////////////////////////////////////////
         //// Reaction to cometD notifications

@@ -184,9 +184,13 @@ class Game extends \Table
                 // Store the top card ID if the deck is not empty
                 $top_cards[$deck_name] = !empty($cards) ? reset($cards)['id'] : null;
             }
-        
             return $top_cards; // Example output: ['deck_0' => 5, 'deck_1' => 12, 'deck_2' => 8, 'deck_3' => null]
     }
+
+    public function argChoose() {
+        return array_values($this->cards->getCardsInLocation("pattern_area"));
+    }
+    
 
     /**
      * Compute and return the current game progression.

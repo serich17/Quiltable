@@ -2014,7 +2014,6 @@ $this->quilt_cards = array(
     240 => array("x" => -$size + $gap, "y" => $size * 2 + $gap*2),
     241 => array("x" => -$size + $gap, "y" => $size),
     242 => array("x" => -$size + $gap, "y" => 0),
-    // 243 => array("x" => -150, "y" => -150)
     243 => array("x" => -$size + $gap, "y" => -$size + $gap)
 
 

@@ -26,7 +26,7 @@
 -->
 
 <strong>Pattern Area</strong>
-<div class="quilt-board">
+<div class="quilt-board pattern-board" id="pattern-board">
     <div class="item"></div>
     <div class="item"></div>
     <div class="item"></div>

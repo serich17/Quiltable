@@ -108,6 +108,7 @@ $machinestates = [
         "description" => clienttranslate('${actplayer} must choose quilt blocks'),
         "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
         "type" => "activeplayer",
+        "args" => "argChoose",
         "possibleactions" => ["chooseBlock", "back"],
         "transitions" => ["back" => 2, "nextTurn" => 4]
     ],
@@ -133,6 +134,7 @@ $machinestates = [
         "description" => clienttranslate('${actplayer} must choose quilt blocks'),
         "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
         "type" => "activeplayer",
+        "args" => "argChoose",
         "possibleactions" => ["chooseBlock", "back"],
         "transitions" => ["back" => 4, "nextTurn" => 3]
     ],
