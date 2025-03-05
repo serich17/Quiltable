@@ -72,6 +72,56 @@
     --size: 150px
 }
 
+.temp-card {
+  border: 2px dashed #999;
+  z-index: 100;
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  opacity: 0.7;
+  cursor: move;
+  transition: left 0.1s, top 0.1s;
+}
+
+.temp-card.valid-placement {
+  border: 2px solid green;
+}
+
+.temp-card:not(.valid-placement) {
+  border: 2px solid red;
+}
+
+.board-card {
+  z-index: 50;
+}
+
+.card-group-controls {
+  position: absolute;
+  z-index: 999;
+  background: rgba(255,255,255,0.9);
+  border-radius: 8px;
+  padding: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  gap: 10px;
+}
+
+.rotate-all-button {
+  background: #4a90e2;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  line-height: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rotate-all-button:hover {
+  background: #3a80d2;
+}
+
 .selectable-card {
   transition: all 0.3s ease; /* Smooth transition for hover effects */
   border: 2px solid yellow; /* Initial border */
@@ -92,6 +142,19 @@
   background-color: rgba(76, 175, 80, 0.2); /* Slightly darker background when selected */
 }
 
+.patterns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+#confirm_placement.action-button {
+  display: none;
+}
+
+#confirm_selection.action-button {
+  display: none;
+}
 
 #player-tables {
     display: flex;

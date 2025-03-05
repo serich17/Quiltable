@@ -215,6 +215,9 @@ class Game extends \Table
      * The action method of state `nextPlayer` is called everytime the current game state is set to `nextPlayer`.
      */
     public function stNextPlayer(): void {
+
+        $this->refillPatternArea();
+
         // Retrieve the active player ID.
         $player_id = (int)$this->getActivePlayerId();
 
@@ -226,6 +229,9 @@ class Game extends \Table
         // Go to another gamestate
         // Here, we would detect if the game is over, and in this case use "endGame" transition instead 
         $this->gamestate->nextState("nextPlayer");
+    }
+    public function turnCards() {
+        $this->refillPatternArea();
     }
 
     /**
@@ -295,6 +301,13 @@ class Game extends \Table
         $result["type_arg"] = array_slice($this->quilt_cards, 0, 208, true);
 
 
+        // return player boards
+        $player_ids = array_keys($this->loadPlayersBasicInfos());
+
+        foreach ($player_ids as $player_id) {
+            $result["boards"][$player_id] = array_values($this->cards->getCardsInLocation($player_id));
+        }
+        
 
         return $result;
     }

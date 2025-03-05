@@ -29,6 +29,12 @@ function (dojo, declare) {
             // Example:
             // this.myGlobalValue = 0;
             this.selectableBlocks = []
+
+            this.playerId
+            this.selectedCards = []; // Stores selected card objects with row/col
+            this.tempCards = []; // Temporary card elements for preview
+            this.board
+
         },
         
         /*
@@ -47,49 +53,11 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
-
+            this.playerId = this.player_id
             // Example to add a div on the game area
             document.getElementById('game_play_area').insertAdjacentHTML('beforeend', `
                 <div id="player-tables"></div>
             `);
-            
-            // Setting up player boards
-            Object.values(gamedatas.players).forEach(player => {
-                // example of setting up players boards
-                this.getPlayerPanelElement(player.id).insertAdjacentHTML('beforeend', `
-                    <div id="player-counter-${player.id}">A player counter</div>
-                `);
-
-                // example of adding a div for each player
-                document.getElementById('player-tables').insertAdjacentHTML('beforeend', `
-                    <div id="player-table-${player.id}">
-                        <strong>${player.name} Quilt Area</strong>
-                        <div class="quilt-board">
-                            <div class="item AAAB"></div>
-                            <div class="item AAIB"></div>
-                            <div class="item AAZB"></div>
-                            <div class="item AAPB"></div>
-                        
-                            <div class="item ABZB"></div>
-                            <div class="item ACIB"></div>
-                            <div class="item ADIB"></div>
-                            <div class="item ADAB"></div>
-                        
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                        
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                        </div>
-                    </div>
-                `);
-            });
-
-            console.log(gamedatas)
 
             // populate the pattern area with cards
             const pattern_area = document.querySelector(".quilt-board")
@@ -110,6 +78,7 @@ function (dojo, declare) {
                 })
             })
 
+            // back cards placed in position
             Object.keys(gamedatas.pattern_area).forEach((card) => {
                 card = gamedatas.pattern_area[card]
 
@@ -122,6 +91,68 @@ function (dojo, declare) {
                 card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
                 pattern_area.appendChild(card_cont)
             })
+            
+            // Setting up player boards
+            Object.values(gamedatas.players).forEach(player => {
+                // example of setting up players boards
+                this.getPlayerPanelElement(player.id).insertAdjacentHTML('beforeend', `
+                    <div id="player-counter-${player.id}">A player counter</div>
+                `);
+
+                // example of adding a div for each player
+                document.getElementById('player-tables').insertAdjacentHTML('beforeend', `
+                    <div id="player-table-${player.id}">
+                        <strong>${player.name} Quilt Area</strong>
+                        <div class="quilt-board">
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                            <div class="item"></div>
+                        </div>
+                    </div>
+                `);
+
+                const patterns = document.createElement("section")
+                patterns.classList.add("patterns")
+
+                document.getElementById("player-table-"+player.id).appendChild(patterns)
+                this.board = dojo.query(`#player-table-${this.player_id} .quilt-board`)[0];
+
+                const player_board = document.getElementById("player-table-"+player.id).querySelector(".quilt-board")
+                if (Object.keys(gamedatas.boards).includes(player.id)) {
+                    Object.values(gamedatas.boards[player.id]).forEach(card => {
+                        let card_cont = document.createElement("div")
+                        card_cont.classList.add("card")
+                        card_cont.classList.add(gamedatas.type_arg[card.type_arg].class)
+                        card_cont.id = card.id
+                        card_cont.setAttribute("location", card.location_arg)
+                        if (card.location_arg != "0") {
+                            card_cont.style.left = gamedatas.locations[card.location_arg].x + "px"
+                            card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
+                            player_board.appendChild(card_cont) 
+                        } else {
+                            patterns.appendChild(card_cont)
+                        }
+                    })
+                }
+            });
+
+            console.log(gamedatas)
 
 
             
@@ -216,9 +247,11 @@ function (dojo, declare) {
             break;
           case 'choose':
             this.removePatterns()
+            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
             break;
           case 'choose2':
             this.removePatterns()
+            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
             break;
            
             case 'dummy':
@@ -238,33 +271,37 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                  case 'playerTurn':
-                    this.addActionButton(('planButton'), _('Plan'), () => this.bgaPerformAction("plan"))
-                    this.addActionButton(('chooseButton'), _('Choose'), () => this.bgaPerformAction("choose"))
-                    this.addActionButton(('returnButton'), _('Return'), () => this.bgaPerformAction("return"))
+                    this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
+                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
                     break;
                  case 'playerTurn2':
-                    this.addActionButton(('planButton'), _('Plan'), () => this.bgaPerformAction("plan"))
-                    this.addActionButton(('chooseButton'), _('Choose'), () => this.bgaPerformAction("choose"))
-                    this.addActionButton(('returnButton'), _('Return'), () => this.bgaPerformAction("return"))
+                    this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
+                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
                     this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), { color: 'secondary' }); 
                     break;
                  case 'plan':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                  case 'choose':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
+                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none'});
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
                     break;
                  case 'return':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                  case 'plan2':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                  case 'choose2':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
+                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none'});
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
                     break;
                  case 'return2':
-                    this.addActionButton(('backButton'), _('Back'), () => this.bgaPerformAction("back"))
+                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                 }
             }
@@ -295,6 +332,7 @@ function (dojo, declare) {
        },
        removePatterns: function () {
             const cards = document.querySelectorAll('.card');
+            this.selectedCards = []
             cards.forEach(card => {
                 card.classList.remove('selectable-card')
                 card.classList.remove('selected')
@@ -304,6 +342,508 @@ function (dojo, declare) {
                 }
             });
        },
+
+
+
+// Updated confirmSelection function
+confirmSelection: function() {
+    let selectedLocations = dojo.query(".selected");
+    console.log("Selected cards:", selectedLocations);
+    
+    // Validate selection (2-3 cards)
+    if (selectedLocations.length < 2 || selectedLocations.length > 3) {
+        this.showMessage(_("Please select 2-3 adjacent cards"), "error");
+        return;
+    }
+    
+    // Get card IDs and locations
+    const selectedCards = [];
+    selectedLocations.forEach(card => {
+        const locationId = card.getAttribute("location");
+        if (!locationId) {
+            console.error("Card is missing location attribute:", card);
+            return;
+        }
+        
+        selectedCards.push({
+            id: card.id,
+            location: this.getCardLocation(parseInt(locationId), 'pattern-area')
+        });
+    });
+    
+    if (selectedCards.length < 2) {
+        this.showMessage(_("Could not determine locations for selected cards"), "error");
+        return;
+    }
+    
+    console.log("Selected cards with locations:", selectedCards);
+    
+    // Get board reference - do this here to ensure we have the latest
+    this.board = dojo.query(`#player-table-${this.player_id} .quilt-board`)[0];
+    if (!this.board) {
+        console.error("Could not find quilt board");
+        return;
+    }
+    
+    // Clear previous temporary cards
+    dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+    dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+    
+    // Validate adjacency
+    if (!this.areCardsAdjacent(selectedCards.map(card => card.location))) {
+        this.showMessage(_("Selected cards must be adjacent"), "error");
+        return;
+    }
+    
+    // Create temporary transparent cards on player's board
+    this.tempCards = selectedCards.map((card, index) => {
+        // Make a clone of the original card
+        const originalCard = dojo.byId(card.id);
+        // Get the computed style of the original card
+        const computedStyle = window.getComputedStyle(originalCard);
+        const backgroundImage = computedStyle.backgroundImage;
+        
+        const tempCard = dojo.create('div', {
+            'class': 'temp-card',
+            'data-original-card-id': card.id,
+            'data-original-row': card.location.row,
+            'data-original-col': card.location.col,
+            'style': `
+                left: ${card.location.x}px; 
+                top: ${card.location.y}px; 
+                background-image: ${backgroundImage || "none"};
+                background-position: ${computedStyle.backgroundPosition};
+            `
+        }, this.board);
+                
+        return tempCard;
+    });
+    
+    // Create the group controls
+    this.createCardGroupControls();
+    
+    // Store the initial positions for rotation calculations
+    this.storeInitialCardPositions();
+    
+    // Make the entire group draggable
+    this.makeGroupDraggable();
+    
+    // Enable confirm placement button, disable selection
+    dojo.style('confirm_placement', 'display', 'block');
+    dojo.style('confirm_selection', 'display', 'none');
+    
+    // Add visual hint for valid placement
+    this.showMessage(_("Drag cards to position and rotate them. At least one card must be adjacent to an existing card."), "info");
+},
+
+// Store initial positions for rotation reference
+storeInitialCardPositions: function() {
+    // Find the center of the card group
+    let totalX = 0, totalY = 0;
+    this.tempCards.forEach(card => {
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        totalX += left + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size')) / 2);
+        totalY += top + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size')) / 2);
+    });
+    
+    const centerX = totalX / this.tempCards.length;
+    const centerY = totalY / this.tempCards.length;
+    
+    // Store center point and initial positions relative to center
+    this.cardGroupCenter = { x: centerX, y: centerY };
+    this.cardInitialPositions = this.tempCards.map(card => {
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        const cardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+        
+        return {
+            element: card,
+            relX: (left + (cardSize / 2)) - centerX,
+            relY: (top + (cardSize / 2)) - centerY,
+            row: parseInt(card.getAttribute('data-original-row')),
+            col: parseInt(card.getAttribute('data-original-col'))
+        };
+    });
+    
+    // Initialize rotation state
+    this.currentRotation = 0;
+},
+
+// Create controls for the card group
+createCardGroupControls: function() {
+    // Remove any existing controls
+    dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+    
+    // Create a container for the controls
+    const controls = dojo.create('div', {
+        'class': 'card-group-controls',
+        'style': 'top: -50px; left: 0px;'
+    }, this.board);
+    
+    // Add rotation button
+    const rotateButton = dojo.create('div', {
+        'class': 'rotate-all-button',
+        'innerHTML': '↻',
+        'title': 'Rotate all cards (90° clockwise)'
+    }, controls);
+    
+    // Connect rotation handler
+    dojo.connect(rotateButton, 'onclick', () => this.rotateAllCards());
+    
+    // Position the controls relative to the card group
+    this.updateControlsPosition();
+},
+
+// Update position of the controls
+updateControlsPosition: function() {
+    const controls = dojo.query('.card-group-controls', this.board)[0];
+    if (!controls || this.tempCards.length === 0) return;
+    
+    // Find the highest card in the group
+    let minTop = Infinity;
+    let avgLeft = 0;
+    
+    this.tempCards.forEach(card => {
+        const top = parseInt(card.style.top);
+        const left = parseInt(card.style.left);
+        minTop = Math.min(minTop, top);
+        avgLeft += left;
+    });
+    
+    avgLeft = avgLeft / this.tempCards.length;
+    
+    // Position controls above the group
+    controls.style.top = (minTop - 50) + 'px';
+    controls.style.left = avgLeft + 'px';
+},
+
+// Rotate all cards while preserving their relative positions
+rotateAllCards: function() {
+    // Increment rotation (90° clockwise)
+    this.currentRotation = (this.currentRotation + 90) % 360;
+    const radians = (this.currentRotation * Math.PI) / 180;
+    
+    // Calculate new positions based on rotation around center
+    this.cardInitialPositions.forEach(cardInfo => {
+        // Apply rotation matrix
+        const newRelX = cardInfo.relX * Math.cos(radians) - cardInfo.relY * Math.sin(radians);
+        const newRelY = cardInfo.relX * Math.sin(radians) + cardInfo.relY * Math.cos(radians);
+        
+        const cardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+        
+        // Update card position (accounting for center of card)
+        const newLeft = this.cardGroupCenter.x + newRelX - (cardSize / 2);
+        const newTop = this.cardGroupCenter.y + newRelY - (cardSize / 2);
+        
+        // Snap to grid
+        const snappedPosition = this.snapToGrid(newLeft, newTop);
+        
+        // Apply position
+        cardInfo.element.style.left = snappedPosition.left + 'px';
+        cardInfo.element.style.top = snappedPosition.top + 'px';
+        
+        // Validate placement
+        this.validateTempCardPlacement(cardInfo.element);
+    });
+    
+    // Update controls position
+    this.updateControlsPosition();
+},
+
+// Make the entire group draggable
+makeGroupDraggable: function() {
+    // Initial state for dragging
+    let isDragging = false;
+    let startX, startY;
+    let cardOffsets = [];
+    
+    // Initialize dragging when any card is clicked
+    this.tempCards.forEach(card => {
+        dojo.connect(card, 'onmousedown', (evt) => {
+            evt.preventDefault();
+            isDragging = true;
+            startX = evt.clientX;
+            startY = evt.clientY;
+            
+            // Store current positions of all cards
+            cardOffsets = this.tempCards.map(c => ({
+                element: c,
+                offsetLeft: parseInt(c.style.left),
+                offsetTop: parseInt(c.style.top)
+            }));
+            
+            // Add move and mouseup handlers
+            const moveHandle = dojo.connect(document, 'onmousemove', handleMouseMove);
+            const upHandle = dojo.connect(document, 'onmouseup', () => {
+                isDragging = false;
+                dojo.disconnect(moveHandle);
+                dojo.disconnect(upHandle);
+                
+                // Snap all cards to grid
+                this.snapAllCardsToGrid();
+                
+                // Update center point
+                this.updateGroupCenter();
+                
+                // Validate all card placements
+                this.tempCards.forEach(c => this.validateTempCardPlacement(c));
+                
+                // Update controls position
+                this.updateControlsPosition();
+            });
+        });
+    });
+    
+    // Handle mouse movement for the entire group
+    const handleMouseMove = (moveEvt) => {
+        if (!isDragging) return;
+        
+        const deltaX = moveEvt.clientX - startX;
+        const deltaY = moveEvt.clientY - startY;
+        
+        // Move all cards by the same delta
+        cardOffsets.forEach(cardOffset => {
+            cardOffset.element.style.left = (cardOffset.offsetLeft + deltaX) + 'px';
+            cardOffset.element.style.top = (cardOffset.offsetTop + deltaY) + 'px';
+        });
+        
+        // Update controls position while dragging
+        this.updateControlsPosition();
+    };
+},
+
+// Snap to grid based on card size and gap
+snapToGrid: function(left, top) {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const cardSize = parseInt(rootStyles.getPropertyValue('--size'));
+    const gap = parseInt(rootStyles.getPropertyValue('--gap'));
+    const cellSize = cardSize + gap;
+    
+    // Snap to nearest grid cell
+    const snappedLeft = Math.round(left / cellSize) * cellSize;
+    const snappedTop = Math.round(top / cellSize) * cellSize;
+    
+    return { left: snappedLeft, top: snappedTop };
+},
+
+// Snap all cards to grid
+snapAllCardsToGrid: function() {
+    this.tempCards.forEach(card => {
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        const snappedPosition = this.snapToGrid(left, top);
+        
+        card.style.left = snappedPosition.left + 'px';
+        card.style.top = snappedPosition.top + 'px';
+    });
+},
+
+// Update the group center after moving
+updateGroupCenter: function() {
+    let totalX = 0, totalY = 0;
+    const cardSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--size'));
+    
+    this.tempCards.forEach(card => {
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        totalX += left + (cardSize / 2);
+        totalY += top + (cardSize / 2);
+    });
+    
+    this.cardGroupCenter = {
+        x: totalX / this.tempCards.length,
+        y: totalY / this.tempCards.length
+    };
+},
+
+// Improved finalize function that creates permanent cards
+finalizeCardPlacement: function() {
+    console.log("Finalizing card placement");
+    
+    // Validate all temp cards
+    this.tempCards.forEach(card => this.validateTempCardPlacement(card));
+    
+    const validCards = dojo.query('.temp-card.valid-placement', this.board);
+    console.log("Valid cards:", validCards.length, "of", this.tempCards.length);
+    
+    if (validCards.length !== this.tempCards.length) {
+        this.showMessage(_("Invalid placement. All cards must be within bounds and adjacent to existing cards."), "error");
+        return;
+    }
+    
+    // Collect final placement details
+    const placements = [];
+    validCards.forEach(card => {
+        const originalCardId = card.getAttribute('data-original-card-id');
+        
+        // Get card position relative to grid
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        
+        // Calculate grid position
+        const rootStyles = getComputedStyle(document.documentElement);
+        const gridSize = parseInt(rootStyles.getPropertyValue('--size'));
+        const gap = parseInt(rootStyles.getPropertyValue('--gap'));
+        
+        // Calculate closest grid position
+        const col = Math.round(left / (gridSize + gap)) + 1;
+        const row = Math.round(top / (gridSize + gap)) + 1;
+        
+        // Get the corresponding location ID for this position
+        const locationId = this.getLocationIdFromPosition(row, col);
+        
+        placements.push({
+            cardId: originalCardId,
+            rotation: this.currentRotation, // Use the group rotation
+            locationId: locationId
+        });
+        
+        // Create a permanent card
+        const permanentCard = dojo.create('div', {
+            'class': 'board-card',
+            'data-original-card-id': originalCardId,
+            'style': `
+                position: absolute; 
+                left: ${left}px; 
+                top: ${top}px; 
+                width: var(--size); 
+                height: var(--size); 
+                transform: rotate(${this.currentRotation}deg);
+                background-image: ${card.style.backgroundImage};
+                background-size: cover;
+            `
+        }, this.board);
+    });
+    
+    // Remove temp cards and controls
+    dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+    dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+    
+    // Reset rotation state
+    this.currentRotation = 0;
+    
+    // Send placements to server
+    this.sendCardPlacements(placements);
+    
+    // Hide placement button, show selection button again
+    dojo.style('confirm_placement', 'display', 'none');
+    dojo.style('confirm_selection', 'display', 'block');
+},
+
+// Improved adjacency check for board cards
+checkAdjacentToExistingCards: function(tempCard) {
+    const boardCards = dojo.query('.board-card', this.board);
+    if (boardCards.length === 0) {
+        // If no cards yet, any position is valid
+        return true;
+    }
+    
+    const tempRect = tempCard.getBoundingClientRect();
+    
+    return Array.from(boardCards).some(boardCard => {
+        const boardRect = boardCard.getBoundingClientRect();
+        
+        // Check if the cards are adjacent (within a threshold)
+        const threshold = 5; // Small threshold to account for rounding errors
+        
+        // Adjacent horizontally
+        const adjacentHorizontally = 
+            Math.abs((boardRect.right) - tempRect.left) < threshold ||
+            Math.abs((tempRect.right) - boardRect.left) < threshold;
+            
+        // Adjacent vertically
+        const adjacentVertically = 
+            Math.abs((boardRect.bottom) - tempRect.top) < threshold ||
+            Math.abs((tempRect.bottom) - boardRect.top) < threshold;
+            
+        // Check if cards are touching either horizontally or vertically (not diagonally)
+        const touchingHorizontally = adjacentHorizontally && 
+            !(tempRect.bottom < boardRect.top || tempRect.top > boardRect.bottom);
+            
+        const touchingVertically = adjacentVertically && 
+            !(tempRect.right < boardRect.left || tempRect.left > boardRect.right);
+            
+        return touchingHorizontally || touchingVertically;
+    });
+},
+
+// Get location ID from row/col position
+getLocationIdFromPosition: function(row, col) {
+    // Based on your location mapping
+    const baseId = 207; // ID offset
+    return baseId + ((row - 1) * 4) + col;
+},
+
+// Send placements to server with proper ajaxcall
+sendCardPlacements: function(placements) {
+    console.log("Sending placements to server:", placements);
+    
+    // Format the placements for server
+    const placementData = JSON.stringify(placements);
+    
+    console.log(placementData)
+},
+getCardLocation: function(cardId, area) {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const gap = parseInt(rootStyles.getPropertyValue('--gap'), 10);
+    const size = parseInt(rootStyles.getPropertyValue('--size'), 10);
+
+    const cards = {};
+    let cardIdStart = 208; // Start ID for first card
+    let rows = 4, cols = 4; // Grid dimensions
+
+    for (let row = 1; row <= rows; row++) {
+        for (let col = 1; col <= cols; col++) {
+            const x = (col - 1) * (size + gap);
+            const y = (row - 1) * (size + gap);
+            cards[cardIdStart++] = { x, y, row, col };
+        }
+    }
+
+    const locationMap = {
+        'pattern-area': cards,
+        'player-board': {} // Fill this if needed
+    };
+    return locationMap[area][cardId]
+},
+areCardsAdjacent: function(locations) {
+    if (locations.length <= 1) return true;
+
+    for (let i = 0; i < locations.length; i++) {
+        let isAdjacentToAny = false;
+        for (let j = 0; j < locations.length; j++) {
+            if (i !== j && this.isAdjacent(locations[i], locations[j])) {
+                isAdjacentToAny = true;
+                break;
+            }
+        }
+        if (!isAdjacentToAny) {
+            return false;
+        }
+    }
+    return true;
+},
+
+isAdjacent: function(loc1, loc2) {
+    return (
+        (Math.abs(loc1.row - loc2.row) === 1 && loc1.col === loc2.col) ||
+        (Math.abs(loc1.col - loc2.col) === 1 && loc1.row === loc2.row)
+    );
+},
+
+
+validateTempCardPlacement: function(card) {
+    const boardCards = dojo.query('.board-card', this.board);
+    const isFirstPlacement = boardCards.length === 0;
+    
+    // Check if card overlaps existing cards or is out of board bounds
+    const isValidPlacement = isFirstPlacement || 
+        this.checkAdjacentToExistingCards(card);
+    
+    // Change card appearance based on validity
+    dojo.toggleClass(card, 'valid-placement', isValidPlacement);
+},
 
        
 
@@ -367,6 +907,7 @@ function (dojo, declare) {
                 card.classList.add("selected");
             }
         
+            //The number passed in is the max amount of cards that can be selected
             this.changeSelectables(3);
         },
         isConnected: function (selectedLocations) {
@@ -393,7 +934,7 @@ function (dojo, declare) {
         
 
 
-        changeSelectables: function (maxSelected) {
+        changeSelectables: function (maxSelected, minSelected = 2) {
             const pattern_board = document.querySelector(".pattern-board")
             let selectedCards = pattern_board.querySelectorAll(".selected"); // Use correct class name
             // Retrieving it correctly inside changeSelectables()
@@ -403,6 +944,14 @@ function (dojo, declare) {
             .map(loc => parseInt(loc, 10)); // Convert to integer safely
 
             console.log("Selected Locations:", selectedLocations); // Check if it works now
+
+            console.log("length:  " +selectedCards.length)
+
+            if (selectedCards.length >= minSelected) {
+                document.getElementById("confirm_selection").style.display = 'inline-block'
+            } else {
+                document.getElementById("confirm_selection").style.display = 'none'
+            }
 
         
             let adjacentLocations = new Set();
@@ -456,7 +1005,7 @@ function (dojo, declare) {
         
             return adjacencyMap[loc] || []; // Return adjacent locations or empty array if unmapped
         },
-        
+               
         
         
         
