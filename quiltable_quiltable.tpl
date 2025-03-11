@@ -24,7 +24,9 @@
     
     Please REMOVE this comment before publishing your game on BGA
 -->
+<div id="play-board">
 
+<div id="pattern-cont" style="display: flex; flex-direction:column;">
 <strong>Pattern Area</strong>
 <div class="quilt-board pattern-board" id="pattern-board">
     <div class="item"></div>
@@ -47,8 +49,9 @@
     <div class="item"></div>
     <div class="item"></div>
   </div>
+  </div>
 
-
+</div>
 
 <script type="text/javascript">
 

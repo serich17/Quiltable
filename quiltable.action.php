@@ -72,6 +72,33 @@
         $this->ajaxResponse();
     }
 
+    public function placeBlocks() {
+        $this->setAjaxMode();
+        $args = $this->getArg('actionArgs', AT_json, true);
+        $this->validateJSonAlphaNum($args, 'actionArgs');
+        $this->game->placeBlocks($args);
+        $this->ajaxResponse();
+    }
+
+    public function validateJSonAlphaNum($value, $argName = 'unknown')
+ {
+   if (is_array($value)) {
+     foreach ($value as $key => $v) {
+       $this->validateJSonAlphaNum($key, $argName);
+       $this->validateJSonAlphaNum($v, $argName);
+     }
+     return true;
+   }
+   if (is_int($value)) {
+     return true;
+   }
+   $bValid = preg_match("/^[_0-9a-zA-Z- ]*$/", $value) === 1;
+   if (!$bValid) {
+     throw new BgaSystemException("Bad value for: $argName", true, true, FEX_bad_input_argument);
+   }
+   return true;
+ }
+
 
     /*
     

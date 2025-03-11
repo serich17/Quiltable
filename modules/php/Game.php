@@ -156,6 +156,22 @@ class Game extends \Table
         $this->gamestate->nextState("nextTurn");
     }
 
+    public function placeBlocks($args) {
+        $this->checkAction("placeBlocks");
+        $player_id = (int)$this->getActivePlayerId();
+        
+        if (!$this->validatePlayerCards($args)) {
+            throw new \BgaUserException('Invalid card placement');
+        }
+        
+        foreach ($args as $arg) {
+            $this->cards->moveCard($arg["cardId"], $player_id, $arg["locationId"]);
+        }
+
+        $this->gamestate->nextState("nextTurn");
+
+    }
+
     /**
      * Game state arguments, example content.
      *
@@ -191,6 +207,9 @@ class Game extends \Table
         return array_values($this->cards->getCardsInLocation("pattern_area"));
     }
     
+    public function argReturn() {
+        return array_values($this->cards->getCardsOfTypeInLocation("back", null, (string)$this->getActivePlayerId(), null));
+    }
 
     /**
      * Compute and return the current game progression.
@@ -468,6 +487,11 @@ class Game extends \Table
 
 
     // UTILITY FUNCTIONS
+
+    function validatePlayerCards($args) {
+        // TODO
+        return true;
+    }
 
     function checkIfTopCard($card_id) {
         for ($i = 0; $i < 4; $i++) {

@@ -72,6 +72,20 @@
     --size: 150px
 }
 
+#play-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+#pattern-board {
+  margin: 100px auto 0 auto;
+}
+
+#pattern-cont {
+  width: 50%;
+  max-width: 1400px;
+}
+
 .temp-card {
   border: 2px dashed #999;
   z-index: 100;
@@ -81,6 +95,7 @@
   opacity: 0.7;
   cursor: move;
   transition: left 0.1s, top 0.1s;
+  touch-action: none; /* Prevents scrolling while touching the element */
 }
 
 .temp-card.valid-placement {
@@ -104,6 +119,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: flex;
   gap: 10px;
+  touch-action: none; /* Prevents scrolling while touching the element */
 }
 
 .rotate-all-button {
@@ -120,6 +136,11 @@
 
 .rotate-all-button:hover {
   background: #3a80d2;
+}
+
+/* BGA compatibility layer for touch devices */
+.bga-cards_draggable-item {
+  touch-action: none;
 }
 
 .selectable-card {
@@ -160,6 +181,8 @@
     display: flex;
     flex-wrap: wrap;
     text-align: center;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 #player-tables * {

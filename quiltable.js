@@ -54,8 +54,9 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
             this.playerId = this.player_id
+            this.locations = gamedatas.locations
             // Example to add a div on the game area
-            document.getElementById('game_play_area').insertAdjacentHTML('beforeend', `
+            document.getElementById('play-board').insertAdjacentHTML('beforeend', `
                 <div id="player-tables"></div>
             `);
 
@@ -126,6 +127,10 @@ function (dojo, declare) {
                         </div>
                     </div>
                 `);
+                if (player.id == this.player_id) {
+                    document.getElementById("player-table-"+player.id).style.order = -1
+                }
+                
 
                 const patterns = document.createElement("section")
                 patterns.classList.add("patterns")
@@ -214,7 +219,11 @@ function (dojo, declare) {
                         card.addEventListener("click", card.boundSelectPlan)})
                 }
                 break;
-           
+            case 'return':
+                this.selectReturnCards(args)
+                break;
+            case 'return2':
+                break;
             case 'dummy':
                 break;
             }
@@ -239,21 +248,28 @@ function (dojo, declare) {
                 
                 break;
            */
-          case 'plan':
-            this.removePatterns()
-            break;
-          case 'plan2':
-            this.removePatterns()
-            break;
-          case 'choose':
-            this.removePatterns()
-            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-            break;
-          case 'choose2':
-            this.removePatterns()
-            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-            break;
-           
+            case 'plan':
+                this.removePatterns()
+                break;
+            case 'plan2':
+                this.removePatterns()
+                break;
+            case 'choose':
+                this.removePatterns()
+                // Clear previous temporary cards
+                dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                break;
+            case 'choose2':
+                this.removePatterns()
+                // Clear previous temporary cards
+                dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                break;
+            case 'return':
+                break;
+            case 'return2':
+                break;
             case 'dummy':
                 break;
             }               
@@ -330,6 +346,15 @@ function (dojo, declare) {
 
                 }
        },
+
+       selectReturnCards: function (args) {
+        if (this.player_id == args.active_player) {
+            args.args.forEach((arg) => {
+                const card = document.getElementById(arg.id)
+                card.classList.add("selectable-card")
+            })
+        }
+       },
        removePatterns: function () {
             const cards = document.querySelectorAll('.card');
             this.selectedCards = []
@@ -345,96 +370,130 @@ function (dojo, declare) {
 
 
 
-// Updated confirmSelection function
-confirmSelection: function() {
-    let selectedLocations = dojo.query(".selected");
-    console.log("Selected cards:", selectedLocations);
-    
-    // Validate selection (2-3 cards)
-    if (selectedLocations.length < 2 || selectedLocations.length > 3) {
-        this.showMessage(_("Please select 2-3 adjacent cards"), "error");
-        return;
-    }
-    
-    // Get card IDs and locations
-    const selectedCards = [];
-    selectedLocations.forEach(card => {
-        const locationId = card.getAttribute("location");
-        if (!locationId) {
-            console.error("Card is missing location attribute:", card);
+       confirmSelection: function() {
+        let selectedLocations = dojo.query(".selected");
+        console.log("Selected cards:", selectedLocations);
+        
+        // Validate selection (2-3 cards)
+        if (selectedLocations.length < 2 || selectedLocations.length > 3) {
+            this.showMessage(_("Please select 2-3 adjacent cards"), "error");
             return;
         }
         
-        selectedCards.push({
-            id: card.id,
-            location: this.getCardLocation(parseInt(locationId), 'pattern-area')
+        // Get card IDs and locations
+        const selectedCards = [];
+        selectedLocations.forEach(card => {
+            const locationId = card.getAttribute("location");
+            if (!locationId) {
+                console.error("Card is missing location attribute:", card);
+                return;
+            }
+            
+            selectedCards.push({
+                id: card.id,
+                location: this.getCardLocation(parseInt(locationId), 'pattern-area')
+            });
         });
-    });
-    
-    if (selectedCards.length < 2) {
-        this.showMessage(_("Could not determine locations for selected cards"), "error");
-        return;
-    }
-    
-    console.log("Selected cards with locations:", selectedCards);
-    
-    // Get board reference - do this here to ensure we have the latest
-    this.board = dojo.query(`#player-table-${this.player_id} .quilt-board`)[0];
-    if (!this.board) {
-        console.error("Could not find quilt board");
-        return;
-    }
-    
-    // Clear previous temporary cards
-    dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-    dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
-    
-    // Validate adjacency
-    if (!this.areCardsAdjacent(selectedCards.map(card => card.location))) {
-        this.showMessage(_("Selected cards must be adjacent"), "error");
-        return;
-    }
-    
-    // Create temporary transparent cards on player's board
-    this.tempCards = selectedCards.map((card, index) => {
-        // Make a clone of the original card
-        const originalCard = dojo.byId(card.id);
-        // Get the computed style of the original card
-        const computedStyle = window.getComputedStyle(originalCard);
-        const backgroundImage = computedStyle.backgroundImage;
         
-        const tempCard = dojo.create('div', {
-            'class': 'temp-card',
-            'data-original-card-id': card.id,
-            'data-original-row': card.location.row,
-            'data-original-col': card.location.col,
-            'style': `
-                left: ${card.location.x}px; 
-                top: ${card.location.y}px; 
-                background-image: ${backgroundImage || "none"};
-                background-position: ${computedStyle.backgroundPosition};
-            `
-        }, this.board);
-                
-        return tempCard;
-    });
-    
-    // Create the group controls
-    this.createCardGroupControls();
-    
-    // Store the initial positions for rotation calculations
-    this.storeInitialCardPositions();
-    
-    // Make the entire group draggable
-    this.makeGroupDraggable();
-    
-    // Enable confirm placement button, disable selection
-    dojo.style('confirm_placement', 'display', 'block');
-    dojo.style('confirm_selection', 'display', 'none');
-    
-    // Add visual hint for valid placement
-    this.showMessage(_("Drag cards to position and rotate them. At least one card must be adjacent to an existing card."), "info");
-},
+        if (selectedCards.length < 2) {
+            this.showMessage(_("Could not determine locations for selected cards"), "error");
+            return;
+        }
+        
+        console.log("Selected cards with locations:", selectedCards);
+        
+        // Get board reference - do this here to ensure we have the latest
+        this.board = dojo.query(`#player-table-${this.player_id} .quilt-board`)[0];
+        if (!this.board) {
+            console.error("Could not find quilt board");
+            return;
+        }
+        
+        // Store board dimensions for boundary checks
+        this.calculateBoardDimensions();
+        
+        // Clear previous temporary cards
+        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+        
+        // Validate adjacency
+        if (!this.areCardsAdjacent(selectedCards.map(card => card.location))) {
+            this.showMessage(_("Selected cards must be adjacent"), "error");
+            return;
+        }
+        
+        // Create temporary transparent cards on player's board
+        this.tempCards = selectedCards.map((card, index) => {
+            // Make a clone of the original card
+            const originalCard = dojo.byId(card.id);
+            // Get the computed style of the original card
+            const computedStyle = window.getComputedStyle(originalCard);
+            const backgroundImage = computedStyle.backgroundImage;
+            
+            const tempCard = dojo.create('div', {
+                'class': 'temp-card',
+                'data-original-card-id': card.id,
+                'data-original-row': card.location.row,
+                'data-original-col': card.location.col,
+                'style': `
+                    left: ${card.location.x}px; 
+                    top: ${card.location.y}px; 
+                    background-image: ${backgroundImage || "none"};
+                    background-position: ${computedStyle.backgroundPosition};
+                `
+            }, this.board);
+                    
+            return tempCard;
+        });
+        
+        // Create the group controls
+        this.createCardGroupControls();
+        
+        // Store the initial positions for rotation calculations
+        this.storeInitialCardPositions();
+        
+        // Make the entire group draggable
+        this.makeGroupDraggable();
+        
+        // Enable confirm placement button, disable selection
+        dojo.style('confirm_placement', 'display', 'inline-block');
+        dojo.style('confirm_selection', 'display', 'none');
+        
+        // Add visual hint for valid placement
+        this.showMessage(_("Drag cards to position and rotate them. At least one card must be adjacent to an existing card."), "info");
+        
+        // Validate initial placement
+        this.tempCards.forEach(card => this.validateTempCardPlacement(card))
+        this.synchronizeValidationState()
+    },
+
+    // Calculate and store board dimensions for boundary checks
+    calculateBoardDimensions: function() {
+        const boardRect = this.board.getBoundingClientRect();
+        const boardStyle = window.getComputedStyle(this.board);
+        
+        // Get the board grid dimensions
+        const rootStyles = getComputedStyle(document.documentElement);
+        const cardSize = parseInt(rootStyles.getPropertyValue('--size'));
+        const gap = parseInt(rootStyles.getPropertyValue('--gap'));
+        
+        // Calculate grid dimensions (assuming 9x9 grid)
+        // You may need to adjust this based on your board size
+        const gridSize = 4; // typical quilt board size
+        const gridWidth = cardSize * gridSize + gap * (gridSize - 1);
+        const gridHeight = gridWidth; // assuming square board
+        
+        // Store these dimensions for boundary checking
+        this.boardBoundaries = {
+            minX: 0,
+            minY: 0,
+            maxX: gridWidth - cardSize,
+            maxY: gridHeight - cardSize,
+            cardSize: cardSize,
+            gap: gap,
+            gridSize: gridSize
+        };
+    },
 
 // Store initial positions for rotation reference
 storeInitialCardPositions: function() {
@@ -488,8 +547,18 @@ createCardGroupControls: function() {
         'title': 'Rotate all cards (90° clockwise)'
     }, controls);
     
-    // Connect rotation handler
-    dojo.connect(rotateButton, 'onclick', () => this.rotateAllCards());
+    // Connect rotation handler for both click and touch
+    dojo.connect(rotateButton, 'onclick', (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.rotateAllCards();
+    });
+    
+    dojo.connect(rotateButton, 'ontouchend', (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.rotateAllCards();
+    });
     
     // Position the controls relative to the card group
     this.updateControlsPosition();
@@ -542,65 +611,57 @@ rotateAllCards: function() {
         // Apply position
         cardInfo.element.style.left = snappedPosition.left + 'px';
         cardInfo.element.style.top = snappedPosition.top + 'px';
-        
-        // Validate placement
-        this.validateTempCardPlacement(cardInfo.element);
     });
+    
+    // Enforce boundaries for all cards after rotation
+    this.keepCardsWithinBoundaries();
+    
+    // Validate all placements
+    this.tempCards.forEach(card => this.validateTempCardPlacement(card))
+    this.synchronizeValidationState()
     
     // Update controls position
     this.updateControlsPosition();
 },
 
-// Make the entire group draggable
+// Make the entire group draggable (with touch support)
 makeGroupDraggable: function() {
     // Initial state for dragging
     let isDragging = false;
     let startX, startY;
     let cardOffsets = [];
     
-    // Initialize dragging when any card is clicked
-    this.tempCards.forEach(card => {
-        dojo.connect(card, 'onmousedown', (evt) => {
+    const startDrag = (evt) => {
+        // Get the initial event coordinates (works for both mouse and touch)
+        const pageX = evt.type.includes('touch') ? evt.touches[0].pageX : evt.pageX;
+        const pageY = evt.type.includes('touch') ? evt.touches[0].pageY : evt.pageY;
+        
+        isDragging = true;
+        startX = pageX;
+        startY = pageY;
+        
+        // Store current positions of all cards
+        cardOffsets = this.tempCards.map(c => ({
+            element: c,
+            offsetLeft: parseInt(c.style.left),
+            offsetTop: parseInt(c.style.top)
+        }));
+        
+        // Prevent default behavior for touch events to disable scrolling
+        if (evt.type.includes('touch')) {
             evt.preventDefault();
-            isDragging = true;
-            startX = evt.clientX;
-            startY = evt.clientY;
-            
-            // Store current positions of all cards
-            cardOffsets = this.tempCards.map(c => ({
-                element: c,
-                offsetLeft: parseInt(c.style.left),
-                offsetTop: parseInt(c.style.top)
-            }));
-            
-            // Add move and mouseup handlers
-            const moveHandle = dojo.connect(document, 'onmousemove', handleMouseMove);
-            const upHandle = dojo.connect(document, 'onmouseup', () => {
-                isDragging = false;
-                dojo.disconnect(moveHandle);
-                dojo.disconnect(upHandle);
-                
-                // Snap all cards to grid
-                this.snapAllCardsToGrid();
-                
-                // Update center point
-                this.updateGroupCenter();
-                
-                // Validate all card placements
-                this.tempCards.forEach(c => this.validateTempCardPlacement(c));
-                
-                // Update controls position
-                this.updateControlsPosition();
-            });
-        });
-    });
+        }
+    };
     
-    // Handle mouse movement for the entire group
-    const handleMouseMove = (moveEvt) => {
+    const moveDrag = (evt) => {
         if (!isDragging) return;
         
-        const deltaX = moveEvt.clientX - startX;
-        const deltaY = moveEvt.clientY - startY;
+        // Get the event coordinates (works for both mouse and touch)
+        const pageX = evt.type.includes('touch') ? evt.touches[0].pageX : evt.pageX;
+        const pageY = evt.type.includes('touch') ? evt.touches[0].pageY : evt.pageY;
+        
+        const deltaX = pageX - startX;
+        const deltaY = pageY - startY;
         
         // Move all cards by the same delta
         cardOffsets.forEach(cardOffset => {
@@ -610,7 +671,134 @@ makeGroupDraggable: function() {
         
         // Update controls position while dragging
         this.updateControlsPosition();
+        
+        // Prevent default behavior for touch events to disable scrolling
+        if (evt.type.includes('touch')) {
+            evt.preventDefault();
+        }
     };
+    
+    const endDrag = (evt) => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        // Snap all cards to grid
+        this.snapAllCardsToGrid();
+        
+        // Keep cards within boundaries
+        this.keepCardsWithinBoundaries();
+        
+        // Update center point
+        this.updateGroupCenter();
+        
+        // Validate all card placements
+        this.tempCards.forEach(c => this.validateTempCardPlacement(c))
+        this.synchronizeValidationState()
+        
+        // Update controls position
+        this.updateControlsPosition();
+        
+        // Prevent default behavior for touch events
+        if (evt && evt.type.includes('touch')) {
+            evt.preventDefault();
+        }
+    };
+    
+    // Add event listeners to all cards for both mouse and touch events
+    this.tempCards.forEach(card => {
+        // Mouse events
+        dojo.connect(card, 'onmousedown', (evt) => {
+            evt.preventDefault();
+            startDrag(evt);
+            
+            // Add document-level handlers
+            const moveHandle = dojo.connect(document, 'onmousemove', moveDrag);
+            const upHandle = dojo.connect(document, 'onmouseup', (upEvt) => {
+                endDrag(upEvt);
+                dojo.disconnect(moveHandle);
+                dojo.disconnect(upHandle);
+            });
+        });
+        
+        // Touch events
+        dojo.connect(card, 'ontouchstart', (evt) => {
+            startDrag(evt);
+            
+            // Add document-level handlers
+            const touchMoveHandle = dojo.connect(document, 'ontouchmove', moveDrag);
+            const touchEndHandle = dojo.connect(document, 'ontouchend', (endEvt) => {
+                endDrag(endEvt);
+                dojo.disconnect(touchMoveHandle);
+                dojo.disconnect(touchEndHandle);
+            });
+            
+            // Prevent scrolling while dragging
+            evt.preventDefault();
+        });
+    });
+    
+    // If BGA's framework provides a touch manager, use it
+    if (this.framework && this.framework.touchManager) {
+        // This is a BGA specific integration - uncomment if available
+        // this.framework.touchManager.addDragEvents(this.tempCards, startDrag, moveDrag, endDrag);
+    }
+},
+
+// Ensure cards stay within the board boundaries
+keepCardsWithinBoundaries: function() {
+    if (!this.boardBoundaries) return;
+    
+    // Check if any card is outside the boundaries
+    let isOutOfBounds = false;
+    let minOffsetX = 0, minOffsetY = 0, maxOffsetX = 0, maxOffsetY = 0;
+    
+    this.tempCards.forEach(card => {
+        const left = parseInt(card.style.left);
+        const top = parseInt(card.style.top);
+        
+        // Check if card is outside boundaries
+        if (left < this.boardBoundaries.minX) {
+            minOffsetX = Math.min(minOffsetX, left - this.boardBoundaries.minX);
+            isOutOfBounds = true;
+        }
+        if (top < this.boardBoundaries.minY) {
+            minOffsetY = Math.min(minOffsetY, top - this.boardBoundaries.minY);
+            isOutOfBounds = true;
+        }
+        if (left > this.boardBoundaries.maxX) {
+            maxOffsetX = Math.max(maxOffsetX, left - this.boardBoundaries.maxX);
+            isOutOfBounds = true;
+        }
+        if (top > this.boardBoundaries.maxY) {
+            maxOffsetY = Math.max(maxOffsetY, top - this.boardBoundaries.maxY);
+            isOutOfBounds = true;
+        }
+    });
+    
+    // If any card is out of bounds, adjust all cards
+    if (isOutOfBounds) {
+        this.tempCards.forEach(card => {
+            let left = parseInt(card.style.left);
+            let top = parseInt(card.style.top);
+            
+            // Apply corrections
+            if (minOffsetX < 0) left -= minOffsetX;
+            if (maxOffsetX > 0) left -= maxOffsetX;
+            if (minOffsetY < 0) top -= minOffsetY;
+            if (maxOffsetY > 0) top -= maxOffsetY;
+            
+            // Ensure we're still within bounds after all adjustments
+            left = Math.max(this.boardBoundaries.minX, Math.min(left, this.boardBoundaries.maxX));
+            top = Math.max(this.boardBoundaries.minY, Math.min(top, this.boardBoundaries.maxY));
+            
+            // Apply corrected position
+            card.style.left = left + 'px';
+            card.style.top = top + 'px';
+        });
+        
+        // Update the center point
+        this.updateGroupCenter();
+    }
 },
 
 // Snap to grid based on card size and gap
@@ -661,14 +849,24 @@ updateGroupCenter: function() {
 finalizeCardPlacement: function() {
     console.log("Finalizing card placement");
     
-    // Validate all temp cards
-    this.tempCards.forEach(card => this.validateTempCardPlacement(card));
+    // Validate all temp cards individually
+    this.tempCards.forEach(card => this.validateTempCardPlacement(card))
+    this.synchronizeValidationState()
+    
+    // Check if any card is adjacent to existing cards (if not first placement)
+    const isFirstPlacement = dojo.query('.card', this.board).length == 0;
+    const isAdjacent = isFirstPlacement || this.checkAnyCardAdjacentToExisting();
+    
+    if (!isAdjacent) {
+        this.showMessage(_("At least one card must be adjacent to an existing card."), "error");
+        return;
+    }
     
     const validCards = dojo.query('.temp-card.valid-placement', this.board);
     console.log("Valid cards:", validCards.length, "of", this.tempCards.length);
     
     if (validCards.length !== this.tempCards.length) {
-        this.showMessage(_("Invalid placement. All cards must be within bounds and adjacent to existing cards."), "error");
+        this.showMessage(_("Invalid placement. Cards must be within bounds and not overlap with existing cards."), "error");
         return;
     }
     
@@ -699,21 +897,6 @@ finalizeCardPlacement: function() {
             locationId: locationId
         });
         
-        // Create a permanent card
-        const permanentCard = dojo.create('div', {
-            'class': 'board-card',
-            'data-original-card-id': originalCardId,
-            'style': `
-                position: absolute; 
-                left: ${left}px; 
-                top: ${top}px; 
-                width: var(--size); 
-                height: var(--size); 
-                transform: rotate(${this.currentRotation}deg);
-                background-image: ${card.style.backgroundImage};
-                background-size: cover;
-            `
-        }, this.board);
     });
     
     // Remove temp cards and controls
@@ -728,43 +911,54 @@ finalizeCardPlacement: function() {
     
     // Hide placement button, show selection button again
     dojo.style('confirm_placement', 'display', 'none');
-    dojo.style('confirm_selection', 'display', 'block');
+    dojo.style('confirm_selection', 'display', 'inline-block');
 },
 
-// Improved adjacency check for board cards
+// Improved adjacency check using grid coordinates
 checkAdjacentToExistingCards: function(tempCard) {
-    const boardCards = dojo.query('.board-card', this.board);
+    const boardCards = dojo.query('.card', this.board);
     if (boardCards.length === 0) {
         // If no cards yet, any position is valid
         return true;
     }
     
-    const tempRect = tempCard.getBoundingClientRect();
+    // Calculate grid position for the temp card
+    const left = parseInt(tempCard.style.left);
+    const top = parseInt(tempCard.style.top);
     
+    const rootStyles = getComputedStyle(document.documentElement);
+    const cardSize = parseInt(rootStyles.getPropertyValue('--size'));
+    const gap = parseInt(rootStyles.getPropertyValue('--gap'));
+    const cellSize = cardSize + gap;
+    
+    const tempCol = Math.round(left / cellSize) + 1;
+    const tempRow = Math.round(top / cellSize) + 1;
+    
+    // Check if any existing card is adjacent to this temp card
     return Array.from(boardCards).some(boardCard => {
-        const boardRect = boardCard.getBoundingClientRect();
+        // Get location attribute and corresponding data
+        const locationAttr = boardCard.getAttribute("location");
+        if (!locationAttr || !this.locations[locationAttr]) {
+            return false;
+        }
         
-        // Check if the cards are adjacent (within a threshold)
-        const threshold = 5; // Small threshold to account for rounding errors
+        const boardLocation = this.locations[locationAttr];
+        const boardRow = boardLocation.row;
+        const boardCol = boardLocation.col;
         
-        // Adjacent horizontally
-        const adjacentHorizontally = 
-            Math.abs((boardRect.right) - tempRect.left) < threshold ||
-            Math.abs((tempRect.right) - boardRect.left) < threshold;
-            
-        // Adjacent vertically
-        const adjacentVertically = 
-            Math.abs((boardRect.bottom) - tempRect.top) < threshold ||
-            Math.abs((tempRect.bottom) - boardRect.top) < threshold;
-            
-        // Check if cards are touching either horizontally or vertically (not diagonally)
-        const touchingHorizontally = adjacentHorizontally && 
-            !(tempRect.bottom < boardRect.top || tempRect.top > boardRect.bottom);
-            
-        const touchingVertically = adjacentVertically && 
-            !(tempRect.right < boardRect.left || tempRect.left > boardRect.right);
-            
-        return touchingHorizontally || touchingVertically;
+        // Two cells are adjacent if they share a side
+        // This means either:
+        // 1. Same row, columns differ by 1
+        // 2. Same column, rows differ by 1
+        
+        const sameRow = boardRow === tempRow;
+        const sameCol = boardCol === tempCol;
+        const adjacentCol = Math.abs(boardCol - tempCol) === 1;
+        const adjacentRow = Math.abs(boardRow - tempRow) === 1;
+        
+        // Cards are adjacent if they're in the same row with adjacent columns
+        // OR in the same column with adjacent rows
+        return (sameRow && adjacentCol) || (sameCol && adjacentRow);
     });
 },
 
@@ -781,6 +975,11 @@ sendCardPlacements: function(placements) {
     
     // Format the placements for server
     const placementData = JSON.stringify(placements);
+
+    // send move to server
+    this.bgaPerformAction("placeBlocks", { 
+        actionArgs: placementData
+    }).then(() => {});
     
     console.log(placementData)
 },
@@ -832,20 +1031,124 @@ isAdjacent: function(loc1, loc2) {
     );
 },
 
-
-validateTempCardPlacement: function(card) {
-    const boardCards = dojo.query('.board-card', this.board);
-    const isFirstPlacement = boardCards.length === 0;
+// Helper to check if any card in the group is adjacent to existing cards
+checkAnyCardAdjacentToExisting: function() {
+    // Skip if no existing cards (first placement)
+    const existingCards = dojo.query('.card', this.board);
+    if (existingCards.length === 0) {
+        return true; // First placement is always valid
+    }
     
-    // Check if card overlaps existing cards or is out of board bounds
-    const isValidPlacement = isFirstPlacement || 
-        this.checkAdjacentToExistingCards(card);
+    // Check if any temp card is adjacent to an existing card
+    for (let i = 0; i < this.tempCards.length; i++) {
+        if (this.checkAdjacentToExistingCards(this.tempCards[i])) {
+            return true;
+        }
+    }
     
-    // Change card appearance based on validity
-    dojo.toggleClass(card, 'valid-placement', isValidPlacement);
+    return false;
 },
 
-       
+
+// Improved card placement validation
+// Improved card placement validation using location attributes
+validateTempCardPlacement: function(card) {
+    let isValid = true;
+    
+    // Check if card is within board boundaries
+    const left = parseInt(card.style.left);
+    const top = parseInt(card.style.top);
+    
+    // Calculate the grid position of this temp card
+    const rootStyles = getComputedStyle(document.documentElement);
+    const cardSize = parseInt(rootStyles.getPropertyValue('--size'));
+    const gap = parseInt(rootStyles.getPropertyValue('--gap'));
+    const cellSize = cardSize + gap;
+    
+    const col = Math.round(left / cellSize) + 1;
+    const row = Math.round(top / cellSize) + 1;
+    
+    // Check boundaries
+    if (row < 1 || row > 4 || col < 1 || col > 4) {
+        isValid = false;
+    }
+    
+    // Check if this grid position is already occupied by an existing card
+    if (isValid) {
+        // Get all existing cards on the board
+        const existingCards = dojo.query('.card', this.board);
+        
+        for (let i = 0; i < existingCards.length; i++) {
+            const existingCard = existingCards[i];
+            const existingLocationAttr = existingCard.getAttribute("location");
+            
+            // Skip if location attribute is missing
+            if (!existingLocationAttr) continue;
+            
+            // Get the location data for this card
+            const existingLocation = this.locations[existingLocationAttr];
+            
+            // Skip if location data is missing
+            if (!existingLocation) continue;
+            
+            // Compare row and column
+            if (existingLocation.row === row && existingLocation.col === col) {
+                isValid = false;
+                break;
+            }
+        }
+    }
+    
+    // Update card appearance based on validity
+    dojo.toggleClass(card, 'valid-placement', isValid);
+
+    
+    
+    return isValid;
+},
+
+// BGA compatibility for touch events
+setupBGATouchSupport: function() {
+    // Add this method to your game setup if using BGA framework
+    if (this.framework && typeof this.framework.enableTouchPlugin === 'function') {
+        // Enable BGA's touch plugin if available
+        this.framework.enableTouchPlugin();
+        
+        // Add class to handle touch events
+        dojo.addClass(document.body, 'touch-enabled');
+    } else {
+        // Fallback: Add passive touch handler to document to prevent scrolling during drag
+        document.addEventListener('touchmove', function(e) {
+            const target = e.target;
+            if (target.classList.contains('temp-card') || 
+                target.classList.contains('card-group-controls') || 
+                target.closest('.temp-card') || 
+                target.closest('.card-group-controls')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
+},
+
+// Synchronize validation state across all cards in the group
+synchronizeValidationState: function() {
+    // First check if any card is invalid
+    let anyInvalid = false;
+    
+    for (let i = 0; i < this.tempCards.length; i++) {
+        if (!dojo.hasClass(this.tempCards[i], 'valid-placement')) {
+            anyInvalid = true;
+            break;
+        }
+    }
+    
+    // If any card is invalid, make all cards invalid
+    if (anyInvalid || !this.checkAnyCardAdjacentToExisting()) {
+        for (let i = 0; i < this.tempCards.length; i++) {
+            dojo.toggleClass(this.tempCards[i], 'valid-placement', false);
+        }
+    }
+},
 
 
         ///////////////////////////////////////////////////
