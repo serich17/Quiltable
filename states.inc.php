@@ -115,12 +115,12 @@ $machinestates = [
     ],
     7 => [
         "name" => "return",
-        "description" => clienttranslate('${actplayer} must return 1-4 tiles'),
-        "descriptionmyturn" => clienttranslate('${you} must return 1-4 tiles'),
+        "description" => clienttranslate('${actplayer} may return tiles'),
+        "descriptionmyturn" => clienttranslate('${you} may select 1-4 tiles to return'),
         "type" => "activeplayer",
         "args" => "argReturn",
-        "possibleactions" => ["returnTile", "back"],
-        "transitions" => ["back" => 2, "nextTurn" => 4]
+        "possibleactions" => ["returnBlocks", "back"],
+        "transitions" => ["back" => 2, "returnBlock" => 13]
     ],
     8 => [
         "name" => "plan2",
@@ -142,12 +142,45 @@ $machinestates = [
     ],
     10 => [
         "name" => "return2",
-        "description" => clienttranslate('${actplayer} must return 1-4 tiles'),
-        "descriptionmyturn" => clienttranslate('${you} must return 1-4 tiles'),
+        "description" => clienttranslate('${actplayer} may return tiles'),
+        "descriptionmyturn" => clienttranslate('${you} may select 1-4 tiles to return'),
         "type" => "activeplayer",
         "args" => "argReturn",
-        "possibleactions" => ["returnTile", "back"],
-        "transitions" => ["back" => 4, "nextTurn" => 3]
+        "possibleactions" => ["returnBlocks", "back"],
+        "transitions" => ["back" => 4, "returnBlock" => 11]
+    ],
+
+    11 => [
+        "name" => "returnBlock2",
+        "description" => clienttranslate('${actplayer} must return tile'),
+        "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
+        "type" => "activeplayer",
+        "args" => "argReturnTile",
+        "possibleactions" => ["confirmReturn"],
+        "transitions" => ["checkReturn" => 12]
+    ],
+    12 => [
+        "name" => "checkReturn2",
+        "type" => "game",
+        "action" => "stCheckReturn",
+        "transitions" => ["returnBlock" => 11, "nextTurn" => 3]
+    ],
+
+    
+    13 => [
+        "name" => "returnBlock",
+        "description" => clienttranslate('${actplayer} must return tile'),
+        "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
+        "type" => "activeplayer",
+        "args" => "argReturnTile",
+        "possibleactions" => ["confirmReturn"],
+        "transitions" => ["checkReturn" => 14]
+    ],
+    14 => [
+        "name" => "checkReturn",
+        "type" => "game",
+        "action" => "stCheckReturn",
+        "transitions" => ["returnBlock" => 13, "nextTurn" => 4]
     ],
 
     // Final state.

@@ -80,6 +80,21 @@
         $this->ajaxResponse();
     }
 
+    public function returnBlocks() {
+        $this->setAjaxMode();
+        $cards = $this->getArg('cards', AT_json, true);
+        $this->validateJSonAlphaNum($cards, 'actionArgs');
+        $this->game->returnBlocks($cards);
+        $this->ajaxResponse();
+    }
+
+    public function confirmReturn() {
+        $this->setAjaxMode();
+        $card_id = $this->getArg("loc", AT_posint, true);
+        $this->game->confirmReturn($card_id);
+        $this->ajaxResponse();
+    }
+
     public function validateJSonAlphaNum($value, $argName = 'unknown')
  {
    if (is_array($value)) {

@@ -18,9 +18,9 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter"
+    "ebg/counter", "dojo/query"
 ],
-function (dojo, declare) {
+function (dojo, declare, query) {
     return declare("bgagame.quiltable", ebg.core.gamegui, {
         constructor: function(){
             console.log('quiltable constructor');
@@ -206,7 +206,7 @@ function (dojo, declare) {
                     this.selectableBlocks = args.args
                     args.args.forEach((item) => {const card = document.getElementById(item.id)
                         card.classList.add("selectable-card")
-                        card.boundSelectPlan = this.chooseBlocks.bind(this);
+                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 3, 2, document.querySelector(".pattern-board"))
                         card.addEventListener("click", card.boundSelectPlan)})
                 }
                 break;
@@ -215,14 +215,37 @@ function (dojo, declare) {
                     this.selectableBlocks = args.args
                     args.args.forEach((item) => {const card = document.getElementById(item.id)
                         card.classList.add("selectable-card")
-                        card.boundSelectPlan = this.chooseBlocks.bind(this);
+                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 3, 2, document.querySelector(".pattern-board"))
                         card.addEventListener("click", card.boundSelectPlan)})
                 }
                 break;
             case 'return':
-                this.selectReturnCards(args)
+                if (this.player_id == args.active_player) {
+                    this.selectableBlocks = args.args
+                    args.args.forEach((item) => {const card = document.getElementById(item.id)
+                        card.classList.add("selectable-card")
+                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 4, 1, dojo.query(".quilt-board", "player-table-" + this.player_id)[0])
+                        card.addEventListener("click", card.boundSelectPlan)})
+                }
                 break;
             case 'return2':
+                if (this.player_id == args.active_player) {
+                    this.selectableBlocks = args.args
+                    args.args.forEach((item) => {const card = document.getElementById(item.id)
+                        card.classList.add("selectable-card")
+                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 4, 1, dojo.query(".quilt-board", "player-table-" + this.player_id)[0])
+                        card.addEventListener("click", card.boundSelectPlan)})
+                }
+                break;
+            case 'returnBlock':
+                if (this.player_id == args.active_player) {
+                this.setUpReturnLocations(args)
+                }
+                break;
+            case 'returnBlock2':
+                if (this.player_id == args.active_player) {
+                this.setUpReturnLocations(args)
+                }
                 break;
             case 'dummy':
                 break;
@@ -267,8 +290,16 @@ function (dojo, declare) {
                 dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
                 break;
             case 'return':
+                this.removePatterns()
                 break;
             case 'return2':
+                this.removePatterns()
+                break;
+            case 'returnBlock':
+                this.removePatterns()
+                break;
+            case 'returnBlock2':
+                this.removePatterns()
                 break;
             case 'dummy':
                 break;
@@ -306,6 +337,7 @@ function (dojo, declare) {
                     this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
                     break;
                  case 'return':
+                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
                     this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                  case 'plan2':
@@ -317,6 +349,7 @@ function (dojo, declare) {
                     this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
                     break;
                  case 'return2':
+                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
                     this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
                     break;
                 }
@@ -332,6 +365,45 @@ function (dojo, declare) {
             script.
         
         */
+       returnCard: function (event) {
+        this.bgaPerformAction("confirmReturn", { 
+            loc: event.target.id
+        }).then(() => {});
+       },
+       setUpReturnLocations: function (args) {
+            for (let i=224; i<= 243; i++) {
+                const pattern_area = document.querySelector(".pattern-board")
+                console.log(args)
+                const newElement = dojo.create("div", {
+                    className: "possible-card",
+                    id: i
+                }, pattern_area);
+                newElement.style.left = this.locations[i].x + "px"
+                newElement.style.top = this.locations[i].y + "px"
+                newElement.boundSelectPlan = this.returnCard.bind(this)
+                newElement.addEventListener("click", newElement.boundSelectPlan)
+            }
+            
+                const element = document.getElementById("storage-item");
+                element.innerHTML = "";
+            
+                const originalCard = document.getElementById(args.args.card_id);
+                if(originalCard){
+                    const display = originalCard.cloneNode(true);
+                    display.id = "return";
+                    display.style.position = "static"
+                    display.classList.add("card-clone");
+                    element.appendChild(display);
+            
+                    const storage = dojo.query(".storage")[0];
+                    if (storage) {
+                      storage.style.display = "block"
+                    }
+                }
+              
+
+       },
+
        selectPatterns: function (args) {
                 if (this.player_id == args.active_player) {
                   for (let i = 0; i < 4; i++) {
@@ -347,16 +419,22 @@ function (dojo, declare) {
                 }
        },
 
-       selectReturnCards: function (args) {
-        if (this.player_id == args.active_player) {
-            args.args.forEach((arg) => {
-                const card = document.getElementById(arg.id)
-                card.classList.add("selectable-card")
+       confirmReturnCards: function () {
+            const cards = dojo.query(".card.selectable-card.selected", "player-table-" + this.player_id);
+            const cardIds = []
+
+            cards.forEach(card => {
+
+                cardIds.push(parseInt(card.id))
             })
-        }
+
+            this.bgaPerformAction("returnBlocks", { 
+                cards: JSON.stringify(cardIds)
+            }).then(() => {}); 
+
        },
        removePatterns: function () {
-            const cards = document.querySelectorAll('.card');
+            const cards = document.querySelectorAll('.card, .possible-card')
             this.selectedCards = []
             cards.forEach(card => {
                 card.classList.remove('selectable-card')
@@ -366,6 +444,11 @@ function (dojo, declare) {
                     delete card.boundSelectPlan
                 }
             });
+
+            const storage = dojo.query(".storage")[0];
+                    if (storage) {
+                      storage.style.display = "none"
+                    }
        },
 
 
@@ -461,6 +544,17 @@ function (dojo, declare) {
         
         // Add visual hint for valid placement
         this.showMessage(_("Drag cards to position and rotate them. At least one card must be adjacent to an existing card."), "info");
+        // Snap all cards to grid
+        this.snapAllCardsToGrid();
+        
+        // Keep cards within boundaries
+        this.keepCardsWithinBoundaries();
+        
+        // Update center point
+        this.updateGroupCenter();
+        
+        // Update controls position
+        this.updateControlsPosition();
         
         // Validate initial placement
         this.tempCards.forEach(card => this.validateTempCardPlacement(card))
@@ -943,8 +1037,9 @@ checkAdjacentToExistingCards: function(tempCard) {
         }
         
         const boardLocation = this.locations[locationAttr];
-        const boardRow = boardLocation.row;
-        const boardCol = boardLocation.col;
+        // -1 for the extra row and column in material for the replacement of tiles
+        const boardRow = boardLocation.row-1;
+        const boardCol = boardLocation.col-1;
         
         // Two cells are adjacent if they share a side
         // This means either:
@@ -984,21 +1079,14 @@ sendCardPlacements: function(placements) {
     console.log(placementData)
 },
 getCardLocation: function(cardId, area) {
-    const rootStyles = getComputedStyle(document.documentElement);
-    const gap = parseInt(rootStyles.getPropertyValue('--gap'), 10);
-    const size = parseInt(rootStyles.getPropertyValue('--size'), 10);
+    const loc = this.locations[cardId]
 
     const cards = {};
-    let cardIdStart = 208; // Start ID for first card
-    let rows = 4, cols = 4; // Grid dimensions
-
-    for (let row = 1; row <= rows; row++) {
-        for (let col = 1; col <= cols; col++) {
-            const x = (col - 1) * (size + gap);
-            const y = (row - 1) * (size + gap);
-            cards[cardIdStart++] = { x, y, row, col };
-        }
-    }
+    const x = loc.x
+    const y = loc.y
+    const row = loc.row;
+    const col = loc.col;
+    cards[cardId] = { x, y, row, col };
 
     const locationMap = {
         'pattern-area': cards,
@@ -1092,7 +1180,7 @@ validateTempCardPlacement: function(card) {
             if (!existingLocation) continue;
             
             // Compare row and column
-            if (existingLocation.row === row && existingLocation.col === col) {
+            if (existingLocation.row-1 === row && existingLocation.col-1 === col) {
                 isValid = false;
                 break;
             }
@@ -1186,7 +1274,7 @@ synchronizeValidationState: function() {
             }).then(() => {});  
         },
 
-        chooseBlocks: function (element) {
+        chooseBlocks: function (element, maxSelected, minSelected, pattern_board) {
             let card = element.target;
         
             // If the card is already selected and selectable, attempt to unselect
@@ -1211,7 +1299,7 @@ synchronizeValidationState: function() {
             }
         
             //The number passed in is the max amount of cards that can be selected
-            this.changeSelectables(3);
+            this.changeSelectables(maxSelected, minSelected, pattern_board);
         },
         isConnected: function (selectedLocations) {
             if (selectedLocations.length < 2) return true; // Single card is always connected
@@ -1237,8 +1325,7 @@ synchronizeValidationState: function() {
         
 
 
-        changeSelectables: function (maxSelected, minSelected = 2) {
-            const pattern_board = document.querySelector(".pattern-board")
+        changeSelectables: function (maxSelected, minSelected, pattern_board) {
             let selectedCards = pattern_board.querySelectorAll(".selected"); // Use correct class name
             // Retrieving it correctly inside changeSelectables()
             let selectedLocations = Array.from(pattern_board.querySelectorAll(".selected"))
@@ -1250,11 +1337,13 @@ synchronizeValidationState: function() {
 
             console.log("length:  " +selectedCards.length)
 
-            if (selectedCards.length >= minSelected) {
-                document.getElementById("confirm_selection").style.display = 'inline-block'
-            } else {
-                document.getElementById("confirm_selection").style.display = 'none'
-            }
+
+                if (selectedCards.length >= minSelected) {
+                    dojo.style('confirm_selection', 'display', 'inline-block');
+                } else {
+                    dojo.style('confirm_selection', 'display', 'none');
+                } 
+
 
         
             let adjacentLocations = new Set();
@@ -1300,10 +1389,46 @@ synchronizeValidationState: function() {
         
         getAdjacentLocations: function (loc) {
             let adjacencyMap = {
-                208: [209, 212], 209: [208, 210], 210: [209, 211], 211: [210, 215],
-                212: [208, 216], 215: [211, 219],
-                216: [212, 220], 219: [215, 223],
-                220: [216, 221], 221: [220, 222], 222: [221, 223], 223: [222, 219]
+                // Inner 4x4 Grid (Original)
+                208: [209, 212, 224, 242],
+                209: [208, 210, 213, 225],
+                210: [209, 211, 214, 226],
+                211: [210, 215, 227, 229],
+                212: [208, 213, 216, 241],
+                213: [209, 212, 214, 217],
+                214: [210, 213, 215, 218],
+                215: [211, 214, 219, 230],
+                216: [212, 217, 220, 240],
+                217: [213, 216, 218, 221],
+                218: [214, 217, 219, 222],
+                219: [215, 218, 223, 231],
+                220: [216, 221, 239, 237],
+                221: [217, 220, 222, 236],
+                222: [218, 221, 223, 235],
+                223: [219, 222, 234, 232],
+        
+                // Outer Border (New)
+                224: [208, 225, 243],
+                225: [209, 224, 226],
+                226: [210, 225, 227],
+                227: [211, 226, 228],
+                228: [227, 229],
+                229: [211, 228, 230],
+                230: [215, 229, 231],
+                231: [219, 230, 232],
+                232: [223, 231, 233],
+                233: [232, 234],
+                234: [223, 233, 235],
+                235: [222, 234, 236],
+                236: [221, 235, 237],
+                237: [220, 236, 238],
+                238: [237, 239],
+                239: [220, 238, 240],
+                240: [216, 239, 241],
+                241: [212, 240, 242],
+                242: [208, 241, 243],
+                243: [242, 224], //243 is the corner. Added 224 and 228 as adjacent.
+        
             };
         
             return adjacencyMap[loc] || []; // Return adjacent locations or empty array if unmapped

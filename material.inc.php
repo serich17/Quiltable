@@ -33,7 +33,7 @@ $this->card_types = array(
 */
 
 // CARD SIZE IN PX (MUST BE THE SAME AS IN THE CSS FILE)
-$size = 150;
+$size = 100;
 
 // GRID GAP IN PX (MUST BE THE SAME AS IN THE CSS FILE)
 $gap = 3;
@@ -1958,28 +1958,28 @@ $this->quilt_cards = array(
     // PLAYER BOARD POSITIONS
 
     // FIRST ROW
-    208 => array("x" => 0, "y" => 0, "row" => 1, "col" => 1),
-    209 => array("x" => $size + $gap, "y" => 0, "row" => 1, "col" => 2),
-    210 => array("x" => $size * 2 + $gap*2, "y" => 0, "row" => 1, "col" => 3),
-    211 => array("x" => $size * 3 + $gap*3, "y" => 0, "row" => 1, "col" => 4),
+    208 => array("x" => 0, "y" => 0, "row" => 2, "col" => 2),
+    209 => array("x" => $size + $gap, "y" => 0, "row" => 2, "col" => 3),
+    210 => array("x" => $size * 2 + $gap*2, "y" => 0, "row" => 2, "col" => 4),
+    211 => array("x" => $size * 3 + $gap*3, "y" => 0, "row" => 2, "col" => 5),
 
     // SECOND ROW
-    212 => array("x" => 0, "y" => $size + $gap, "row" => 2, "col" => 1),
-    213 => array("x" => $size+ $gap, "y" => $size + $gap, "row" => 2, "col" => 2),
-    214 => array("x" => $size * 2 + $gap*2, "y" => $size + $gap, "row" => 2, "col" => 3),
-    215 => array("x" => $size * 3 + $gap*3, "y" => $size + $gap, "row" => 2, "col" => 4),
+    212 => array("x" => 0, "y" => $size + $gap, "row" => 3, "col" => 2),
+    213 => array("x" => $size+ $gap, "y" => $size + $gap, "row" => 3, "col" => 3),
+    214 => array("x" => $size * 2 + $gap*2, "y" => $size + $gap, "row" => 3, "col" => 4),
+    215 => array("x" => $size * 3 + $gap*3, "y" => $size + $gap, "row" => 3, "col" => 5),
 
     // THIRD ROW
-    216 => array("x" => 0, "y" => $size * 2 + $gap*2, "row" => 3, "col" => 1),
-    217 => array("x" => $size + $gap, "y" => $size * 2 + $gap*2, "row" => 3, "col" => 2),
-    218 => array("x" => $size * 2 + $gap*2, "y" => $size * 2 + $gap*2, "row" => 3, "col" => 3),
-    219 => array("x" => $size * 3 + $gap*3, "y" => $size * 2 + $gap*2, "row" => 3, "col" => 4),
+    216 => array("x" => 0, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 2),
+    217 => array("x" => $size + $gap, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 3),
+    218 => array("x" => $size * 2 + $gap*2, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 4),
+    219 => array("x" => $size * 3 + $gap*3, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 5),
 
     // FORTH ROW
-    220 => array("x" => 0, "y" => $size * 3 + $gap*3, "row" => 4, "col" => 1),
-    221 => array("x" => $size + $gap, "y" => $size * 3 + $gap*3, "row" => 4, "col" => 2),
-    222 => array("x" => $size * 2 + $gap*2, "y" => $size * 3 + $gap*3, "row" => 4, "col" => 3),
-    223 => array("x" => $size * 3 + $gap*3, "y" => $size * 3 + $gap*3, "row" => 4, "col" => 4),
+    220 => array("x" => 0, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 2),
+    221 => array("x" => $size + $gap, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 3),
+    222 => array("x" => $size * 2 + $gap*2, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 4),
+    223 => array("x" => $size * 3 + $gap*3, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 5),
 
 
     // PATTERN AREA 4 DECK POSITIONS 213, 214, 217, 218
@@ -1989,32 +1989,32 @@ $this->quilt_cards = array(
     // PATTERN AREA EXTRA POSITIONS (FOR RETURNING TILES)
 
     // TOP
-    224 => array("x" => 0, "y" => -$size + $gap),
-    225 => array("x" => $size + $gap, "y" => -$size + $gap),
-    226 => array("x" => $size * 2 + $gap*2, "y" => -$size + $gap),
-    227 => array("x" => $size * 3 + $gap*3, "y" => -$size + $gap),
-    228 => array("x" => $size * 4 + $gap*4, "y" => -$size + $gap),
+    224 => array("x" => 0, "y" => -$size - $gap, "row" => 1, "col" => 2),
+    225 => array("x" => $size + $gap, "y" => -$size - $gap, "row" => 1, "col" => 3),
+    226 => array("x" => $size * 2 + $gap*2, "y" => -$size - $gap, "row" => 1, "col" => 4),
+    227 => array("x" => $size * 3 + $gap*3, "y" => -$size - $gap, "row" => 1, "col" => 5),
+    228 => array("x" => $size * 4 + $gap*4, "y" => -$size - $gap, "row" => 1, "col" => 6),
 
     // RIGHT
-    229 => array("x" => $size * 4 + $gap*4, "y" => 0),
-    230 => array("x" => $size * 4 + $gap*4, "y" => $size + $gap),
-    231 => array("x" => $size * 4 + $gap*4, "y" => $size * 2 + $gap*2),
-    232 => array("x" => $size * 4 + $gap*4, "y" => $size * 3 + $gap*3),
-    233 => array("x" => $size * 4 + $gap*4, "y" => $size * 4 + $gap*4),
+    229 => array("x" => $size * 4 + $gap*4, "y" => 0, "row" => 2, "col" => 6),
+    230 => array("x" => $size * 4 + $gap*4, "y" => $size + $gap, "row" => 3, "col" => 6),
+    231 => array("x" => $size * 4 + $gap*4, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 6),
+    232 => array("x" => $size * 4 + $gap*4, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 6),
+    233 => array("x" => $size * 4 + $gap*4, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 6),
 
     // BOTTOM
-    234 => array("x" => $size * 3 + $gap*3, "y" => $size * 4 + $gap*4),
-    235 => array("x" => $size * 2 + $gap*2, "y" => $size * 4 + $gap*4),
-    236 => array("x" => $size + $gap, "y" => $size * 4 + $gap*4),
-    237 => array("x" => 0, "y" => $size * 4 + $gap*4),
-    238 => array("x" => -$size + $gap, "y" => $size * 4 + $gap*4),
+    234 => array("x" => $size * 3 + $gap*3, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 5),
+    235 => array("x" => $size * 2 + $gap*2, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 4),
+    236 => array("x" => $size + $gap, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 3),
+    237 => array("x" => 0, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 2),
+    238 => array("x" => -$size - $gap, "y" => $size * 4 + $gap*4, "row" => 6, "col" => 1),
 
     // LEFT
-    239 => array("x" => -$size + $gap, "y" => $size * 3 + $gap*3),
-    240 => array("x" => -$size + $gap, "y" => $size * 2 + $gap*2),
-    241 => array("x" => -$size + $gap, "y" => $size),
-    242 => array("x" => -$size + $gap, "y" => 0),
-    243 => array("x" => -$size + $gap, "y" => -$size + $gap)
+    239 => array("x" => -$size - $gap, "y" => $size * 3 + $gap*3, "row" => 5, "col" => 1),
+    240 => array("x" => -$size - $gap, "y" => $size * 2 + $gap*2, "row" => 4, "col" => 1),
+    241 => array("x" => -$size - $gap, "y" => $size + $gap, "row" => 3, "col" => 1),
+    242 => array("x" => -$size - $gap, "y" => 0, "row" => 2, "col" => 1),
+    243 => array("x" => -$size - $gap, "y" => -$size - $gap, "row" => 1, "col" => 1)
 
 
 );

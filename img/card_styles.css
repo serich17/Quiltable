@@ -1,1560 +1,1560 @@
 /* card 1 */
 .AAA {
   background-image: url(front.png);
-  background-position: 0px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAAB {
   background-image: url(back.png);
-  background-position: 0px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 2 */
 .AAB {
   background-image: url(front.png);
-  background-position: -150px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AABB {
   background-image: url(back.png);
-  background-position: -150px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 3 */
 .AAC {
   background-image: url(front.png);
-  background-position: -300px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AACB {
   background-image: url(back.png);
-  background-position: -300px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 4 */
 .AAD {
   background-image: url(front.png);
-  background-position: -450px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AADB {
   background-image: url(back.png);
-  background-position: -450px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 5 */
 .AAE {
   background-image: url(front.png);
-  background-position: -600px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAEB {
   background-image: url(back.png);
-  background-position: -600px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 6 */
 .AAF {
   background-image: url(front.png);
-  background-position: -750px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAFB {
   background-image: url(back.png);
-  background-position: -750px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 7 */
 .AAG {
   background-image: url(front.png);
-  background-position: -900px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAGB {
   background-image: url(back.png);
-  background-position: -900px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 8 */
 .AAH {
   background-image: url(front.png);
-  background-position: -1050px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAHB {
   background-image: url(back.png);
-  background-position: -1050px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 9 */
 .AAI {
   background-image: url(front.png);
-  background-position: -1200px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAIB {
   background-image: url(back.png);
-  background-position: -1200px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 10 */
 .AAJ {
   background-image: url(front.png);
-  background-position: -1350px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAJB {
   background-image: url(back.png);
-  background-position: -1350px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 11 */
 .AAK {
   background-image: url(front.png);
-  background-position: -1500px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAKB {
   background-image: url(back.png);
-  background-position: -1500px 0px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-0 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 12 */
 .AAL {
   background-image: url(front.png);
-  background-position: 0px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AALB {
   background-image: url(back.png);
-  background-position: 0px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 13 */
 .AAM {
   background-image: url(front.png);
-  background-position: -150px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAMB {
   background-image: url(back.png);
-  background-position: -150px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 14 */
 .AAN {
   background-image: url(front.png);
-  background-position: -300px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AANB {
   background-image: url(back.png);
-  background-position: -300px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 15 */
 .AAO {
   background-image: url(front.png);
-  background-position: -450px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAOB {
   background-image: url(back.png);
-  background-position: -450px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 16 */
 .AAP {
   background-image: url(front.png);
-  background-position: -600px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAPB {
   background-image: url(back.png);
-  background-position: -600px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 17 */
 .AAQ {
   background-image: url(front.png);
-  background-position: -750px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAQB {
   background-image: url(back.png);
-  background-position: -750px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 18 */
 .AAR {
   background-image: url(front.png);
-  background-position: -900px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AARB {
   background-image: url(back.png);
-  background-position: -900px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 19 */
 .AAS {
   background-image: url(front.png);
-  background-position: -1050px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AASB {
   background-image: url(back.png);
-  background-position: -1050px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 20 */
 .AAT {
   background-image: url(front.png);
-  background-position: -1200px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AATB {
   background-image: url(back.png);
-  background-position: -1200px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 21 */
 .AAU {
   background-image: url(front.png);
-  background-position: -1350px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAUB {
   background-image: url(back.png);
-  background-position: -1350px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 22 */
 .AAV {
   background-image: url(front.png);
-  background-position: -1500px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAVB {
   background-image: url(back.png);
-  background-position: -1500px -150px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-1 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 23 */
 .AAW {
   background-image: url(front.png);
-  background-position: 0px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAWB {
   background-image: url(back.png);
-  background-position: 0px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 24 */
 .AAX {
   background-image: url(front.png);
-  background-position: -150px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAXB {
   background-image: url(back.png);
-  background-position: -150px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 25 */
 .AAY {
   background-image: url(front.png);
-  background-position: -300px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAYB {
   background-image: url(back.png);
-  background-position: -300px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 26 */
 .AAZ {
   background-image: url(front.png);
-  background-position: -450px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .AAZB {
   background-image: url(back.png);
-  background-position: -450px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 27 */
 .ABA {
   background-image: url(front.png);
-  background-position: -600px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABAB {
   background-image: url(back.png);
-  background-position: -600px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 28 */
 .ABB {
   background-image: url(front.png);
-  background-position: -750px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABBB {
   background-image: url(back.png);
-  background-position: -750px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 29 */
 .ABC {
   background-image: url(front.png);
-  background-position: -900px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABCB {
   background-image: url(back.png);
-  background-position: -900px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 30 */
 .ABD {
   background-image: url(front.png);
-  background-position: -1050px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABDB {
   background-image: url(back.png);
-  background-position: -1050px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 31 */
 .ABE {
   background-image: url(front.png);
-  background-position: -1200px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABEB {
   background-image: url(back.png);
-  background-position: -1200px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 32 */
 .ABF {
   background-image: url(front.png);
-  background-position: -1350px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABFB {
   background-image: url(back.png);
-  background-position: -1350px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 33 */
 .ABG {
   background-image: url(front.png);
-  background-position: -1500px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABGB {
   background-image: url(back.png);
-  background-position: -1500px -300px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-2 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 34 */
 .ABH {
   background-image: url(front.png);
-  background-position: 0px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABHB {
   background-image: url(back.png);
-  background-position: 0px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 35 */
 .ABI {
   background-image: url(front.png);
-  background-position: -150px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABIB {
   background-image: url(back.png);
-  background-position: -150px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 36 */
 .ABJ {
   background-image: url(front.png);
-  background-position: -300px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABJB {
   background-image: url(back.png);
-  background-position: -300px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 37 */
 .ABK {
   background-image: url(front.png);
-  background-position: -450px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABKB {
   background-image: url(back.png);
-  background-position: -450px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 38 */
 .ABL {
   background-image: url(front.png);
-  background-position: -600px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABLB {
   background-image: url(back.png);
-  background-position: -600px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 39 */
 .ABM {
   background-image: url(front.png);
-  background-position: -750px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABMB {
   background-image: url(back.png);
-  background-position: -750px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 40 */
 .ABN {
   background-image: url(front.png);
-  background-position: -900px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABNB {
   background-image: url(back.png);
-  background-position: -900px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 41 */
 .ABO {
   background-image: url(front.png);
-  background-position: -1050px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABOB {
   background-image: url(back.png);
-  background-position: -1050px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 42 */
 .ABP {
   background-image: url(front.png);
-  background-position: -1200px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABPB {
   background-image: url(back.png);
-  background-position: -1200px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 43 */
 .ABQ {
   background-image: url(front.png);
-  background-position: -1350px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABQB {
   background-image: url(back.png);
-  background-position: -1350px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 44 */
 .ABR {
   background-image: url(front.png);
-  background-position: -1500px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABRB {
   background-image: url(back.png);
-  background-position: -1500px -450px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-3 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 45 */
 .ABS {
   background-image: url(front.png);
-  background-position: 0px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABSB {
   background-image: url(back.png);
-  background-position: 0px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 46 */
 .ABT {
   background-image: url(front.png);
-  background-position: -150px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABTB {
   background-image: url(back.png);
-  background-position: -150px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 47 */
 .ABU {
   background-image: url(front.png);
-  background-position: -300px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABUB {
   background-image: url(back.png);
-  background-position: -300px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 48 */
 .ABV {
   background-image: url(front.png);
-  background-position: -450px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABVB {
   background-image: url(back.png);
-  background-position: -450px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 49 */
 .ABW {
   background-image: url(front.png);
-  background-position: -600px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABWB {
   background-image: url(back.png);
-  background-position: -600px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 50 */
 .ABX {
   background-image: url(front.png);
-  background-position: -750px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABXB {
   background-image: url(back.png);
-  background-position: -750px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 51 */
 .ABY {
   background-image: url(front.png);
-  background-position: -900px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABYB {
   background-image: url(back.png);
-  background-position: -900px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 52 */
 .ABZ {
   background-image: url(front.png);
-  background-position: -1050px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ABZB {
   background-image: url(back.png);
-  background-position: -1050px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 53 */
 .ACA {
   background-image: url(front.png);
-  background-position: -1200px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACAB {
   background-image: url(back.png);
-  background-position: -1200px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 54 */
 .ACB {
   background-image: url(front.png);
-  background-position: -1350px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACBB {
   background-image: url(back.png);
-  background-position: -1350px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 55 */
 .ACC {
   background-image: url(front.png);
-  background-position: -1500px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACCB {
   background-image: url(back.png);
-  background-position: -1500px -600px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-4 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 56 */
 .ACD {
   background-image: url(front.png);
-  background-position: 0px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACDB {
   background-image: url(back.png);
-  background-position: 0px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 57 */
 .ACE {
   background-image: url(front.png);
-  background-position: -150px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACEB {
   background-image: url(back.png);
-  background-position: -150px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 58 */
 .ACF {
   background-image: url(front.png);
-  background-position: -300px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACFB {
   background-image: url(back.png);
-  background-position: -300px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 59 */
 .ACG {
   background-image: url(front.png);
-  background-position: -450px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACGB {
   background-image: url(back.png);
-  background-position: -450px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 60 */
 .ACH {
   background-image: url(front.png);
-  background-position: -600px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACHB {
   background-image: url(back.png);
-  background-position: -600px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 61 */
 .ACI {
   background-image: url(front.png);
-  background-position: -750px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACIB {
   background-image: url(back.png);
-  background-position: -750px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 62 */
 .ACJ {
   background-image: url(front.png);
-  background-position: -900px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACJB {
   background-image: url(back.png);
-  background-position: -900px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 63 */
 .ACK {
   background-image: url(front.png);
-  background-position: -1050px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACKB {
   background-image: url(back.png);
-  background-position: -1050px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 64 */
 .ACL {
   background-image: url(front.png);
-  background-position: -1200px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACLB {
   background-image: url(back.png);
-  background-position: -1200px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 65 */
 .ACM {
   background-image: url(front.png);
-  background-position: -1350px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACMB {
   background-image: url(back.png);
-  background-position: -1350px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 66 */
 .ACN {
   background-image: url(front.png);
-  background-position: -1500px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACNB {
   background-image: url(back.png);
-  background-position: -1500px -750px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-5 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 67 */
 .ACO {
   background-image: url(front.png);
-  background-position: 0px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACOB {
   background-image: url(back.png);
-  background-position: 0px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 68 */
 .ACP {
   background-image: url(front.png);
-  background-position: -150px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACPB {
   background-image: url(back.png);
-  background-position: -150px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 69 */
 .ACQ {
   background-image: url(front.png);
-  background-position: -300px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACQB {
   background-image: url(back.png);
-  background-position: -300px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 70 */
 .ACR {
   background-image: url(front.png);
-  background-position: -450px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACRB {
   background-image: url(back.png);
-  background-position: -450px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 71 */
 .ACS {
   background-image: url(front.png);
-  background-position: -600px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACSB {
   background-image: url(back.png);
-  background-position: -600px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 72 */
 .ACT {
   background-image: url(front.png);
-  background-position: -750px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACTB {
   background-image: url(back.png);
-  background-position: -750px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 73 */
 .ACU {
   background-image: url(front.png);
-  background-position: -900px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACUB {
   background-image: url(back.png);
-  background-position: -900px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 74 */
 .ACV {
   background-image: url(front.png);
-  background-position: -1050px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACVB {
   background-image: url(back.png);
-  background-position: -1050px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 75 */
 .ACW {
   background-image: url(front.png);
-  background-position: -1200px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACWB {
   background-image: url(back.png);
-  background-position: -1200px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 76 */
 .ACX {
   background-image: url(front.png);
-  background-position: -1350px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACXB {
   background-image: url(back.png);
-  background-position: -1350px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 77 */
 .ACY {
   background-image: url(front.png);
-  background-position: -1500px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACYB {
   background-image: url(back.png);
-  background-position: -1500px -900px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-6 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 78 */
 .ACZ {
   background-image: url(front.png);
-  background-position: 0px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ACZB {
   background-image: url(back.png);
-  background-position: 0px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 79 */
 .ADA {
   background-image: url(front.png);
-  background-position: -150px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADAB {
   background-image: url(back.png);
-  background-position: -150px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 80 */
 .ADB {
   background-image: url(front.png);
-  background-position: -300px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADBB {
   background-image: url(back.png);
-  background-position: -300px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 81 */
 .ADC {
   background-image: url(front.png);
-  background-position: -450px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADCB {
   background-image: url(back.png);
-  background-position: -450px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 82 */
 .ADD {
   background-image: url(front.png);
-  background-position: -600px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADDB {
   background-image: url(back.png);
-  background-position: -600px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 83 */
 .ADE {
   background-image: url(front.png);
-  background-position: -750px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADEB {
   background-image: url(back.png);
-  background-position: -750px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 84 */
 .ADF {
   background-image: url(front.png);
-  background-position: -900px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADFB {
   background-image: url(back.png);
-  background-position: -900px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 85 */
 .ADG {
   background-image: url(front.png);
-  background-position: -1050px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADGB {
   background-image: url(back.png);
-  background-position: -1050px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 86 */
 .ADH {
   background-image: url(front.png);
-  background-position: -1200px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADHB {
   background-image: url(back.png);
-  background-position: -1200px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 87 */
 .ADI {
   background-image: url(front.png);
-  background-position: -1350px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADIB {
   background-image: url(back.png);
-  background-position: -1350px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 88 */
 .ADJ {
   background-image: url(front.png);
-  background-position: -1500px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADJB {
   background-image: url(back.png);
-  background-position: -1500px -1050px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-7 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 89 */
 .ADK {
   background-image: url(front.png);
-  background-position: 0px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADKB {
   background-image: url(back.png);
-  background-position: 0px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 90 */
 .ADL {
   background-image: url(front.png);
-  background-position: -150px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADLB {
   background-image: url(back.png);
-  background-position: -150px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 91 */
 .ADM {
   background-image: url(front.png);
-  background-position: -300px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADMB {
   background-image: url(back.png);
-  background-position: -300px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 92 */
 .ADN {
   background-image: url(front.png);
-  background-position: -450px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADNB {
   background-image: url(back.png);
-  background-position: -450px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 93 */
 .ADO {
   background-image: url(front.png);
-  background-position: -600px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADOB {
   background-image: url(back.png);
-  background-position: -600px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 94 */
 .ADP {
   background-image: url(front.png);
-  background-position: -750px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADPB {
   background-image: url(back.png);
-  background-position: -750px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-5 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 95 */
 .ADQ {
   background-image: url(front.png);
-  background-position: -900px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADQB {
   background-image: url(back.png);
-  background-position: -900px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-6 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 96 */
 .ADR {
   background-image: url(front.png);
-  background-position: -1050px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADRB {
   background-image: url(back.png);
-  background-position: -1050px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-7 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 97 */
 .ADS {
   background-image: url(front.png);
-  background-position: -1200px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADSB {
   background-image: url(back.png);
-  background-position: -1200px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-8 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 98 */
 .ADT {
   background-image: url(front.png);
-  background-position: -1350px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADTB {
   background-image: url(back.png);
-  background-position: -1350px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-9 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 99 */
 .ADU {
   background-image: url(front.png);
-  background-position: -1500px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADUB {
   background-image: url(back.png);
-  background-position: -1500px -1200px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-10 * var(--size)) calc(-8 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 100 */
 .ADV {
   background-image: url(front.png);
-  background-position: 0px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADVB {
   background-image: url(back.png);
-  background-position: 0px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-0 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 101 */
 .ADW {
   background-image: url(front.png);
-  background-position: -150px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADWB {
   background-image: url(back.png);
-  background-position: -150px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-1 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 102 */
 .ADX {
   background-image: url(front.png);
-  background-position: -300px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADXB {
   background-image: url(back.png);
-  background-position: -300px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-2 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 103 */
 .ADY {
   background-image: url(front.png);
-  background-position: -450px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADYB {
   background-image: url(back.png);
-  background-position: -450px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-3 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 /* card 104 */
 .ADZ {
   background-image: url(front.png);
-  background-position: -600px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 
 .ADZB {
   background-image: url(back.png);
-  background-position: -600px -1350px;
-  width: 150px;
-  height: 150px;
+  background-position: calc(-4 * var(--size)) calc(-9 * var(--size));
+  width: var(--size);
+  height: var(--size);
 }
 

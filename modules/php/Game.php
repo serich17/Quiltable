@@ -42,13 +42,18 @@ class Game extends \Table
         parent::__construct();
         $this->cards = self::getNew("module.common.deck");
         $this->cards->init("card");
+        
 
         $this->initGameStateLabels([
             "my_first_global_variable" => 10,
             "my_second_global_variable" => 11,
+            "return_block_index" => 13,
             "my_first_game_variant" => 100,
             "my_second_game_variant" => 101,
-        ]);        
+        ]);   
+
+        
+        
 
         self::$CARD_TYPES = [
             1 => [
@@ -172,6 +177,56 @@ class Game extends \Table
 
     }
 
+    public function returnBlocks($cards) {
+        $this->checkAction("returnBlocks");
+        $player_id = (int)$this->getActivePlayerId();
+    
+        // Clear previous entries (if you want to allow fresh selection)
+        self::DbQuery("DELETE FROM return_blocks");
+    
+        foreach ($cards as $card_id) {
+            $card = $this->cards->getCard($card_id);
+            if ($card && $card["location"] == $player_id) {
+                self::DbQuery("INSERT INTO return_blocks (card_id, location) VALUES ({$card['id']}, '{$card['location']}')");
+            } else {
+                throw new \BgaUserException('One or more selected cards don\'t exist');
+            }
+        }
+    
+        // Reset the internal pointer to the first card
+        $this->setGameStateValue("return_block_index", 0);
+    
+        $this->gamestate->nextState("returnBlock");
+    }
+    
+    
+    public function confirmReturn($loc) {
+        $this->checkAction("confirmReturn");
+    
+        if (!($loc > 223 && $loc < 244)) {
+            throw new \BgaUserException('Invalid placement');
+        }
+    
+        $player_id = (int)$this->getActivePlayerId();
+        $index = $this->getGameStateValue("return_block_index");
+    
+        $tile = self::getObjectFromDB("SELECT * FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
+    
+        if (!$tile) {
+            throw new \BgaUserException('No tile to return');
+        }
+        if ($this->cards->countCardInLocation("pattern_area", $loc) > 0) {
+            throw new \BgaUserException('A card is in this spot already');
+        }
+    
+        // Move the card to the new location
+        $this->cards->moveCard($tile['card_id'], "pattern_area", $loc);
+        
+        $this->gamestate->nextState("checkReturn");
+        
+    }
+    
+
     /**
      * Game state arguments, example content.
      *
@@ -210,6 +265,15 @@ class Game extends \Table
     public function argReturn() {
         return array_values($this->cards->getCardsOfTypeInLocation("back", null, (string)$this->getActivePlayerId(), null));
     }
+
+    public function argReturnTile() {
+        $player_id = (int)$this->getActivePlayerId();
+        $index = $this->getGameStateValue("return_block_index");
+    
+        return self::getObjectFromDB("SELECT card_id, location FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
+    }
+    
+    
 
     /**
      * Compute and return the current game progression.
@@ -251,6 +315,21 @@ class Game extends \Table
     }
     public function turnCards() {
         $this->refillPatternArea();
+    }
+
+    public function stCheckReturn() {
+        $index = $this->getGameStateValue("return_block_index");
+
+        // Check if there are more cards left to process
+        $remaining = self::getUniqueValueFromDB("SELECT COUNT(*) FROM return_blocks");
+    
+        if ($index + 1 < $remaining) {
+            // Increase the pointer
+            $this->setGameStateValue("return_block_index", $index + 1);
+            $this->gamestate->nextState("returnBlock");  // Continue the loop
+        } else {
+            $this->gamestate->nextState("nextTurn");  // Move to the next player
+        }
     }
 
     /**

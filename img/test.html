@@ -15,20 +15,21 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(10, 150px); /* 10 columns */
-  grid-template-rows: repeat(11, 150px); /* 11 rows */
+  grid-template-columns: repeat(10, 100px); /* 10 columns */
+  grid-template-rows: repeat(11, 100px); /* 11 rows */
   gap: 0px;
   margin: 10px;
 }
 
 .card {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
+  background-size: 1101px 1000px;
 }
 
 :root {
   --gap: 3px;
-  --size: 150px;
+  --size: 100px;
 }
 
 .quilt {
@@ -49,6 +50,7 @@ body {
   border: 1px solid black; /* Borders for inner grid lines */
   box-sizing: border-box;
   border-radius: 5px;
+  background-size: 1101px 1000px;
 }
 
 /* Position items using grid calculations */
