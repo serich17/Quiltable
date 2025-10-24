@@ -1,0 +1,122 @@
+{
+    "100": {
+        "name": "Solo Options",
+        "description": "Choose the difficulty level for your solo game",
+        "values": {
+            "1": {
+                "name": "Granny Smith (easy)",
+                "tmdisplay": "Granny Smith (easy)"
+            },
+            "2": {
+                "name": "Terrific Tim (medium)",
+                "tmdisplay": "Terrific Tim (medium)"
+            },
+            "3": {
+                "name": "Gifted Gladys (hard)",
+                "tmdisplay": "Gifted Gladys (hard)"
+            },
+            "4": {
+                "name": "Big Billy (extreme)",
+                "tmdisplay": "Big Billy (extreme)"
+            }
+        },
+        "default": 1,
+        "displaycondition": [
+            {
+                "type": "maxplayers",
+                "value": 1
+            },
+            {
+                "type": "minplayers",
+                "value": 1
+            }
+        ],
+        "displayconditionoperand": "and"
+    },
+    "101": {
+        "name": "Game Variants",
+        "description": "",
+        "values": {
+            "1": {
+                "name": "Default Scoring Options",
+                "tmdisplay": "Default Scoring: Enabled"
+            },
+            "2": {
+                "name": "Symmetrical Race",
+                "tmdisplay": "Symmetrical Race: Enabled"
+            }
+        },
+        "default": 1,
+        "displaycondition" : [
+            {
+                "type" : "minplayers",
+                "value" : [2,3,4]
+            }
+        ]
+
+    },
+    "102": {
+        "name": "Patches",
+        "description": "Score 3 points per patch lined up with the same color",
+        "values": {
+            "1": {
+                "name": "On"
+            },
+            "2": {
+                "name": "Off"
+            }
+        },
+        "default": 1,
+         "displaycondition": [
+            { "type": "otheroption", "id": 101, "value": 1 },
+          {
+                "type" : "minplayers",
+                "value" : [2,3,4]
+            }
+          ],
+          "displayconditionoperand": "and"
+    },
+    "103" : {
+        "name": "Symmetry",
+        "description": "Score 15 extra points for a symmetrical quilt",
+        "values": {
+            "1": {
+                "name": "On"
+            },
+            "2": {
+                "name": "Off"
+            }
+        },
+        "default": 1,
+         "displaycondition": [
+            { "type": "otheroption", "id": 101, "value": 1 },
+            {
+                "type" : "minplayers",
+                "value" : [2,3,4]
+            }
+          ],
+          "displayconditionoperand": "and"
+    },
+    "104" : {
+        "name": "Quilting Assistants",
+        "description": "Have a quilting assistant for a special accion",
+        "values": {
+            "1": {
+                "name": "On"
+            },
+            "2": {
+                "name": "Off"
+            }
+        },
+        "default": 1,
+         "displaycondition": [
+            { "type": "otheroption", "id": 101, "value": 1 },
+            {
+                "type" : "minplayers",
+                "value" : [2,3,4]
+            }
+          ],
+          "displayconditionoperand": "and"
+          
+    }
+}
