@@ -29,12 +29,12 @@ function (dojo, declare, query) {
             // Example:
             // this.myGlobalValue = 0;
             this.selectableBlocks = []
-
+            this.log_span_num = 0
             this.playerId
             this.selectedCards = []; // Stores selected card objects with row/col
             this.tempCards = []; // Temporary card elements for preview
             this.board
-
+            this.isShiftEnabled = true
         },
         
         /*
@@ -186,6 +186,7 @@ function (dojo, declare, query) {
        setup_board_cards: function(data, playerid) {
         const patterns = dojo.query(`#player-table-${playerid} .quilt-cont .patterns`)[0]
         const player_board = document.getElementById("player-table-"+playerid).querySelector(".quilt-board")
+        player_board.querySelectorAll(".card").forEach(card => card.remove())
         Object.values(data).forEach(card => {
             const card_cont = document.createElement("div")
             card_cont.classList.add("card")
@@ -465,88 +466,92 @@ function (dojo, declare, query) {
                 const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
                 let shift = true
 
-                if (direction == "left") {
-                    cards.forEach(card => {
-                        let loc = parseInt(card.getAttribute("location"))
-                        if (left.includes(loc))
-                        {
-                            shift=false
-                        }
-                    });
-                    if (shift) {
-                        index = 0
-                        cards.forEach(card => {
-                            let loc = parseInt(card.getAttribute("location"))
-                            args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
-                            index ++
-                        })
-                        this.animateCards(args)
-                    }
-                } else if (direction == "up") {
-                    cards.forEach(card => {
-                        loc = parseInt(card.getAttribute("location"))
-                        if (top.includes(loc))
-                        {
-                            shift=false
-                        }
-                    });
-                    if (shift) {
-                        index = 0
-                        cards.forEach(card => {
-                            let loc = parseInt(card.getAttribute("location"))
-                            args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
-                            index ++
-                        })
-                        this.animateCards(args)
-                    }
-                } else if (direction == "right") {
-                    cards.forEach(card => {
-                        loc = parseInt(card.getAttribute("location"))
-                        if (right.includes(loc))
-                        {
-                            shift=false
-                        }
-                    });
-                    if (shift) {
-                        index = 0
-                        cards.forEach(card => {
-                            let loc = parseInt(card.getAttribute("location"))
-                            args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
-                            index ++
-                        })
-                        this.animateCards(args)
-                    }
-                } else if (direction == "down") {
-                    cards.forEach(card => {
-                        loc = parseInt(card.getAttribute("location"))
-                        if (bottom.includes(loc))
-                        {
-                            shift=false
-                        }
-                    });
-                    if (shift) {
-                        index = 0
-                        cards.forEach(card => {
-                            let loc = parseInt(card.getAttribute("location"))
-                            args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
-                            index ++
-                        })
-                        this.animateCards(args)
-                    }
-                }
-                
+                if (this.isShiftEnabled) {
 
-                this.ajaxcall(
-                    "quiltable/quiltable/ajax_shiftQuilt.html",  // Path to your PHP handler
-                    { 
-                        shiftDirection: direction 
-                    },
-                    this,
-                    function (result) {
-                        console.log("Success!", result);
+                    if (direction == "left") {
+                        cards.forEach(card => {
+                            let loc = parseInt(card.getAttribute("location"))
+                            if (left.includes(loc))
+                            {
+                                shift=false
+                            }
+                        });
+                        if (shift) {
+                            index = 0
+                            cards.forEach(card => {
+                                let loc = parseInt(card.getAttribute("location"))
+                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
+                                index ++
+                            })
+                            this.animateCards(args)
+                        }
+                    } else if (direction == "up") {
+                        cards.forEach(card => {
+                            loc = parseInt(card.getAttribute("location"))
+                            if (top.includes(loc))
+                            {
+                                shift=false
+                            }
+                        });
+                        if (shift) {
+                            index = 0
+                            cards.forEach(card => {
+                                let loc = parseInt(card.getAttribute("location"))
+                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
+                                index ++
+                            })
+                            this.animateCards(args)
+                        }
+                    } else if (direction == "right") {
+                        cards.forEach(card => {
+                            loc = parseInt(card.getAttribute("location"))
+                            if (right.includes(loc))
+                            {
+                                shift=false
+                            }
+                        });
+                        if (shift) {
+                            index = 0
+                            cards.forEach(card => {
+                                let loc = parseInt(card.getAttribute("location"))
+                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
+                                index ++
+                            })
+                            this.animateCards(args)
+                        }
+                    } else if (direction == "down") {
+                        cards.forEach(card => {
+                            loc = parseInt(card.getAttribute("location"))
+                            if (bottom.includes(loc))
+                            {
+                                shift=false
+                            }
+                        });
+                        if (shift) {
+                            index = 0
+                            cards.forEach(card => {
+                                let loc = parseInt(card.getAttribute("location"))
+                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
+                                index ++
+                            })
+                            this.animateCards(args)
+                        }
                     }
-                );
+                    
+                    this.isShiftEnabled = false
+                    this.ajaxcall(
+                        "quiltable/quiltable/ajax_shiftQuilt.html",  // Path to your PHP handler
+                        { 
+                            shiftDirection: direction 
+                        },
+                        this,
+                        function (result) {
+                            console.log("Success!", result);
+                            this.isShiftEnabled = true
+                        }
+                    );
                 
+                }
                 
                 // Here you would call your server action
                 // For example:
@@ -1847,25 +1852,85 @@ synchronizeValidationState: function() {
             // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
             // 
 
+            dojo.subscribe('assistant', this, "notif_assistant")
             dojo.subscribe('shift', this, "notif_quiltShift")
             this.notifqueue.setSynchronous( 'shift', 3000 );
         },
-        notif_quiltShift: function(args) {
-            console.log(args)
-            const id = args?.args?.location ? Object.values(args.args.location)[0] : undefined;
 
+        notif_assistant: function(args) {
+            console.log(args)
+            this.setup_assistant(args.args.card_arg, args.args.player_id)
+        },
+        notif_quiltShift: function(args) {
+            console.log("shifted")
+            console.log(args)
+            const id = args?.args ? Object.values(args.args)[0].location : undefined;
+            console.log(id)
             if (id) {
+                console.log("inside id")
                 const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
                 cards.forEach(element => {
                     element.remove()
-
                 })
-                this.setup_board_cards(data, id)
+                this.setup_board_cards(args.args, id)
             }
         },
         
         // TODO: from this point and below, you can write your game notifications handling methods
         
+
+        format_string_recursive: function(log, args) {
+            // console.log("I'm inside ")
+            var text = '';
+            if (log != '') {
+                var log = this.clienttranslate_string(log); // TRANSLATION HAPPENS HERE !!
+                if (log === null) {
+                // THE RED BANNER YOU GET IN CASE OF MISSING TRANSLATION
+                this.showMessage('Missing translation for `' + log + '`', 'error');
+                console.error('Missing translation for `' + log + '`', 'error');
+                return '';
+                }
+
+                [1] // that's for later
+                [2] // and for even later
+
+                try {
+                // THIS IS WERE SUBSTITUTION TAKES PLACE
+                text = dojo.string.substitute(log, args);
+                } catch (e) {
+                console.error('Invalid or missing substitution argument for log message: ' + _884, 'error');
+                text = log;
+                }
+            }
+            return this.logInject(text);
+        },
+
+        logInject: function (log_entry) {
+            const card_regex = /\[(.+?)\(\d+\)\]/g;
+    // this will catch a card name in the log formatted like so: [card_name(card_type_arg)] -You may need to adjust the regex to catch your card names
+            const cards_to_replace = log_entry.matchAll(card_regex);
+            for (let card of cards_to_replace) {
+                const match = card[0];
+                const left_parenthesis = match.indexOf('(');
+                const card_type_arg = match.slice(left_parenthesis+1, match.length-2);
+                const card_span = this.getHTMLForLog(card_type_arg, 'card');
+                log_entry = log_entry.replace(match, card_span);
+            }
+            return log_entry;
+        },
+
+        getHTMLForLog: function (item, type) {   // in this example, item refers to the card_type_arg
+            switch(type) {
+                case 'card':
+                    this.log_span_num++; // adds a unique num to the span id so that duplicate card names in the log have unique ids
+                    const card_name = this.types[item]['name'];
+                    const item_type = 'logcard';
+                    return `<span id="${this.log_span_num}_item_${item}" class="${item_type} ${this.types[item]['class']}"></span>`;
+            }
+        },
+
+
+
         /*
         Example:
         

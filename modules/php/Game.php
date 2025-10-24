@@ -113,10 +113,22 @@ class Game extends \Table
         $this->activeNextPlayer();
         $this->gamestate->setPlayerNonMultiactive($player_id, "next");
 
-        // If all players are done, transition automatically
-        // if ($this->gamestate->isMultiactiveEmpty()) {
-        //     $this->gamestate->nextState("next");
-        // }
+        // If all players are done, notify players
+        if (!$this->gamestate->isMultiactiveState()) {
+            $players = $this->getCollectionFromDB("SELECT player_id, player_no, assistant FROM player ORDER BY player_no ASC");
+            foreach($players as $playerId => $info) {
+                $card_arg = $info["assistant"];
+                $card_name = $this->quilt_cards[$card_arg]["name"];
+                $this->notify->all("assistant", clienttranslate('${player_name} chose [${card_name}(${card_arg})] as assistent'),
+                array(
+                    "player_id" => $playerId,
+                    "card_arg" => $card_arg,
+                    "card_name" => $card_name,
+                    "player_name" => $this->getPlayerNameById($playerId)
+                ));
+                }
+            }
+            
     }
 
     public function actPlayCard(int $card_id): void
@@ -352,7 +364,7 @@ class Game extends \Table
             }
         }
     
-        $this->notify->all("shift", "quilt-shifted", $this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null));
+        $this->notify->all("shift", "", $this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null));
 
     }
     
