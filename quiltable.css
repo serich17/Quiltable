@@ -369,7 +369,7 @@ background-position: 33.33% 0;
     width: var(--size);
     height: var(--size);
   }
-  .logcard {
+.logcard {
     --size: 40px;
     display: inline-block;
     width: var(--size);
@@ -382,6 +382,10 @@ background-position: 33.33% 0;
     margin: 0 3px;
 }
 
+/* When cards are in a grid, remove individual margins */
+.logcard-grid .logcard {
+    margin: 0;
+}
 
   .storage {
     width: 100%;

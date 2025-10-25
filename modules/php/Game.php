@@ -114,12 +114,12 @@ class Game extends \Table
         $this->gamestate->setPlayerNonMultiactive($player_id, "next");
 
         // If all players are done, notify players
-        if (!$this->gamestate->isMultiactiveState()) {
+        if (!$this->gamestate->isMultiactiveState() && ($this->getGameStateValue("game_variants") == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
             $players = $this->getCollectionFromDB("SELECT player_id, player_no, assistant FROM player ORDER BY player_no ASC");
             foreach($players as $playerId => $info) {
                 $card_arg = $info["assistant"];
                 $card_name = $this->quilt_cards[$card_arg]["name"];
-                $this->notify->all("assistant", clienttranslate('${player_name} chose [${card_name}(${card_arg})] as assistent'),
+                $this->notify->all("assistant", clienttranslate('${player_name} chooses [${card_name}(${card_arg})] as assistent'),
                 array(
                     "player_id" => $playerId,
                     "card_arg" => $card_arg,
@@ -215,6 +215,15 @@ class Game extends \Table
         }
 
         $this->cards->moveCard($card_id, $this->getActivePlayerId());
+
+        $this->notify->all("plan", clienttranslate('${player_name} draws pattern card [${card_name}(${card_arg})]'),
+                array(
+                    "player_id" => $this->getActivePlayerId(),
+                    "card_arg" => $this->cards->getCard($card_id)["type_arg"],
+                    "card_name" => "pattern card",
+                    "player_name" => $this->getPlayerNameById($this->getActivePlayerId())
+                ));
+
         $target = "player-table-" . $this->getActivePlayerId();
         $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', 0)");
         
@@ -230,6 +239,8 @@ class Game extends \Table
         if (!$this->validatePlayerCards($args)) {
             throw new \BgaUserException('Invalid card placement');
         }
+
+        
         
         foreach ($args as $arg) {
             $this->cards->moveCard($arg["cardId"], $player_id, $arg["locationId"]);
@@ -239,6 +250,28 @@ class Game extends \Table
             $target = "player-table-" . $this->getActivePlayerId();
             $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', $loc)");
         }
+
+        $card_data = array();
+        foreach ($args as $tile) {
+            $card = $this->cards->getCard($tile['cardId'])["type_arg"];
+            $location = $this->cards->getCard($tile['cardId'])["location_arg"];
+            $card_data[] = array(
+                "type_arg" => $card,
+                "location_arg" => $location,
+                "row" => $this->quilt_cards[$location]['row'],
+                "col" => $this->quilt_cards[$location]['col']
+            );
+        }
+
+        $this->notify->All("chooseTiles",
+            clienttranslate('${player_name} added ${card_arg} to quilt'),
+            [
+                "player_name" => $this->getActivePlayerName(),
+                "card_arg" => json_encode($card_data) // This will be substituted as a string
+            ]);
+
+
+
         $this->refillPatternArea();
 
         $this->gamestate->nextState("nextTurn");
@@ -293,6 +326,15 @@ class Game extends \Table
     
         // Move the card to the new location
         $this->cards->moveCard($tile['card_id'], "pattern_area", $loc);
+
+        $this->notify->all("return", clienttranslate('${player_name} returns [${card_name}(${card_arg})]'),
+                array(
+                    "player_id" => $player_id,
+                    "card_arg" => $this->cards->getCard($tile['card_id'])["type_arg"],
+                    "card_name" => "patch card",
+                    "player_name" => $this->getPlayerNameById($player_id)
+                ));
+
 
         $card_id = $tile["card_id"];
         $target = "pattern-board";
