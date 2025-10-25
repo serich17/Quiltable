@@ -264,7 +264,7 @@ class Game extends \Table
         }
 
         $this->notify->All("chooseTiles",
-            clienttranslate('${player_name} added ${card_arg} to quilt'),
+            clienttranslate('${player_name} adds ${card_arg} to quilt'),
             [
                 "player_name" => $this->getActivePlayerName(),
                 "card_arg" => json_encode($card_data) // This will be substituted as a string
