@@ -483,7 +483,7 @@ function (dojo, declare, query) {
                                 args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
                                 index ++
                             })
-                            this.animateCards(args)
+                            this.animateCards(args, 0)
                         }
                     } else if (direction == "up") {
                         cards.forEach(card => {
@@ -500,7 +500,7 @@ function (dojo, declare, query) {
                                 args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
                                 index ++
                             })
-                            this.animateCards(args)
+                            this.animateCards(args, 0)
                         }
                     } else if (direction == "right") {
                         cards.forEach(card => {
@@ -517,7 +517,7 @@ function (dojo, declare, query) {
                                 args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
                                 index ++
                             })
-                            this.animateCards(args)
+                            this.animateCards(args, 0)
                         }
                     } else if (direction == "down") {
                         cards.forEach(card => {
@@ -534,10 +534,10 @@ function (dojo, declare, query) {
                                 args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
                                 index ++
                             })
-                            this.animateCards(args)
+                            this.animateCards(args, 0)
                         }
                     }
-                    
+                    if (shift) {
                     this.isShiftEnabled = false
                     this.ajaxcall(
                         "quiltable/quiltable/ajax_shiftQuilt.html",  // Path to your PHP handler
@@ -547,9 +547,9 @@ function (dojo, declare, query) {
                         this,
                         function (result) {
                             console.log("Success!", result);
-                            this.isShiftEnabled = true
                         }
                     );
+                    }
                 
                 }
                 
@@ -574,7 +574,7 @@ function (dojo, declare, query) {
             },
             
 
-            animateCards: function(args) {
+            animateCards: function(args, delay_inc=50) {
                 console.log(args)
                 delay = 0
                 Object.values(args.args.animation).forEach(element => {
@@ -633,7 +633,7 @@ function (dojo, declare, query) {
                     } else {
                         original.removeAttribute("arg")
                     }
-                    delay += 100
+                    delay += delay_inc
                 });
             },
             
@@ -898,9 +898,12 @@ function (dojo, declare, query) {
             // Get the computed style of the original card
             const computedStyle = window.getComputedStyle(originalCard);
             const backgroundImage = computedStyle.backgroundImage;
-            
+
             const tempCard = dojo.create('div', {
                 'class': 'temp-card',
+                'style': `
+                    touch-action: none;
+                    will-change: transform;`,
                 'data-original-card-id': card.id,
                 'data-original-row': card.location.row,
                 'data-original-col': card.location.col,
@@ -1145,12 +1148,11 @@ makeGroupDraggable: function() {
         
         // Move all cards by the same delta
         cardOffsets.forEach(cardOffset => {
-            cardOffset.element.style.left = (cardOffset.offsetLeft + deltaX) + 'px';
-            cardOffset.element.style.top = (cardOffset.offsetTop + deltaY) + 'px';
+            cardOffset.element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         });
         
         // Update controls position while dragging
-        this.updateControlsPosition();
+        //this.updateControlsPosition();
         
         // Prevent default behavior for touch events to disable scrolling
         if (evt.type.includes('touch')) {
@@ -1161,9 +1163,36 @@ makeGroupDraggable: function() {
     const endDrag = (evt) => {
         if (!isDragging) return;
         isDragging = false;
-        
+        // Convert transform to actual positions
+        // Convert transform to actual positions without animation
+        // Disable transitions temporarily
+        this.tempCards.forEach(card => card.style.transition = 'none');
+        cardOffsets.forEach(cardOffset => {
+            const currentTransform = cardOffset.element.style.transform;
+            const match = currentTransform.match(/translate\((-?\d+(?:\.\d+)?)px,\s*(-?\d+(?:\.\d+)?)px\)/);
+            
+            if (match) {
+                const deltaX = parseFloat(match[1]);
+                const deltaY = parseFloat(match[2]);
+                
+                // Clear transform first, then update position in same frame
+                cardOffset.element.style.transform = '';
+                cardOffset.element.style.left = (cardOffset.offsetLeft + deltaX) + 'px';
+                cardOffset.element.style.top = (cardOffset.offsetTop + deltaY) + 'px';
+            }
+        });
+        // Re-enable transitions after a frame
+        requestAnimationFrame(() => {
+            this.tempCards.forEach(card => card.style.transition = '');
+        });
+
         // Snap all cards to grid
+        // Snap all cards to grid without animation
+        this.tempCards.forEach(card => card.style.transition = 'none');
         this.snapAllCardsToGrid();
+        // Force a reflow to apply the snap immediately
+        this.tempCards[0].offsetHeight;
+        this.tempCards.forEach(card => card.style.transition = '');
         
         // Keep cards within boundaries
         this.keepCardsWithinBoundaries();
@@ -1201,15 +1230,15 @@ makeGroupDraggable: function() {
         });
         
         // Touch events
-        dojo.connect(card, 'ontouchstart', (evt) => {
+        dojo.connect(card, 'touchstart', (evt) => {
             startDrag(evt);
             
             // Add document-level handlers
-            const touchMoveHandle = dojo.connect(document, 'ontouchmove', moveDrag);
-            const touchEndHandle = dojo.connect(document, 'ontouchend', (endEvt) => {
+            const touchMoveHandle = dojo.connect(document, 'touchmove', moveDrag);
+            const touchEndHandle = dojo.connect(document, 'touchend', (endEvt) => {
                 endDrag(endEvt);
-                dojo.disconnect(touchMoveHandle);
-                dojo.disconnect(touchEndHandle);
+                document.removeEventListener('touchmove', moveDrag);
+                document.removeEventListener('touchend', endEvt);
             });
             
             // Prevent scrolling while dragging
@@ -1852,9 +1881,22 @@ synchronizeValidationState: function() {
             // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
             // 
 
+            dojo.subscribe('plan', this, "notif_plan")
+            dojo.subscribe('chooseTiles', this, "notif_choose")
+            dojo.subscribe('return', this, "notif_return")
             dojo.subscribe('assistant', this, "notif_assistant")
             dojo.subscribe('shift', this, "notif_quiltShift")
             this.notifqueue.setSynchronous( 'shift', 3000 );
+        },
+        notif_plan: function(args) {
+
+        },
+        notif_choose: function(args) {
+            console.log(args)
+        },
+
+        notif_return: function(args) {
+
         },
 
         notif_assistant: function(args) {
@@ -1868,11 +1910,12 @@ synchronizeValidationState: function() {
             console.log(id)
             if (id) {
                 console.log("inside id")
-                const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
+                const cards = dojo.query(`#player-table-${id} .quilt-board .card`)
                 cards.forEach(element => {
                     element.remove()
                 })
                 this.setup_board_cards(args.args, id)
+                this.isShiftEnabled = true
             }
         },
         
@@ -1906,28 +1949,77 @@ synchronizeValidationState: function() {
         },
 
         logInject: function (log_entry) {
-            const card_regex = /\[(.+?)\(\d+\)\]/g;
-    // this will catch a card name in the log formatted like so: [card_name(card_type_arg)] -You may need to adjust the regex to catch your card names
-            const cards_to_replace = log_entry.matchAll(card_regex);
-            for (let card of cards_to_replace) {
-                const match = card[0];
-                const left_parenthesis = match.indexOf('(');
-                const card_type_arg = match.slice(left_parenthesis+1, match.length-2);
-                const card_span = this.getHTMLForLog(card_type_arg, 'card');
-                log_entry = log_entry.replace(match, card_span);
-            }
-            return log_entry;
-        },
+    // Check if there's JSON card data in the log entry
+    const json_regex = /(\[{.*?\}\])/;
+    const json_match = log_entry.match(json_regex);
+    
+    if (json_match) {
+        // We have multiple cards as JSON
+        try {
+            const card_data = JSON.parse(json_match[1]);
+            const card_html = this.getHTMLGroupForLog(card_data, 'cards');
+            log_entry = log_entry.replace(json_match[1], card_html);
+        } catch (e) {
+            console.error('Failed to parse card data:', e);
+        }
+    } else {
+        // Fall back to single card bracket notation: [card_name(card_type_arg)]
+        const card_regex = /\[(.+?)\((\d+)\)\]/g;
+        const cards_to_replace = log_entry.matchAll(card_regex);
+        
+        for (let card of cards_to_replace) {
+            const match = card[0];
+            const card_type_arg = card[2];
+            const card_span = this.getHTMLForLog(card_type_arg, 'card');
+            log_entry = log_entry.replace(match, card_span);
+        }
+    }
+    
+    return log_entry;
+},
 
-        getHTMLForLog: function (item, type) {   // in this example, item refers to the card_type_arg
-            switch(type) {
-                case 'card':
-                    this.log_span_num++; // adds a unique num to the span id so that duplicate card names in the log have unique ids
-                    const card_name = this.types[item]['name'];
-                    const item_type = 'logcard';
-                    return `<span id="${this.log_span_num}_item_${item}" class="${item_type} ${this.types[item]['class']}"></span>`;
+getHTMLForLog: function (item, type) {
+    switch(type) {
+        case 'card':
+            this.log_span_num++;
+            const item_type = 'logcard';
+            return `<span id="${this.log_span_num}_item_${item}" class="${item_type} ${this.types[item]['class']}"></span>`;
+    }
+},
+
+getHTMLGroupForLog: function (card_data, type) {
+    switch(type) {
+        case 'cards':
+            // Find min row and col
+            let minRow = Math.min(...card_data.map(c => c.row));
+            let minCol = Math.min(...card_data.map(c => c.col));
+            
+            // Normalize to 1-based grid
+            const normalized = card_data.map(c => ({
+                ...c,
+                gridRow: c.row - minRow + 1,
+                gridCol: c.col - minCol + 1
+            }));
+            
+            // Find grid dimensions
+            const maxRow = Math.max(...normalized.map(c => c.gridRow));
+            const maxCol = Math.max(...normalized.map(c => c.gridCol));
+            
+            // Build grid HTML
+            this.log_span_num++;
+            const grid_id = `log_grid_${this.log_span_num}`;
+            
+            let grid_html = `<span id="${grid_id}" class="logcard-grid" style="display: inline-grid; grid-template-columns: repeat(${maxCol}, 40px); grid-template-rows: repeat(${maxRow}, 40px); gap: 2px; vertical-align: middle; margin: 0 3px;">`;
+            
+            for (let card of normalized) {
+                const card_class = this.types[card.type_arg]['class'];
+                grid_html += `<span class="logcard ${card_class}" style="grid-row: ${card.gridRow}; grid-column: ${card.gridCol};"></span>`;
             }
-        },
+            
+            grid_html += '</span>';
+            return grid_html;
+    }
+},
 
 
 
