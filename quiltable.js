@@ -18,9 +18,11 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter", "dojo/query"
+    "ebg/counter", "dojo/query",
+    getLibUrl('bga-score-sheet', '1.x'),
+
 ],
-function (dojo, declare, query) {
+function (dojo, declare, gui, counter, query, BgaScoreSheet) {
     return declare("bgagame.quiltable", ebg.core.gamegui, {
         constructor: function(){
             console.log('quiltable constructor');
@@ -163,6 +165,62 @@ function (dojo, declare, query) {
  
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
+            console.log("gamedatas")
+            console.log(gamedatas)
+
+            this.scoreSheet = new BgaScoreSheet.ScoreSheet(
+                document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
+                {
+                animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
+                playerNameWidth: 80,
+                playerNameHeight: 30,
+                entryLabelWidth: 120,
+                entryLabelHeight: 20,
+                classes: 'score-sheet-background',
+                players: gamedatas.players,
+                entries: [
+                    {
+                    property: 'completed',
+                    label: _('Completed Quilt'),
+                    labelClasses: 'entries-label',
+                    },
+                    {
+                    property: 'symmetry',
+                    label: _('Symmetrical quilt'),
+                    labelClasses: 'entries-label',
+                    },
+                    {
+                    property: 'patches',
+                    label: _('Patch points'),
+                    labelClasses: 'entries-label',
+                    },
+                    {
+                    property: 'premium',
+                    label: _('Premium points'),
+                    labelClasses: 'entries-label',
+                    },
+                    {
+                    property: 'patterns',
+                    label: _('Pattern cards'),
+                    labelClasses: 'entries-label',
+                    },
+                    {
+                    property: 'total',
+                    label: _('Total'),
+                    labelClasses: 'entries-label',
+                    scoresClasses: 'total',
+                    width: 80,
+                    height: 40,
+                    },
+                ],
+                scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
+                onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
+                    if (property === 'total') {
+                    this.scoreCtrl[playerId].setValue(score);
+                    }
+                },
+                }
+            );    
 
             console.log( "Ending game setup" );
         },
@@ -1880,18 +1938,29 @@ synchronizeValidationState: function() {
             // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
             // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
             // 
+            this.bgaSetupPromiseNotifications();
 
-            dojo.subscribe('plan', this, "notif_plan")
-            dojo.subscribe('chooseTiles', this, "notif_choose")
-            dojo.subscribe('return', this, "notif_return")
-            dojo.subscribe('assistant', this, "notif_assistant")
-            dojo.subscribe('shift', this, "notif_quiltShift")
-            this.notifqueue.setSynchronous( 'shift', 3000 );
+            // dojo.subscribe('scoring', this, "notif_endScores")
+            // dojo.subscribe('plan', this, "notif_plan")
+            // dojo.subscribe('chooseTiles', this, "notif_choose")
+            // dojo.subscribe('return', this, "notif_return")
+            // dojo.subscribe('assistant', this, "notif_assistant")
+            // dojo.subscribe('shift', this, "notif_quiltShift")
+            //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
+
+        notif_endScores(args) {
+    console.log("endScores")
+    console.log(args)
+    return this.scoreSheet.setScores(args.endScores, {
+        startBy: this.playerId
+    });
+},
+
         notif_plan: function(args) {
 
         },
-        notif_choose: function(args) {
+        notif_chooseTiles: function(args) {
             console.log(args)
         },
 
@@ -1901,12 +1970,12 @@ synchronizeValidationState: function() {
 
         notif_assistant: function(args) {
             console.log(args)
-            this.setup_assistant(args.args.card_arg, args.args.player_id)
+            this.setup_assistant(args.card_arg, args.player_id)
         },
-        notif_quiltShift: function(args) {
+        notif_shift: function(args) {
             console.log("shifted")
             console.log(args)
-            const id = args?.args ? Object.values(args.args)[0].location : undefined;
+            const id = Object.values(args)[0].location;
             console.log(id)
             if (id) {
                 console.log("inside id")
@@ -1914,7 +1983,7 @@ synchronizeValidationState: function() {
                 cards.forEach(element => {
                     element.remove()
                 })
-                this.setup_board_cards(args.args, id)
+                this.setup_board_cards(args, id)
                 this.isShiftEnabled = true
             }
         },

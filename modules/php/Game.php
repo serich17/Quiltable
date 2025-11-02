@@ -119,7 +119,7 @@ class Game extends \Table
             foreach($players as $playerId => $info) {
                 $card_arg = $info["assistant"];
                 $card_name = $this->quilt_cards[$card_arg]["name"];
-                $this->notify->all("assistant", clienttranslate('${player_name} chooses [${card_name}(${card_arg})] as assistent'),
+                $this->notify->all("assistant", clienttranslate('${player_name} chooses [${card_name}(${card_arg})] as assistant'),
                 array(
                     "player_id" => $playerId,
                     "card_arg" => $card_arg,
@@ -492,8 +492,11 @@ class Game extends \Table
     }
 
     public function stPostEnd() {
+        $this->notify->all("endScores", "",[ 'endScores' => $this->calculatePoints() ]);
         $this->gamestate->nextState("endGame");
     }
+
+
     
     
     
@@ -538,14 +541,13 @@ class Game extends \Table
         // add points to db
         if ($endTriggered == 1) {
             
-            foreach($this->calculatePoints() as $player_id => $points) {
+            foreach($this->calculatePoints() as $id => $data) {
                 $total = 0;
-                foreach($points as $source => $point) {
+                foreach($data as $source => $point) {
                     $total += $point;
                 }
-                $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $player_id");
+                $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
             }
-            
 
             $this->activeNextPlayer();
             $this->gamestate->nextState("postEnd");
@@ -650,7 +652,10 @@ class Game extends \Table
             $result["boards"][$player_id] = array_values($this->cards->getCardsInLocation($player_id));
         }
         
-        $result["points"] = $this->calculatePoints();
+
+        $isEndScore = intval($this->gamestate->getCurrentMainStateId()) >= 98;
+        $result['endScores'] = $isEndScore ? $this->calculatePoints() : null;
+
         return $result;
     }
 
@@ -973,13 +978,13 @@ class Game extends \Table
         }
         
         // Output debug information
-        $this->notifyAllPlayers(
-            "debugInfo",
-            clienttranslate("Debug information"),
-            array(
-                'debug' => $this->debug_array
-            )
-        );
+        // $this->notifyAllPlayers(
+        //     "debugInfo",
+        //     clienttranslate("Debug information"),
+        //     array(
+        //         'debug' => $this->debug_array
+        //     )
+        // );
         
         return $total;
     }
@@ -1511,19 +1516,24 @@ class Game extends \Table
 
 
     // Used to calculate all the points of player and return array player_id => pointType => points
-    function calculatePoints() {
-        $points = [];
-        $player_ids =  array_keys($this->loadPlayersBasicInfos());
+function calculatePoints() {
+    $scores = [];
+    $players = $this->loadPlayersBasicInfos();
 
-        foreach($player_ids as $player_id) {
-            $points[$player_id]["premium"] = $this->getPremiumPoints($player_id);
-            $points[$player_id]["patterns"] = $this->getPatternPoints($player_id);
-            $points[$player_id]["completed"] = $this->getCompletedQuiltPoints($player_id);
-            $points[$player_id]["symmetry"] = $this->getSymmetryPoints($player_id);
-            $points[$player_id]["patches"] = $this->getPatchesPoints($player_id);
-        }
-        return $points;
+    foreach ($players as $player_id => $data) {
+        $scores[$player_id] = [
+                'premium'   => (int)$this->getPremiumPoints($player_id),
+                'patterns'  => (int)$this->getPatternPoints($player_id),
+                'completed' => (int)$this->getCompletedQuiltPoints($player_id),
+                'symmetry'  => (int)$this->getSymmetryPoints($player_id),
+                'patches'   => (int)$this->getPatchesPoints($player_id),
+                'total' => (int)$this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id")
+        ];
     }
+
+    return $scores;
+}
+
 
     function getNextPlayer() {
         $currentPlayerNo = $this->getPlayerNoById($this->getActivePlayerId());
