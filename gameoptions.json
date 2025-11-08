@@ -71,10 +71,10 @@
             { "type": "otheroption", "id": 101, "value": 1 },
           {
                 "type" : "minplayers",
-                "value" : [2,3,4]
+                "value" : [1]
             }
           ],
-          "displayconditionoperand": "and"
+          "displayconditionoperand": "or"
     },
     "103" : {
         "name": "Symmetry",
@@ -92,10 +92,10 @@
             { "type": "otheroption", "id": 101, "value": 1 },
             {
                 "type" : "minplayers",
-                "value" : [2,3,4]
+                "value" : [1]
             }
           ],
-          "displayconditionoperand": "and"
+          "displayconditionoperand": "or"
     },
     "104" : {
         "name": "Quilting Assistants",
@@ -113,10 +113,10 @@
             { "type": "otheroption", "id": 101, "value": 1 },
             {
                 "type" : "minplayers",
-                "value" : [2,3,4]
+                "value" : [1]
             }
           ],
-          "displayconditionoperand": "and"
+          "displayconditionoperand": "or"
           
     }
 }
