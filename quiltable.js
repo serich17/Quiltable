@@ -1950,12 +1950,12 @@ synchronizeValidationState: function() {
         },
 
         notif_endScores(args) {
-    console.log("endScores")
-    console.log(args)
-    return this.scoreSheet.setScores(args.endScores, {
-        startBy: this.playerId
-    });
-},
+            // console.log("endScores")
+            // console.log(args)
+            return this.scoreSheet.setScores(args.endScores, {
+                startBy: this.playerId
+            });
+        },
 
         notif_plan: function(args) {
 
@@ -1986,6 +1986,11 @@ synchronizeValidationState: function() {
                 this.setup_board_cards(args, id)
                 this.isShiftEnabled = true
             }
+        },
+
+        notif_showPoints: function(args) {
+            console.log("POINTS")
+            console.log(args)
         },
         
         // TODO: from this point and below, you can write your game notifications handling methods

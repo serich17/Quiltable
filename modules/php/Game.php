@@ -405,8 +405,9 @@ class Game extends \Table
                 }
             }
         }
-    
+        # Real args
         $this->notify->all("shift", "", $this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null));
+        $this->notify->all("showPoints", "", $this->calculatePoints());
 
     }
     
@@ -544,6 +545,9 @@ class Game extends \Table
             foreach($this->calculatePoints() as $id => $data) {
                 $total = 0;
                 foreach($data as $source => $point) {
+                    if ($data == "N/A") {
+                        continue;
+                    }
                     $total += $point;
                 }
                 $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
@@ -784,12 +788,18 @@ class Game extends \Table
         $this->refillPatternArea();
 
 
+        if ($this->getPlayersNumber() == 1) {
+            $assistants = [192, 194, 196, 198, 206];
+        } else {
+            $assistants = [192, 194, 196, 198, 200, 206];
+        }
+
 
         // Set multi-active state for players to choose assistant if applicable
-        if ($this->getGameStateValue("game_variants") == 1 && $this->getGameStateValue("quilting_assistants") == 1) {
+        if (($this->getGameStateValue("game_variants") != 2 && $this->getGameStateValue("quilting_assistants") == 1) || ($this->getPlayersNumber() == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
             # get random assistant cards the players can choose from
             $players = $this->loadPlayersBasicInfos();
-            $assistants = [192, 194, 196, 198, 200, 206];
+            
 
             # set assigned assistant card to choose from
             foreach($players as $player_id => $info) {
@@ -819,7 +829,7 @@ class Game extends \Table
     }
     function stChooseAssistant() {
         # This function is ONLY for moving on to another state if they don't need to choose assistants. 
-        if (!($this->getGameStateValue("game_variants") == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
+        if (!($this->getGameStateValue("game_variants") == 1 && $this->getGameStateValue("quilting_assistants") == 1) && !($this->getPlayersNumber() == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
             $this->activeNextPlayer();
             $this->gamestate->nextState("next");
             
@@ -881,407 +891,190 @@ class Game extends \Table
         $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
         $points = 0;
 
-        foreach ($quilt as $card_id => $card_info) {
-            $points += intval($this->quilt_cards[$card_info["type_arg"]]["points"]);
+        if ($this->getGameStateValue("game_variants") == 1 || $this->getPlayersNumber() == 1) {
+            foreach ($quilt as $card_id => $card_info) {
+                $points += intval($this->quilt_cards[$card_info["type_arg"]]["points"]);
+            }
+        } else {
+            $points = "N/A";
         }
         return $points;
     }
     function getPatternPoints($player_id) {
-        $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
-        $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, $player_id, null);
-        $total = 0;
-        
-        // For debugging
-        $this->debug_array = array();
-        $this->debug_array['quilt_cards'] = $quilt;
-    
-        // Build 2D grid representation of the quilt
-        $grid = array();
-        $max_row = 0;
-        $max_col = 0;
-        
-        foreach ($quilt as $card_id => $card_data) {
-            $location_arg = $card_data['location_arg'];
-            $material_location = $this->quilt_cards[$location_arg];
-            $row = $material_location['row'] - 1; // Adjust as mentioned
-            $col = $material_location['col'] - 1; // Adjust as mentioned
-            $type_arg = $card_data['type_arg'];
-            $card_name = $this->quilt_cards[$type_arg]['name'];
-            
-            if (!isset($grid[$row])) {
-                $grid[$row] = array();
-            }
-            $grid[$row][$col] = array(
-                'id' => $card_id,
-                'name' => $card_name,
-                'location_arg' => $location_arg
-            );
-            
-            $max_row = max($max_row, $row);
-            $max_col = max($max_col, $col);
-        }
-        
-        // For debugging
-        $this->debug_array['grid'] = $grid;
-        $this->debug_array['max_dimensions'] = array('rows' => $max_row, 'cols' => $max_col);
-        
-        // Process each pattern card
-        foreach ($patterns as $pattern_card => $card_data) {
-            $pattern_data = $this->quilt_cards[$card_data["type_arg"]];
-            $pattern = $pattern_data["pattern"];
-            $points = intval($pattern_data["points"]);
-            
-            // For debugging
-            $this->debug_array['current_pattern'] = $pattern;
-            
-            // Make a copy of the grid to work with for this pattern
-            $working_grid = $this->deepCopyGrid($grid);
-            
-            // Find all possible pattern matches
-            $all_matches = array();
-            
-            // Try all possible orientations of the pattern
-            foreach (range(0, 3) as $orientation) {
-                $oriented_pattern = $this->rotatePattern($pattern, $orientation);
-                
-                // For debugging
-                $this->debug_array['oriented_patterns'][$orientation] = $oriented_pattern;
-                
-                // Check pattern against every position in the quilt
-                for ($start_row = 0; $start_row <= $max_row; $start_row++) {
-                    for ($start_col = 0; $start_col <= $max_col; $start_col++) {
-                        $match_result = $this->findPatternMatch($oriented_pattern, $working_grid, $start_row, $start_col);
-                        if ($match_result !== false) {
-                            // For debugging
-                            $match_result['orientation'] = $orientation;
-                            $match_result['start_position'] = array($start_row, $start_col);
-                            
-                            $all_matches[] = $match_result;
-                        }
-                    }
+        if ($this->getGameStateValue("game_variants") == 1 || $this->getPlayersNumber() == 1) {
+            $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+            $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, $player_id, null);
+            $total = 0;
+
+            # Build dynamic quilt
+            $quilt_built = [[],[],[],[]];
+            for($r=1;$r<=4;$r++) {
+                for($c=1;$c<=4;$c++) {
+                    $quilt_built[$r][$c] = null;
                 }
             }
-            
-            // For debugging
-            $this->debug_array['all_matches'] = $all_matches;
-            
-            // Find maximum number of non-overlapping matches
-            $max_matches = $this->findMaxNonOverlappingMatches($all_matches);
-            $pattern_count = count($max_matches);
-            
-            // For debugging
-            $this->debug_array['max_matches'] = $max_matches;
-            $this->debug_array['match_count'] = $pattern_count;
-            
-            // Add points for all matches of this pattern
-            $total += $points * $pattern_count;
-        }
-        
-        // Output debug information
-        // $this->notifyAllPlayers(
-        //     "debugInfo",
-        //     clienttranslate("Debug information"),
-        //     array(
-        //         'debug' => $this->debug_array
-        //     )
-        // );
-        
-        return $total;
-    }
-    
-    /**
-     * Make a deep copy of the grid
-     */
-    private function deepCopyGrid($grid) {
-        $copy = array();
-        foreach ($grid as $row => $cols) {
-            $copy[$row] = array();
-            foreach ($cols as $col => $cell) {
-                $copy[$row][$col] = $cell;
-                if (!isset($copy[$row][$col]['used'])) {
-                    $copy[$row][$col]['used'] = false;
-                }
-            }
-        }
-        return $copy;
-    }
-    
-    /**
-     * Find a pattern match at the given position
-     * Returns false if no match, or an array with match details if found
-     */
-    private function findPatternMatch($pattern, $grid, $start_row, $start_col) {
-        $letter_matches = array(); // Track what each letter (A, B, C, D) has matched
-        $positions = array(); // Track positions used in this match
-        $card_positions = array(); // Track actual card positions (for debugging)
-        
-        // Check if this starting position is valid
-        $pattern_height = count($pattern);
-        $pattern_width = count($pattern[0]);
-        
-        // For simple patterns like ["pie", "cottage"], we should consider all arrangements
-        // that include the required elements, regardless of their orientation
-        if ($pattern_height == 1 && count($pattern[0]) == 2 && 
-            !preg_match('/^[A-Z]$/', $pattern[0][0]) && !preg_match('/^[A-Z]$/', $pattern[0][1])) {
-            
-            // This is a simple 2-element pattern with specific card types
-            // Look for both elements in any adjacent positions
-            $element1 = $pattern[0][0];
-            $element2 = $pattern[0][1];
-            
-            $directions = array(
-                array(0, 1),  // right
-                array(1, 0),  // down
-                array(0, -1), // left
-                array(-1, 0)  // up
-            );
-            
-            // Check if first element matches at the starting position
-            if (!isset($grid[$start_row][$start_col]) || 
-                $grid[$start_row][$start_col]['used'] || 
-                $grid[$start_row][$start_col]['name'] != $element1) {
-                return false;
+
+            foreach ($quilt as $quiltCardId => $patch) {
+                # extract card args
+                $arg = $patch["type_arg"];
+                $location = $patch["location_arg"];
+
+                # extract card data needed
+                $name = $this->quilt_cards[$arg]["name"];
+                    # subtract 1 because in material file they start at 2
+                $row = $this->quilt_cards[$location]["row"]-1;
+                $col = $this->quilt_cards[$location]["col"]-1;
+                # put card name in new quilt location
+                $quilt_built[$row][$col] = $name;
             }
             
-            // Look for second element in adjacent positions
-            foreach ($directions as $dir) {
-                $row2 = $start_row + $dir[0];
-                $col2 = $start_col + $dir[1];
-                
-                if (isset($grid[$row2][$col2]) && 
-                    !$grid[$row2][$col2]['used'] && 
-                    $grid[$row2][$col2]['name'] == $element2) {
-                    
-                    // Found a match!
-                    return array(
-                        'positions' => array(
-                            $start_row . '_' . $start_col,
-                            $row2 . '_' . $col2
-                        ),
-                        'card_positions' => array(
-                            $grid[$start_row][$start_col]['location_arg'],
-                            $grid[$row2][$col2]['location_arg']
-                        ),
-                        'letters' => array()
-                    );
+            # single row or more for pattern rotations function
+            foreach ($patterns as $patternCardId => $card) {
+                $arg = $card["type_arg"];
+                $card = $this->quilt_cards[$arg];
+                $pattern = $card["pattern"];
+                if (is_string($pattern[0])) {
+                    # oneline pattern
+                    $type = "one";
+                } else {
+                    # multiline pattern
+                    $type = "multi";
                 }
-            }
-            
-            // Also check for reverse order (element2, element1)
-            if (!isset($grid[$start_row][$start_col]) || 
-                $grid[$start_row][$start_col]['used'] || 
-                $grid[$start_row][$start_col]['name'] != $element2) {
-                return false;
-            }
-            
-            foreach ($directions as $dir) {
-                $row2 = $start_row + $dir[0];
-                $col2 = $start_col + $dir[1];
-                
-                if (isset($grid[$row2][$col2]) && 
-                    !$grid[$row2][$col2]['used'] && 
-                    $grid[$row2][$col2]['name'] == $element1) {
-                    
-                    // Found a match!
-                    return array(
-                        'positions' => array(
-                            $start_row . '_' . $start_col,
-                            $row2 . '_' . $col2
-                        ),
-                        'card_positions' => array(
-                            $grid[$start_row][$start_col]['location_arg'],
-                            $grid[$row2][$col2]['location_arg']
-                        ),
-                        'letters' => array()
-                    );
-                }
-            }
-            
-            return false;
-        }
-        
-        // Standard pattern matching for more complex patterns
-        for ($r = 0; $r < $pattern_height; $r++) {
-            for ($c = 0; $c < $pattern_width; $c++) {
-                $pattern_element = $pattern[$r][$c];
-                $grid_row = $start_row + $r;
-                $grid_col = $start_col + $c;
-                
-                // Skip ANY - it can match anything including empty spaces
-                if ($pattern_element === "ANY") {
-                    continue;
-                }
-                
-                // If position is outside grid or no card exists here
-                if (!isset($grid[$grid_row]) || !isset($grid[$grid_row][$grid_col])) {
-                    return false;
-                }
-                
-                // If card is already used in another match
-                if ($grid[$grid_row][$grid_col]['used']) {
-                    return false;
-                }
-                
-                // Get card name
-                $card_name = $grid[$grid_row][$grid_col]['name'];
-                $position_key = $grid_row . '_' . $grid_col;
-                
-                // Check pattern element against card
-                if (in_array($pattern_element, array("pie", "pumpkin", "leaf", "apple", "corn", "sunflower", "cottage", "acorn"))) {
-                    // Exact type match required
-                    if ($pattern_element !== $card_name) {
-                        return false;
-                    }
-                    $positions[] = $position_key;
-                    $card_positions[] = $grid[$grid_row][$grid_col]['location_arg'];
-                } else if (preg_match('/^[A-Z]$/', $pattern_element)) {
-                    // Letter pattern (A, B, C, D, etc.)
-                    $letter = $pattern_element;
-                    
-                    if (isset($letter_matches[$letter])) {
-                        // This letter has already matched something, ensure it's the same
-                        if ($letter_matches[$letter] !== $card_name) {
-                            return false;
-                        }
-                    } else {
-                        // First occurrence of this letter
-                        // Ensure this letter doesn't match another letter's card
-                        foreach ($letter_matches as $other_letter => $matched_card) {
-                            if ($other_letter !== $letter && $matched_card === $card_name) {
-                                return false;
+
+
+                # get all pattern rotations
+                $rotations = $this->getPatternRotations($pattern, $type);
+
+                # array for all matches of this pattern in all directions. The array contains a list of row/col for each critical point in the pattern match
+                $matches = [];
+
+                # 1. find all pattern matches and add to a list "matches"
+                foreach ($rotations as $rotation) {
+                    $row_breadth = count($rotation);
+                    $col_breadth = count($rotation[0]);
+
+                    for ($r=1;$r<=5-$row_breadth; $r++) {
+                        for ($c=1;$c<=5-$col_breadth; $c++) {
+                            $match = true;
+                            $lookup = ["A"=>"", "B"=>"", "C"=>""];
+                            $current_row = 0;
+                            $match_data = [];
+                            foreach ($rotation as $row_value) {
+                                $current_col = 0;
+                                $row = $current_row + $r;
+                                foreach($row_value as $name) {
+                                    $col = $current_col + $c;
+                                    array_push($match_data, ["row"=>$row, "col"=>$col]);
+                                    if ($name == "ANY") {
+                                        $current_col++;
+                                        continue;
+                                    } else if (is_null($quilt_built[$row][$col])) {
+                                        $match=false;
+                                    }
+                                     else if (in_array($name, ["A", "B", "C"])) {
+                                        if ($lookup[$name] == "") {
+                                            if (in_array($quilt_built[$row][$col], array_values($lookup))){
+                                                $match = false;
+                                            }
+                                            else {
+                                                $lookup[$name] = $quilt_built[$row][$col];
+                                            }
+                                        }
+                                        else if($lookup[$name] != $quilt_built[$row][$col]) {$match = false;
+                                        }           
+                                    } else if ($name != $quilt_built[$row][$col]) {
+                                        $match = false;
+                                    }
+                                    $current_col++;
+                                }
+                                $current_row++;
+                            }
+                            if ($match) {
+                                array_push($matches, $match_data);
                             }
                         }
-                        
-                        // Remember what this letter matched
-                        $letter_matches[$letter] = $card_name;
                     }
-                    $positions[] = $position_key;
-                    $card_positions[] = $grid[$grid_row][$grid_col]['location_arg'];
-                } else {
-                    // Unknown pattern element
-                    return false;
                 }
-            }
-        }
-        
-        // If we got here and we have positions, we found a match
-        if (!empty($positions)) {
-            return array(
-                'positions' => $positions,
-                'card_positions' => $card_positions,
-                'letters' => $letter_matches
-            );
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Find maximum number of non-overlapping matches
-     */
-    private function findMaxNonOverlappingMatches($all_matches) {
-        if (empty($all_matches)) {
-            return array();
-        }
-        
-        // Build a graph of conflicting matches
-        $conflicts = array();
-        for ($i = 0; $i < count($all_matches); $i++) {
-            $conflicts[$i] = array();
-            for ($j = 0; $j < count($all_matches); $j++) {
-                if ($i != $j) {
-                    // Check if matches i and j overlap
-                    $overlap = false;
-                    foreach ($all_matches[$i]['positions'] as $pos_i) {
-                        if (in_array($pos_i, $all_matches[$j]['positions'])) {
-                            $overlap = true;
-                            break;
-                        }
+                # 2. create a new list "overlap" with all patterns with at least 1 critical point overlap
+                $maxValue = 5;
+                while ($maxValue > 0) {
+                    if (empty($matches)) {
+                        break;
                     }
-                    if ($overlap) {
-                        $conflicts[$i][] = $j;
+                    $overlap = [];
+                    for ($i=0;$i<count($matches);$i++) {
+                        $overlap[$i] = 0;
+                    }
+                    foreach ($matches as $index1 => $match1) {
+                        foreach($matches as $index2 => $match2) {
+                            #skip itself
+                            if ($index1 == $index2) {continue;}
+                            # add number of overlaps with this match
+                            $overlap[$index1] += $this->overlaps($match1, $match2);
+                        } 
+                    }
+                     # 3. select first pattern match in "overlap" with the max number of critical points overlapped with other matches
+                    #  Then remove from "allMatches"
+                    $maxIndex = array_keys($overlap, max($overlap))[0];
+                    $maxValue = $overlap[$maxIndex];
+                    if ($maxValue <= 0) {break;}
+                    unset($matches[$maxIndex]);
+                    $matches = array_values($matches);
+                }
+                # 5. Add count("allMatches")*patternPoint to total points to be returned
+                $total += intval($card["points"])*count($matches);
+            }       
+            return $total;
+        } else {
+            return "N/A";
+        }
+        }
+        #helper
+        function overlaps($match1, $match2) {
+            $overlap = 0;
+            foreach ($match1 as $point1) {
+                foreach($match2 as $point2) {
+                    if ($point1["row"] == $point2["row"] && $point1["col"] == $point2["col"]) {
+                        $overlap++;
                     }
                 }
             }
+            return $overlap;
         }
-        
-        // Use a greedy algorithm to find maximum independent set
-        // Sort matches by number of conflicts (fewer conflicts first)
-        $match_indices = range(0, count($all_matches) - 1);
-        usort($match_indices, function($a, $b) use ($conflicts) {
-            return count($conflicts[$a]) - count($conflicts[$b]);
-        });
-        
-        $selected = array();
-        $used = array();
-        
-        foreach ($match_indices as $idx) {
-            if (!isset($used[$idx])) {
-                $selected[] = $all_matches[$idx];
-                $used[$idx] = true;
-                
-                // Mark all conflicting matches as used
-                foreach ($conflicts[$idx] as $conflict_idx) {
-                    $used[$conflict_idx] = true;
-                }
+
+        #helper function
+        function getPatternRotations($pattern, $type) {
+            $rotations = [];
+            if ($type == "one") {
+                # original
+                array_push($rotations, [$pattern]);
+                # turn each item into an array to represent vertical
+                array_push($rotations, array_map(fn($n) => [$n], $pattern));
+                # reverse original
+                array_push($rotations, [array_reverse($pattern)]);
+                # reverse array from 2nd rotation
+                array_push($rotations, array_reverse(array_map(fn($n) => [$n], $pattern)));
+            } else {
+                # original
+                array_push($rotations, $pattern);
+
+                # same indexes are new arrays reversed
+                array_push($rotations, array_map(null, ...array_reverse($pattern)));
+
+                # reverse original
+                array_push($rotations, array_reverse(array_map(fn($array) => array_reverse($array), $pattern)));
+
+                # same indexes are new arrays
+                array_push($rotations, array_reverse(array_map(null, ...$pattern)));
             }
+
+            return $rotations;
         }
-        
-        return $selected;
-    }
-    
-    /**
-     * Rotate pattern based on orientation (0 = normal, 1 = rotate right, 2 = flip, 3 = rotate left)
-     */
-    private function rotatePattern($pattern, $orientation) {
-        // Convert single row pattern into 2D array
-        if (!is_array($pattern[0])) {
-            $pattern = array($pattern);
-        }
-        
-        $rows = count($pattern);
-        $cols = count($pattern[0]);
-        $result = array();
-        
-        switch ($orientation) {
-            case 0: // Normal orientation
-                return $pattern;
-                
-            case 1: // Rotate right (90 degrees clockwise)
-                for ($c = 0; $c < $cols; $c++) {
-                    $new_row = array();
-                    for ($r = $rows - 1; $r >= 0; $r--) {
-                        $new_row[] = $pattern[$r][$c];
-                    }
-                    $result[] = $new_row;
-                }
-                return $result;
-                
-            case 2: // Flip (180 degrees)
-                for ($r = $rows - 1; $r >= 0; $r--) {
-                    $new_row = array();
-                    for ($c = $cols - 1; $c >= 0; $c--) {
-                        $new_row[] = $pattern[$r][$c];
-                    }
-                    $result[] = $new_row;
-                }
-                return $result;
-                
-            case 3: // Rotate left (270 degrees clockwise)
-                for ($c = $cols - 1; $c >= 0; $c--) {
-                    $new_row = array();
-                    for ($r = 0; $r < $rows; $r++) {
-                        $new_row[] = $pattern[$r][$c];
-                    }
-                    $result[] = $new_row;
-                }
-                return $result;
-        }
-        
-        return $pattern; // Default fallback
-    }
     
     function getCompletedQuiltPoints($player_id) {
+        if ($this->getGameStateValue("game_variants") == 2) {
+            return "N/A";
+        }
         if (count(array_keys($this->cards->getCardsOfTypeInLocation("back", null, $player_id, null))) == 16) {
             return 5;
         }
@@ -1290,6 +1083,10 @@ class Game extends \Table
         }
     }
     function getSymmetryPoints($player_id) {
+        if ($this->getGameStateValue("symmetry") == 2) {
+            return "N/A";
+        }
+
         $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
         $total = 0;
         $isSymmetrical = false;
@@ -1320,14 +1117,13 @@ class Game extends \Table
             $max_col = max($max_col, $col);
         }
         
-        // Determine grid size - make sure it's at least 4x4
-        $size = 5;
-        //$size = max(4, max($max_row, $max_col)+1);
+        // Determine grid size 
+        $size = 4;
         
         // Fill grid with empty spots or actual cards
         $normalized_grid = array();
-        for ($i = 1; $i < $size; $i++) {
-            for ($j = 1; $j < $size; $j++) {
+        for ($i = 1; $i <= $size; $i++) {
+            for ($j = 1; $j <= $size; $j++) {
                 if (!isset($normalized_grid[$i])) {
                     $normalized_grid[$i] = array();
                 }
@@ -1346,10 +1142,10 @@ class Game extends \Table
         // Check symmetry in all four directions
         $horizontal = $this->checkHorizontalSymmetry($normalized_grid, $size);
         $vertical = $this->checkVerticalSymmetry($normalized_grid, $size);
-        $diagonal1 = $this->checkDiagonalSymmetry1($normalized_grid, $size);
-        $diagonal2 = $this->checkDiagonalSymmetry2($normalized_grid, $size);
+        $diagonalLeft = $this->checkDiagonalSymmetryLeft($normalized_grid, $size);
+        $diagonalRight = $this->checkDiagonalSymmetryRight($normalized_grid, $size);
         
-        $isSymmetrical = $horizontal || $vertical || $diagonal1 || $diagonal2;
+        $isSymmetrical = $horizontal || $vertical || $diagonalLeft || $diagonalRight;
         
         if ($isSymmetrical && count($quilt) > 0) {
             $total = 15;
@@ -1360,15 +1156,13 @@ class Game extends \Table
     
     // Check horizontal symmetry (folding top to bottom)
     function checkHorizontalSymmetry($grid, $size) {
-        for ($i = 1; $i < $size / 2; $i++) {
-            for ($j = 1; $j < $size; $j++) {
-                $opposite = $size - $i;
+        for ($i = 1; $i <= $size / 2; $i++) {
+            for ($j = 1; $j <= $size; $j++) {
+                $opposite = $size+1 - $i;
                 
                 // If both cells have cards (not empty), they must match
                 if ($grid[$i][$j]['name'] != 'empty' && $grid[$opposite][$j]['name'] != 'empty') {
                     if ($grid[$i][$j]['name'] != $grid[$opposite][$j]['name']) {
-                        // For debugging
-                        //$this->debug_log("Horizontal mismatch: [$i][$j]=".$grid[$i][$j]['name']." vs [$opposite][$j]=".$grid[$opposite][$j]['name']);
                         return false;
                     }
                 }
@@ -1380,9 +1174,9 @@ class Game extends \Table
     
     // Check vertical symmetry (folding left to right)
     function checkVerticalSymmetry($grid, $size) {
-        for ($i = 1; $i < $size; $i++) {
-            for ($j = 1; $j < $size / 2; $j++) {
-                $opposite = $size - $j;
+        for ($i = 1; $i <= $size; $i++) {
+            for ($j = 1; $j <= $size / 2; $j++) {
+                $opposite = $size+1 - $j;
                 
                 // If both cells have cards (not empty), they must match
                 if ($grid[$i][$j]['name'] != 'empty' && $grid[$i][$opposite]['name'] != 'empty') {
@@ -1399,9 +1193,9 @@ class Game extends \Table
     }
     
     // Check diagonal symmetry (top-left to bottom-right)
-    function checkDiagonalSymmetry1($grid, $size) {
-        for ($i = 1; $i < $size; $i++) {
-            for ($j = 1; $j < $size; $j++) {
+    function checkDiagonalSymmetryLeft($grid, $size) {
+        for ($i = 1; $i <= $size; $i++) {
+            for ($j = 1; $j <= $size; $j++) {
                 // Skip the cells on the main diagonal
                 if ($i == $j) {
                     continue;
@@ -1410,8 +1204,6 @@ class Game extends \Table
                 // If both cells have cards (not empty), they must match
                 if ($grid[$i][$j]['name'] != 'empty' && $grid[$j][$i]['name'] != 'empty') {
                     if ($grid[$i][$j]['name'] != $grid[$j][$i]['name']) {
-                        // For debugging
-                        //$this->debug_log("Diagonal1 mismatch: [$i][$j]=".$grid[$i][$j]['name']." vs [$j][$i]=".$grid[$j][$i]['name']);
                         return false;
                     }
                 }
@@ -1422,22 +1214,20 @@ class Game extends \Table
     }
     
     // Check diagonal symmetry (top-right to bottom-left)
-    function checkDiagonalSymmetry2($grid, $size) {
-        for ($i = 1; $i < $size; $i++) {
-            for ($j = 1; $j < $size; $j++) {
-                $opposite_i = $size - $j;
-                $opposite_j = $size - $i;
+    function checkDiagonalSymmetryRight($grid, $size) {
+        for ($i = 1; $i <= $size; $i++) {
+            for ($j = 1; $j <= $size; $j++) {
+                $opposite_i = $size+1 - $j;
+                $opposite_j = $size+1 - $i;
                 
                 // Skip cells on the diagonal
-                if ($i + $j == $size) {
+                if ($i + $j == $size+1) {
                     continue;
                 }
                 
                 // If both cells have cards (not empty), they must match
                 if ($grid[$i][$j]['name'] != 'empty' && $grid[$opposite_i][$opposite_j]['name'] != 'empty') {
                     if ($grid[$i][$j]['name'] != $grid[$opposite_i][$opposite_j]['name']) {
-                        // For debugging
-                        //$this->debug_log("Diagonal2 mismatch: [$i][$j]=".$grid[$i][$j]['name']." vs [$opposite_i][$opposite_j]=".$grid[$opposite_i][$opposite_j]['name']);
                         return false;
                     }
                 }
@@ -1447,14 +1237,13 @@ class Game extends \Table
         return true;
     }
     
-    // Helper function for debugging
-    function debug_log($message) {
-        var_dump($message);
-    }
     function getPatchesPoints($player_id) {
+        if ($this->getGameStateValue("game_variants") == 2 || $this->getGameStateValue("patches") == 2) {
+            return "N/A";
+        }
         $total = 0;
         $patchPoints = 3;
-        $gridSize = 4; // Changeable grid size
+        $gridSize = 4; 
         
         $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
         $grid = array_fill(1, $gridSize, array_fill(1, $gridSize, null));
@@ -1466,17 +1255,13 @@ class Game extends \Table
             
             $row = $material_location['row'] - 1;
             $col = $material_location['col'] - 1;
-
-            
             
             $type_arg = $card_data['type_arg'];
             $grid[$row][$col] = $this->quilt_cards[$type_arg];
         }
-
-        //$this->debug_log($grid);
         
         // Check horizontal matches
-        for ($r = 1; $r < $gridSize+1; $r++) {
+        for ($r = 1; $r <= $gridSize; $r++) {
             for ($c = 1; $c < $gridSize; $c++) {
                 if (!$grid[$r][$c] || !$grid[$r][$c + 1]) continue; // Skip empty spaces
                 
@@ -1484,9 +1269,10 @@ class Game extends \Table
                 $tileB = $grid[$r][$c + 1];
                 
                 if (
-                    ($tileA['position'] === 'middle' && $tileB['position'] === 'middle' && $tileA['color'] === $tileB['color']) ||
-                    ($tileA['position'] === 'right' && $tileB['position'] === 'left' && $tileA['color'] === $tileB['color']) ||
-                    ($tileA['position'] === 'left' && $tileB['position'] === 'right' && $tileA['color'] === $tileB['color'])
+                    ($tileA['color'] === $tileB['color']) &&
+                    (($tileA['position'] === 'middle' && $tileB['position'] === 'middle') ||
+                    ($tileA['position'] === 'right' && $tileB['position'] === 'left') ||
+                    ($tileA['position'] === 'left' && $tileB['position'] === 'right'))
                 ) {
                     $total += $patchPoints;
                 }
@@ -1494,7 +1280,7 @@ class Game extends \Table
         }
         
         // Check vertical matches
-        for ($c = 1; $c < $gridSize+1; $c++) {
+        for ($c = 1; $c <= $gridSize; $c++) {
             for ($r = 1; $r < $gridSize; $r++) {
                 if (!$grid[$r][$c] || !$grid[$r + 1][$c]) continue; // Skip empty spaces
                 
@@ -1502,9 +1288,10 @@ class Game extends \Table
                 $tileB = $grid[$r + 1][$c];
                 
                 if (
-                    ($tileA['position'] === 'middle' && $tileB['position'] === 'middle' && $tileA['color'] === $tileB['color']) ||
-                    ($tileA['position'] === 'right' && $tileB['position'] === 'left' && $tileA['color'] === $tileB['color']) ||
-                    ($tileA['position'] === 'left' && $tileB['position'] === 'right' && $tileA['color'] === $tileB['color'])
+                    ($tileA['color'] === $tileB['color']) &&
+                    (($tileA['position'] === 'middle' && $tileB['position'] === 'middle') ||
+                    ($tileA['position'] === 'right' && $tileB['position'] === 'left') ||
+                    ($tileA['position'] === 'left' && $tileB['position'] === 'right'))
                 ) {
                     $total += $patchPoints;
                 }
@@ -1522,12 +1309,12 @@ function calculatePoints() {
 
     foreach ($players as $player_id => $data) {
         $scores[$player_id] = [
-                'premium'   => (int)$this->getPremiumPoints($player_id),
-                'patterns'  => (int)$this->getPatternPoints($player_id),
-                'completed' => (int)$this->getCompletedQuiltPoints($player_id),
-                'symmetry'  => (int)$this->getSymmetryPoints($player_id),
-                'patches'   => (int)$this->getPatchesPoints($player_id),
-                'total' => (int)$this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id")
+                'premium'   => $this->getPremiumPoints($player_id),
+                'patterns'  => $this->getPatternPoints($player_id),
+                'completed' => $this->getCompletedQuiltPoints($player_id),
+                'symmetry'  => $this->getSymmetryPoints($player_id),
+                'patches'   => $this->getPatchesPoints($player_id),
+                'total' => $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id")
         ];
     }
 
