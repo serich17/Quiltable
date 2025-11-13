@@ -55,6 +55,8 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
+            this.playerCount = Object.keys(gamedatas.players).length
+            this.options = gamedatas.options
             this.playerId = this.player_id
             this.locations = gamedatas.locations
             this.types = gamedatas.type_arg
@@ -424,12 +426,16 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 switch( stateName )
                 {
                  case 'playerTurn':
-                    this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    if (this.options == "1" || this.playerCount == 1) {
+                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    }
                     this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
                     this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
                     break;
                  case 'playerTurn2':
-                    this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    if (this.options == "1" || this.playerCount == 1) {
+                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                    }
                     this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
                     this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
                     this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), { color: 'secondary' }); 
@@ -524,7 +530,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
                 let shift = true
 
-                if (this.isShiftEnabled) {
+                if (this.isShiftEnabled && cards.length > 0) {
 
                     if (direction == "left") {
                         cards.forEach(card => {
@@ -1955,6 +1961,10 @@ synchronizeValidationState: function() {
             return this.scoreSheet.setScores(args.endScores, {
                 startBy: this.playerId
             });
+        },
+
+        async notif_animation(args) {
+            await this.animateCards(args)
         },
 
         notif_plan: function(args) {
