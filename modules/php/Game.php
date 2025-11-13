@@ -225,7 +225,9 @@ class Game extends \Table
                 ));
 
         $target = "player-table-" . $this->getActivePlayerId();
-        $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', 0)");
+
+        $this->notify->all("animation", "", ["args"=>["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]]);
+
         
         $this->refillPatternArea();
 
@@ -241,15 +243,21 @@ class Game extends \Table
         }
 
         
-        
+        $animation = [];
+        $animation["animation"] = [];
+
         foreach ($args as $arg) {
             $this->cards->moveCard($arg["cardId"], $player_id, $arg["locationId"]);
 
             $card_id = $arg["cardId"];
             $loc = $arg["locationId"];
             $target = "player-table-" . $this->getActivePlayerId();
+            
+            $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0];
+
             $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', $loc)");
         }
+        // $this->notify->all("animation", "", ["args"=>$animation]);
 
         $card_data = array();
         foreach ($args as $tile) {
@@ -545,7 +553,7 @@ class Game extends \Table
             foreach($this->calculatePoints() as $id => $data) {
                 $total = 0;
                 foreach($data as $source => $point) {
-                    if ($data == "N/A") {
+                    if ($point == "N/A") {
                         continue;
                     }
                     $total += $point;
@@ -648,6 +656,7 @@ class Game extends \Table
 
         $result["type_arg"] = array_slice($this->quilt_cards, 0, 208, true);
 
+        $result["options"] = $this->getGameStateValue("game_variants");
 
         // return player boards
         $player_ids = array_keys($this->loadPlayersBasicInfos());
@@ -1083,7 +1092,7 @@ class Game extends \Table
         }
     }
     function getSymmetryPoints($player_id) {
-        if ($this->getGameStateValue("symmetry") == 2) {
+        if ($this->getGameStateValue("symmetry") == 2 && ($this->getPlayersNumber() == 1 || $this->getGameStateValue("game_variants") == 1)) {
             return "N/A";
         }
 
@@ -1149,6 +1158,15 @@ class Game extends \Table
         
         if ($isSymmetrical && count($quilt) > 0) {
             $total = 15;
+        }
+
+
+        if ($this->getGameStateValue("game_variants") == 2 && $this->getPlayersNumber() != 1) {   
+            $cardsInQuilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);         
+           if (count(array_keys($cardsInQuilt)) >= 16 && $isSymmetrical) {
+            return 15;
+           }
+           else {return 0;}
         }
         
         return $total;
@@ -1334,10 +1352,21 @@ function calculatePoints() {
     }
 
     function checkEndConditions($player_id) {
-        $cardsInQuilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
-        
-        if(count(array_keys($cardsInQuilt)) >= 16 && $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1;") != 1) {
-            $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
+        if ($this->getGameStateValue("game_variants") == 2 && $this->getPlayersNumber() != 1) {
+            $cardsInQuilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+            
+            if(count(array_keys($cardsInQuilt)) >= 16 && $this->getSymmetryPoints($player_id) == 15) {
+                $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
+                $this->DbQuery("UPDATE player SET player_score = 15 WHERE player_id = $player_id");
+
+                $this->gamestate->nextState("postEnd");
+            }
+        } else {
+            $cardsInQuilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+            
+            if(count(array_keys($cardsInQuilt)) >= 16 && $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1;") != 1) {
+                $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
+            }
         }
     }
 

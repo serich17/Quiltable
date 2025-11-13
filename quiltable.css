@@ -472,8 +472,11 @@ background-position: 33.33% 0;
   .item {
     width: var(--size);
     height: var(--size);
-    background-color: rgb(219, 219, 219);
+    /* background-color: rgb(219, 219, 219); */
     box-sizing: border-box;
+    border-style: dashed;
+    border-width: 2px;
+    background-color: rgba(150, 75, 0, 0.2);
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow to mimic a border */
   }
@@ -489,7 +492,15 @@ background-position: 33.33% 0;
     background-size: 1101px 1000px;
     width: var(--size);
     height: var(--size);
-    background-color: rgb(219, 219, 219);
+    background-color: rgba(50, 255, 43, 0.2);
+    border-style: dashed;
+    border-width: 2px;
+    border-color: #000000;
+  }
+
+  .possible-card:hover {
+    cursor: pointer;
+    scale: 1.01;
   }
 
   .card {
