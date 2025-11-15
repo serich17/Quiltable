@@ -48,6 +48,7 @@ class Game extends \Table
             "my_first_global_variable" => 10,
             "my_second_global_variable" => 11,
             "return_block_index" => 13,
+            "turn_counter" => 73,
             "solo_options" => 100,
             "game_variants" => 101,
             "patches" => 102,
@@ -169,9 +170,6 @@ class Game extends \Table
             "player_id" => $player_id,
             "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
         ]);
-
-        $this->DbQuery("DELETE FROM animation");
-
         // at the end of the action, move to the next state
         $this->gamestate->nextState("pass");
     }
@@ -182,17 +180,14 @@ class Game extends \Table
             throw new \BgaUserException('No pattern cards left in deck');
         }
 
-        $this->DbQuery("DELETE FROM animation");
-        $this->gamestate->nextState("plan");
+        $this->notify->player((int)$this->getActivePlayerId(), "plan_args", "", $this->argPlan());
     }
     public function choose() {
         $this->checkAction("choose");
-        $this->DbQuery("DELETE FROM animation");
-        $this->gamestate->nextState("choose");
+        $this->notify->player((int)$this->getActivePlayerId(), "choose_args", "", $this->argChoose());
     }
     public function return() {
         $this->checkAction("return");
-        $this->DbQuery("DELETE FROM animation");
 
         if (count($this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null)) < 1) {
             throw new \BgaUserException('You don\'t have cards to return');
@@ -201,11 +196,7 @@ class Game extends \Table
             throw new \BgaUserException('There aren\'t any spots available to return tiles');
         }
 
-        $this->gamestate->nextState("return");
-    }
-    public function back() {
-        $this->checkAction("back");
-        $this->gamestate->nextState("back");
+        $this->notify->player((int)$this->getActivePlayerId(), "return_args", "", $this->argReturn());
     }
 
     public function choosePattern(int $card_id) {
@@ -221,17 +212,17 @@ class Game extends \Table
                     "player_id" => $this->getActivePlayerId(),
                     "card_arg" => $this->cards->getCard($card_id)["type_arg"],
                     "card_name" => "pattern card",
-                    "player_name" => $this->getPlayerNameById($this->getActivePlayerId())
+                    "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                 ));
 
         $target = "player-table-" . $this->getActivePlayerId();
 
-        $this->notify->all("animation", "", ["args"=>["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]]);
+        $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
 
         
         $this->refillPatternArea();
 
-        $this->gamestate->nextState("nextTurn");
+        $this->gamestate->nextState("nextPlayer");
     }
 
     public function placeBlocks($args) {
@@ -254,10 +245,7 @@ class Game extends \Table
             $target = "player-table-" . $this->getActivePlayerId();
             
             $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0];
-
-            $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', $loc)");
         }
-        // $this->notify->all("animation", "", ["args"=>$animation]);
 
         $card_data = array();
         foreach ($args as $tile) {
@@ -276,13 +264,14 @@ class Game extends \Table
             [
                 "player_name" => $this->getActivePlayerName(),
                 "card_arg" => json_encode($card_data) // This will be substituted as a string
-            ]);
+        ]);
+        $this->notify->all("animation", "", $animation);
 
 
 
         $this->refillPatternArea();
 
-        $this->gamestate->nextState("nextTurn");
+        $this->gamestate->nextState("nextPlayer");
 
     }
 
@@ -290,13 +279,13 @@ class Game extends \Table
         $this->checkAction("returnBlocks");
         $player_id = (int)$this->getActivePlayerId();
     
-        // Clear previous entries (if you want to allow fresh selection)
-        self::DbQuery("DELETE FROM return_blocks");
+        // Clear previous entries
+        $this->DbQuery("DELETE FROM return_blocks");
     
         foreach ($cards as $card_id) {
-            $card = $this->cards->getCard($card_id);
+            $card = $this->cards->getCard(card_id: $card_id);
             if ($card && $card["location"] == $player_id) {
-                self::DbQuery("INSERT INTO return_blocks (card_id, location) VALUES ({$card['id']}, '{$card['location']}')");
+                $this->DbQuery("INSERT INTO return_blocks (card_id, location) VALUES ({$card['id']}, '{$card['location']}')");
             } else {
                 throw new \BgaUserException('One or more selected cards don\'t exist');
             }
@@ -305,7 +294,7 @@ class Game extends \Table
         // Reset the internal pointer to the first card
         $this->setGameStateValue("return_block_index", 0);
     
-        $this->gamestate->nextState("returnBlock");
+        $this->gamestate->nextState("return");
     }
     
     
@@ -323,7 +312,7 @@ class Game extends \Table
         $player_id = (int)$this->getActivePlayerId();
         $index = $this->getGameStateValue("return_block_index");
     
-        $tile = self::getObjectFromDB("SELECT * FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
+        $tile = $this->getObjectFromDB("SELECT * FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
     
         if (!$tile) {
             throw new \BgaUserException('No tile to return');
@@ -341,14 +330,12 @@ class Game extends \Table
                     "card_arg" => $this->cards->getCard($tile['card_id'])["type_arg"],
                     "card_name" => "patch card",
                     "player_name" => $this->getPlayerNameById($player_id)
-                ));
-
+        ));
 
         $card_id = $tile["card_id"];
         $target = "pattern-board";
-        $this->DbQuery("DELETE FROM animation");
-        $this->DbQuery("INSERT INTO animation (card_id, target, loc) VALUES ($card_id, '$target', $loc)");
-        
+
+        $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0]]]);
         $this->gamestate->nextState("checkReturn");
         
     }
@@ -491,12 +478,6 @@ class Game extends \Table
         $cards = [];
         $cards["card"] = self::getObjectFromDB("SELECT card_id, location FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
     
-        return array_merge($cards, $this->argAnimation());
-    }
-
-    public function argAnimation() {
-        $cards = [];
-        $cards["animation"] = $this->getCollectionFromDB("SELECT card_id, target, loc, flip FROM animation");
         return $cards;
     }
 
@@ -549,7 +530,6 @@ class Game extends \Table
         $endTriggered = $this->getUniqueValueFromDB("SELECT endTriggered FROM player WHERE player_id = $nextPlayer");
         // add points to db
         if ($endTriggered == 1) {
-            
             foreach($this->calculatePoints() as $id => $data) {
                 $total = 0;
                 foreach($data as $source => $point) {
@@ -561,10 +541,16 @@ class Game extends \Table
                 $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
             }
 
-            $this->activeNextPlayer();
             $this->gamestate->nextState("postEnd");
         } else {
-            $this->activeNextPlayer();
+            $turns = $this->getUniqueValueFromDB("SELECT num_turns FROM player WHERE player_id = $player_id");
+            $turn_counter = $this->getGameStateValue("turn_counter");
+            if ($turn_counter < $turns-1) {
+                $this->setGameStateValue("turn_counter", $turn_counter + 1);
+            } else {
+                $this->activeNextPlayer();
+                $this->setGameStateValue("turn_counter", 0);
+            }
             // Go to another gamestate
             // Here, we would detect if the game is over, and in this case use "endGame" transition instead 
             $this->gamestate->nextState("nextPlayer");
@@ -572,21 +558,20 @@ class Game extends \Table
     }
     public function turnCards() {
         $this->refillPatternArea();
-        $this->resetAnimation();
     }
 
     public function stCheckReturn() {
         $index = $this->getGameStateValue("return_block_index");
 
         // Check if there are more cards left to process
-        $remaining = self::getUniqueValueFromDB("SELECT COUNT(*) FROM return_blocks");
+        $remaining = $this->getUniqueValueFromDB("SELECT COUNT(*) FROM return_blocks");
     
         if ($index + 1 < $remaining) {
             // Increase the pointer
             $this->setGameStateValue("return_block_index", $index + 1);
             $this->gamestate->nextState("returnBlock");  // Continue the loop
         } else {
-            $this->gamestate->nextState("nextTurn");  // Move to the next player
+            $this->gamestate->nextState("nextPlayer");  // Move to the next player
         }
     }
 
@@ -1370,11 +1355,6 @@ function calculatePoints() {
         }
     }
 
-    function resetAnimation() {
-        sleep(1);
-        $this->DbQuery("DELETE FROM animation;");
-    }
-
     function validatePlayerCards($args) {
         $allCardsPlayerTable = $this->cards->getCardsOfTypeInLocation("back", null, $this->getActivePlayerId(), null);
         foreach ($args as $arg) {
@@ -1509,7 +1489,7 @@ function calculatePoints() {
     }
     
 
-    function refillPatternArea() {
+    function refillPatternArea($animation=["animation" => []]) {
         $pattern_grid = [
             213 => [208, 209, 212], // Closest to top-left deck
             214 => [210, 211, 215], // Closest to top-right deck
@@ -1586,7 +1566,10 @@ foreach ($empty_spots as $loc) {
                 $this->cards->moveCard($card_id, 'pattern_area', $loc);
                 $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = '$new_card_type' WHERE card_id = $card_id");
 
-                $this->DbQuery("INSERT INTO animation (card_id, target, loc, flip) VALUES ($card_id, 'pattern-board', $loc, $new_type_arg)");
+                $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>'pattern-board', "loc"=>$loc, "flip"=>$new_type_arg];
+
+                // $this->DbQuery("INSERT INTO animation (card_id, target, loc, flip) VALUES ($card_id, 'pattern-board', $loc, $new_type_arg)");
+
             }
             break; // Exit after refilling the spot
         }
@@ -1634,11 +1617,12 @@ foreach ($deck_positions as $pos => $deck_id) {
     if ($this->cards->countCardInLocation("pattern_area", $pos) == 0) {
         $this->cards->moveCard($card_id, 'pattern_area', $pos);
         $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = '$new_card_type' WHERE card_id = $card_id");
-        $this->DbQuery("INSERT INTO animation (card_id, target, loc, flip) VALUES ($card_id, 'pattern-board', $pos, $new_type_arg)");
-        $this->refillPatternArea();
+        $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>'pattern-board', "loc"=>$pos, "flip"=>$new_type_arg];
+        $this->refillPatternArea($animation);
     }
 }
 
+    $this->notify->all("animation", "", $animation);
 
     }
 
