@@ -170,59 +170,61 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             console.log("gamedatas")
             console.log(gamedatas)
 
-            this.scoreSheet = new BgaScoreSheet.ScoreSheet(
-                document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
-                {
-                animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
-                playerNameWidth: 80,
-                playerNameHeight: 30,
-                entryLabelWidth: 120,
-                entryLabelHeight: 20,
-                classes: 'score-sheet-background',
-                players: gamedatas.players,
-                entries: [
+            if (this.options != 2) {
+                this.scoreSheet = new BgaScoreSheet.ScoreSheet(
+                    document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
                     {
-                    property: 'completed',
-                    label: _('Completed Quilt'),
-                    labelClasses: 'entries-label',
+                    animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
+                    playerNameWidth: 80,
+                    playerNameHeight: 30,
+                    entryLabelWidth: 120,
+                    entryLabelHeight: 20,
+                    classes: 'score-sheet-background',
+                    players: gamedatas.players,
+                    entries: [
+                        {
+                        property: 'completed',
+                        label: _('Completed Quilt'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'symmetry',
+                        label: _('Symmetrical quilt'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'patches',
+                        label: _('Patch points'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'premium',
+                        label: _('Premium points'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'patterns',
+                        label: _('Pattern cards'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'total',
+                        label: _('Total'),
+                        labelClasses: 'entries-label',
+                        scoresClasses: 'total',
+                        width: 80,
+                        height: 40,
+                        },
+                    ],
+                    scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
+                    onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
+                        if (property === 'total') {
+                        this.scoreCtrl[playerId].setValue(score);
+                        }
                     },
-                    {
-                    property: 'symmetry',
-                    label: _('Symmetrical quilt'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'patches',
-                    label: _('Patch points'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'premium',
-                    label: _('Premium points'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'patterns',
-                    label: _('Pattern cards'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'total',
-                    label: _('Total'),
-                    labelClasses: 'entries-label',
-                    scoresClasses: 'total',
-                    width: 80,
-                    height: 40,
-                    },
-                ],
-                scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
-                onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
-                    if (property === 'total') {
-                    this.scoreCtrl[playerId].setValue(score);
                     }
-                },
-                }
-            );    
+                );    
+            }
 
             console.log( "Ending game setup" );
         },
@@ -332,14 +334,14 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         //        
         back: function() {
             this.reset_buttons()
-            dojo.style('confirm_selection', 'display', 'none')
-            dojo.style('confirm_placement', 'display', 'none')
-            dojo.style('back', 'display', 'none')
+            dojo.byId('confirm_placement') && dojo.style('confirm_placement', 'display', 'none')
+            dojo.byId('back') && dojo.style('back', 'display', 'none')
             this.removePatterns()
             // Clear previous temporary cards
             dojo.query('.temp-card', this.board).forEach(dojo.destroy);
             dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
             dojo.byId('confirm_selection') && dojo.destroy('confirm_selection');
+            this.updatePageTitle();
         },
 
         reset_buttons: function() {
@@ -1895,8 +1897,9 @@ synchronizeValidationState: function() {
                 this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
                 dojo.style('confirm_selection', 'display', 'none')
                 dojo.style('back', 'display', 'inline-block')
-
+                dojo.place('confirm_selection', 'back', 'before');
             }
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may select 1-4 tiles to return') : _('${actplayer} may return tiles'), "")
         },
 
         notif_choose_args: function(args) {
@@ -1910,21 +1913,26 @@ synchronizeValidationState: function() {
                 this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
                 dojo.style('confirm_selection', 'display', 'none')
                 dojo.style('back', 'display', 'inline-block')
+                dojo.place('confirm_selection', 'back', 'before');
             }
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose quilt blocks') : _('${actplayer} must choose quilt blocks'), "")
         },
 
         notif_plan_args: function(args) {
             this.selectPatterns(args)
             this.hide_turn_buttons()
             dojo.style('back', 'display', 'inline-block')
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a pattern') : _('${actplayer} must choose a pattern'), "")
         },
 
         notif_endScores(args) {
             // console.log("endScores")
             // console.log(args)
-            return this.scoreSheet.setScores(args.endScores, {
-                startBy: this.playerId
-            });
+            if (this.options != 2) {
+                return this.scoreSheet.setScores(args.endScores, {
+                    startBy: this.playerId
+                });
+        }
         },
 
         async notif_animation(args) {

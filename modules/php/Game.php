@@ -1568,8 +1568,6 @@ foreach ($empty_spots as $loc) {
 
                 $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>'pattern-board', "loc"=>$loc, "flip"=>$new_type_arg];
 
-                // $this->DbQuery("INSERT INTO animation (card_id, target, loc, flip) VALUES ($card_id, 'pattern-board', $loc, $new_type_arg)");
-
             }
             break; // Exit after refilling the spot
         }
