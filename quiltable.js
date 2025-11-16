@@ -155,7 +155,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.addShiftControls(gamedatas)
             
             Object.values(gamedatas.players).forEach(player => {
-            if (gamedatas.gamestate.name != "choose_assistant" && gamedatas.players[player.id].assistant != "0") {
+            if (gamedatas.gamestate.name != "chooseAssistant" && gamedatas.players[player.id].assistant != "0") {
                     this.setup_assistant(gamedatas.players[player.id].assistant, player.id)
                 }
             });
@@ -288,8 +288,16 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 
                 break;
            */
+            case 'playerTurn':
+                if (args.args.turn_num > 0 && this.isCurrentPlayerActive()) {
+                    dojo.style('pass', 'display', 'inline-block');
+                } 
+                if (args.args.use_assistant && this.isCurrentPlayerActive()) {
+                    //TODO set assistant to send request on click to server to return args for specific assistant
+                }
+                break;
 
-            case 'choose_assistant':
+            case 'chooseAssistant':
                 this.setUpAssistants(args)
                 break;
             case 'returnBlock':
@@ -323,7 +331,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             case 'returnBlock':
                 this.removePatterns()
                 break;
-            case 'choose_assistant':
+            case 'chooseAssistant':
                 this.removePatterns()
                 break;
             }               
