@@ -170,59 +170,61 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             console.log("gamedatas")
             console.log(gamedatas)
 
-            this.scoreSheet = new BgaScoreSheet.ScoreSheet(
-                document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
-                {
-                animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
-                playerNameWidth: 80,
-                playerNameHeight: 30,
-                entryLabelWidth: 120,
-                entryLabelHeight: 20,
-                classes: 'score-sheet-background',
-                players: gamedatas.players,
-                entries: [
+            if (this.options != 2) {
+                this.scoreSheet = new BgaScoreSheet.ScoreSheet(
+                    document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
                     {
-                    property: 'completed',
-                    label: _('Completed Quilt'),
-                    labelClasses: 'entries-label',
+                    animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
+                    playerNameWidth: 80,
+                    playerNameHeight: 30,
+                    entryLabelWidth: 120,
+                    entryLabelHeight: 20,
+                    classes: 'score-sheet-background',
+                    players: gamedatas.players,
+                    entries: [
+                        {
+                        property: 'completed',
+                        label: _('Completed Quilt'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'symmetry',
+                        label: _('Symmetrical quilt'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'patches',
+                        label: _('Patch points'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'premium',
+                        label: _('Premium points'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'patterns',
+                        label: _('Pattern cards'),
+                        labelClasses: 'entries-label',
+                        },
+                        {
+                        property: 'total',
+                        label: _('Total'),
+                        labelClasses: 'entries-label',
+                        scoresClasses: 'total',
+                        width: 80,
+                        height: 40,
+                        },
+                    ],
+                    scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
+                    onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
+                        if (property === 'total') {
+                        this.scoreCtrl[playerId].setValue(score);
+                        }
                     },
-                    {
-                    property: 'symmetry',
-                    label: _('Symmetrical quilt'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'patches',
-                    label: _('Patch points'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'premium',
-                    label: _('Premium points'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'patterns',
-                    label: _('Pattern cards'),
-                    labelClasses: 'entries-label',
-                    },
-                    {
-                    property: 'total',
-                    label: _('Total'),
-                    labelClasses: 'entries-label',
-                    scoresClasses: 'total',
-                    width: 80,
-                    height: 40,
-                    },
-                ],
-                scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
-                onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
-                    if (property === 'total') {
-                    this.scoreCtrl[playerId].setValue(score);
                     }
-                },
-                }
-            );    
+                );    
+            }
 
             console.log( "Ending game setup" );
         },
@@ -290,72 +292,12 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             case 'choose_assistant':
                 this.setUpAssistants(args)
                 break;
-           
-            case 'plan':
-                this.selectPatterns(args)
-                break;
-            case 'plan2':
-                this.selectPatterns(args)
-                break;
-            case 'playerTurn':
-                this.animateCards(args)
-                break;
-            case 'playerTurn2':
-                this.animateCards(args)
-                break;
-            case 'postEnd':
-                this.animateCards(args)
-                break;
-            case 'choose':
-                if (this.player_id == args.active_player) {
-                    this.selectableBlocks = args.args
-                    args.args.forEach((item) => {const card = document.getElementById(item.id)
-                        card.classList.add("selectable-card")
-                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 3, 2, document.querySelector(".pattern-board"))
-                        card.addEventListener("click", card.boundSelectPlan)})
-                }
-                break;
-            case 'choose2':
-                if (this.player_id == args.active_player) {
-                    this.selectableBlocks = args.args
-                    args.args.forEach((item) => {const card = document.getElementById(item.id)
-                        card.classList.add("selectable-card")
-                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 3, 2, document.querySelector(".pattern-board"))
-                        card.addEventListener("click", card.boundSelectPlan)})
-                }
-                break;
-            case 'return':
-                if (this.player_id == args.active_player) {
-                    this.selectableBlocks = args.args
-                    args.args.forEach((item) => {const card = document.getElementById(item.id)
-                        card.classList.add("selectable-card")
-                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 4, 1, dojo.query(".quilt-board", "player-table-" + this.player_id)[0])
-                        card.addEventListener("click", card.boundSelectPlan)})
-                }
-                break;
-            case 'return2':
-                if (this.player_id == args.active_player) {
-                    this.selectableBlocks = args.args
-                    args.args.forEach((item) => {const card = document.getElementById(item.id)
-                        card.classList.add("selectable-card")
-                        card.boundSelectPlan = (event) => this.chooseBlocks(event, 4, 1, dojo.query(".quilt-board", "player-table-" + this.player_id)[0])
-                        card.addEventListener("click", card.boundSelectPlan)})
-                }
-                break;
             case 'returnBlock':
-                if (this.player_id == args.active_player) {
-                this.setUpReturnLocations(args)
+                if (this.isCurrentPlayerActive()) {
+                    this.setUpReturnLocations(args)
                 }
-                this.animateCards(args)
                 break;
-            case 'returnBlock2':
-                if (this.player_id == args.active_player) {
-                this.setUpReturnLocations(args)
-                }
-                this.animateCards(args)
-                break;
-            case 'dummy':
-                break;
+
             }
         },
 
@@ -378,34 +320,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 
                 break;
            */
-            case 'plan':
-                this.removePatterns()
-                break;
-            case 'plan2':
-                this.removePatterns()
-                break;
-            case 'choose':
-                this.removePatterns()
-                // Clear previous temporary cards
-                dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-                dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
-                break;
-            case 'choose2':
-                this.removePatterns()
-                // Clear previous temporary cards
-                dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-                dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
-                break;
-            case 'return':
-                this.removePatterns()
-                break;
-            case 'return2':
-                this.removePatterns()
-                break;
             case 'returnBlock':
-                this.removePatterns()
-                break;
-            case 'returnBlock2':
                 this.removePatterns()
                 break;
             case 'choose_assistant':
@@ -417,6 +332,25 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
+        back: function() {
+            this.reset_buttons()
+            dojo.byId('confirm_placement') && dojo.style('confirm_placement', 'display', 'none')
+            dojo.byId('back') && dojo.style('back', 'display', 'none')
+            this.removePatterns()
+            // Clear previous temporary cards
+            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+            dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+            dojo.byId('confirm_selection') && dojo.destroy('confirm_selection');
+            this.updatePageTitle();
+        },
+
+        reset_buttons: function() {
+            dojo.byId('plan_button') && dojo.style('plan_button', 'display', 'inline-block')
+            dojo.byId('choose_button') && dojo.style('choose_button', 'display', 'inline-block')
+            dojo.byId('return_button') && dojo.style('return_button', 'display', 'inline-block')
+        },
+        
+    
         onUpdateActionButtons: function( stateName, args )
         {
             console.log( 'onUpdateActionButtons: '+stateName, args );
@@ -427,42 +361,15 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 {
                  case 'playerTurn':
                     if (this.options == "1" || this.playerCount == 1) {
-                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
+                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"), {id:'plan_button'})
                     }
-                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
-                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
-                    break;
-                 case 'playerTurn2':
-                    if (this.options == "1" || this.playerCount == 1) {
-                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("plan"))
-                    }
-                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"))
-                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"))
-                    this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), { color: 'secondary' }); 
-                    break;
-                 case 'plan':
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
-                    break;
-                 case 'choose':
-                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
-                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none'});
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
-                    break;
-                 case 'return':
-                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
-                    break;
-                 case 'plan2':
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
-                    break;
-                 case 'choose2':
-                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
-                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none'});
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' })
-                    break;
-                 case 'return2':
-                    this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("back"), { color: 'secondary' });
+                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("choose"), {id:'choose_button'})
+                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("return"), {id:'return_button'})
+                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none;'});
+                    this.statusBar.addActionButton(_('Back'), () => this.back(), {id:'back', color: 'secondary', style: 'display:none;'});
+                    dojo.style('back', 'display', 'none');
+                    this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), {id:'pass', color: 'secondary', style: 'display:none;'});
+                    dojo.style('pass', 'display', 'none');
                     break;
                 }
             }
@@ -525,7 +432,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 const top = [208, 209, 210, 211]
                 const right = [211, 215, 219, 223]
                 const bottom = [220, 221, 222, 223]
-                let args = {"args":{"animation":{}}}
+                let args = {"animation":{}}
 
                 const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
                 let shift = true
@@ -544,7 +451,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             index = 0
                             cards.forEach(card => {
                                 let loc = parseInt(card.getAttribute("location"))
-                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
+                                args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
                                 index ++
                             })
                             this.animateCards(args, 0)
@@ -561,7 +468,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             index = 0
                             cards.forEach(card => {
                                 let loc = parseInt(card.getAttribute("location"))
-                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
+                                args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
                                 index ++
                             })
                             this.animateCards(args, 0)
@@ -578,7 +485,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             index = 0
                             cards.forEach(card => {
                                 let loc = parseInt(card.getAttribute("location"))
-                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
+                                args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
                                 index ++
                             })
                             this.animateCards(args, 0)
@@ -595,7 +502,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             index = 0
                             cards.forEach(card => {
                                 let loc = parseInt(card.getAttribute("location"))
-                                args.args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
+                                args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
                                 index ++
                             })
                             this.animateCards(args, 0)
@@ -641,7 +548,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             animateCards: function(args, delay_inc=50) {
                 console.log(args)
                 delay = 0
-                Object.values(args.args.animation).forEach(element => {
+                Object.values(args.animation).forEach(element => {
                     let target
                     const original = document.getElementById(element.card_id)
                     const card = original.cloneNode(true)
@@ -819,6 +726,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
 
 
        setUpReturnLocations: function (args) {
+        console.log("SETUP RETURN")
+        console.log(args)
+        args = args.args
             for (let i=224; i<= 243; i++) {
                 const pattern_area = document.querySelector(".pattern-board")
                 const newElement = dojo.create("div", {
@@ -834,7 +744,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 const element = document.getElementById("storage-item");
                 element.innerHTML = "";
             
-                const originalCard = document.getElementById(args.args.card.card_id);
+                const originalCard = document.getElementById(args.card.card_id);
                 if(originalCard){
                     const display = originalCard.cloneNode(true);
                     display.id = "return";
@@ -852,11 +762,11 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
        },
 
        selectPatterns: function (args) {
-                if (this.player_id == args.active_player) {
+                if (this.isCurrentPlayerActive()) {
                   for (let i = 0; i < 4; i++) {
                     let deck_name = "deck_" + i;
-                    if (args.args[deck_name] != null) {
-                        const card = document.getElementById(args.args[deck_name])
+                    if (args[deck_name] != null) {
+                        const card = document.getElementById(args[deck_name])
                         card.classList.add("selectable-card")
                         card.boundSelectPlan = this.selectPlan.bind(this);
                         card.addEventListener("click", card.boundSelectPlan)
@@ -877,7 +787,10 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
 
             this.bgaPerformAction("returnBlocks", { 
                 cards: JSON.stringify(cardIds)
-            }).then(() => {}); 
+            }).then(() => {
+                dojo.style('confirm_selection', 'display', 'none')
+                dojo.style('back', 'display', 'none')
+            }); 
 
        },
        removePatterns: function () {
@@ -1553,7 +1466,15 @@ sendCardPlacements: function(placements) {
     // send move to server
     this.bgaPerformAction("placeBlocks", { 
         actionArgs: placementData
-    }).then(() => {});
+    }).then(() => {
+        this.removePatterns()
+        dojo.style('back', 'display', 'none')
+        dojo.style('confirm_selection', 'display', 'none')
+        // Clear previous temporary cards
+        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+        this.reset_buttons()
+    });
     
     console.log(placementData)
 },
@@ -1750,7 +1671,11 @@ synchronizeValidationState: function() {
             let card_id = parseInt(element.target.id)
             this.bgaPerformAction("choosePattern", { 
                 card: card_id,
-            }).then(() => {});  
+            }).then(() => {
+                this.removePatterns()
+                dojo.style('back', 'display', 'none')
+                this.reset_buttons()
+            });
         },
 
         chooseBlocks: function (element, maxSelected, minSelected, pattern_board) {
@@ -1954,13 +1879,60 @@ synchronizeValidationState: function() {
             // dojo.subscribe('shift', this, "notif_quiltShift")
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
+        hide_turn_buttons: function() {
+            dojo.byId('plan_button') && dojo.style('plan_button', 'display', 'none')
+            dojo.byId('choose_button') && dojo.style('choose_button', 'display', 'none')
+            dojo.byId('choose_button') && dojo.style('return_button', 'display', 'none')
+        },
+
+        notif_return_args: function(args) {
+            if (this.isCurrentPlayerActive()) {
+                this.selectableBlocks = args
+                args.forEach((item) => {const card = document.getElementById(item.id)
+                    card.classList.add("selectable-card")
+                    card.boundSelectPlan = (event) => this.chooseBlocks(event, 4, 1, dojo.query(".quilt-board", "player-table-" + this.player_id)[0])
+                    card.addEventListener("click", card.boundSelectPlan)})
+                
+                this.hide_turn_buttons()
+                this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmReturnCards(), {id: 'confirm_selection'})
+                dojo.style('confirm_selection', 'display', 'none')
+                dojo.style('back', 'display', 'inline-block')
+                dojo.place('confirm_selection', 'back', 'before');
+            }
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} may select 1-4 tiles to return') : _('${actplayer} may return tiles'), "")
+        },
+
+        notif_choose_args: function(args) {
+            if (this.isCurrentPlayerActive()) {
+                this.selectableBlocks = args
+                args.forEach((item) => {const card = document.getElementById(item.id)
+                    card.classList.add("selectable-card")
+                    card.boundSelectPlan = (event) => this.chooseBlocks(event, 3, 2, document.querySelector(".pattern-board"))
+                    card.addEventListener("click", card.boundSelectPlan)})
+                this.hide_turn_buttons()
+                this.statusBar.addActionButton(_('Confirm Selection'), () => this.confirmSelection(), {id: 'confirm_selection'})
+                dojo.style('confirm_selection', 'display', 'none')
+                dojo.style('back', 'display', 'inline-block')
+                dojo.place('confirm_selection', 'back', 'before');
+            }
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose quilt blocks') : _('${actplayer} must choose quilt blocks'), "")
+        },
+
+        notif_plan_args: function(args) {
+            this.selectPatterns(args)
+            this.hide_turn_buttons()
+            dojo.style('back', 'display', 'inline-block')
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a pattern') : _('${actplayer} must choose a pattern'), "")
+        },
 
         notif_endScores(args) {
             // console.log("endScores")
             // console.log(args)
-            return this.scoreSheet.setScores(args.endScores, {
-                startBy: this.playerId
-            });
+            if (this.options != 2) {
+                return this.scoreSheet.setScores(args.endScores, {
+                    startBy: this.playerId
+                });
+        }
         },
 
         async notif_animation(args) {
