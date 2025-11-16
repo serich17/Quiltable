@@ -49,6 +49,7 @@ class Game extends \Table
             "my_second_global_variable" => 11,
             "return_block_index" => 13,
             "turn_counter" => 73,
+            "use_assistant" => 74,
             "solo_options" => 100,
             "game_variants" => 101,
             "patches" => 102,
@@ -171,7 +172,9 @@ class Game extends \Table
             "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
         ]);
         // at the end of the action, move to the next state
-        $this->gamestate->nextState("pass");
+        $this->setGameStateValue("turn_counter", 5);
+        $this->gamestate->nextState("nextPlayer");
+        
     }
 
     public function plan(): void {
@@ -421,7 +424,8 @@ class Game extends \Table
         // Get some values from the current game situation from the database.
 
         return [
-            "playableCardsIds" => [1, 2],
+            "use_assistant" => $this->getGameStateValue("use_assistant"),
+            "turn_num" => $this->getGameStateValue("turn_counter")
         ];
     }
 
@@ -548,8 +552,11 @@ class Game extends \Table
             if ($turn_counter < $turns-1) {
                 $this->setGameStateValue("turn_counter", $turn_counter + 1);
             } else {
-                $this->activeNextPlayer();
+                if ($this->getGameStateValue("quilting_assistants") == 1) {
+                    $this->setGameStateValue("use_assistant", 1);
+                }
                 $this->setGameStateValue("turn_counter", 0);
+                $this->activeNextPlayer();
             }
             // Go to another gamestate
             // Here, we would detect if the game is over, and in this case use "endGame" transition instead 
@@ -794,7 +801,7 @@ class Game extends \Table
             # get random assistant cards the players can choose from
             $players = $this->loadPlayersBasicInfos();
             
-
+            $this->setGameStateValue("use_assistant", 1);
             # set assigned assistant card to choose from
             foreach($players as $player_id => $info) {
                 $randomIndex = bga_rand(0, count($assistants) - 1);

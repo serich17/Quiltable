@@ -65,7 +65,7 @@ $machinestates = [
     ),
 
     50 => array(
-        "name" => "choose_assistant",
+        "name" => "chooseAssistant",
         "description" => clienttranslate('⏳Waiting for other players...'),
         "descriptionmyturn" => clienttranslate('${you} must choose an assistant'),
         "type" => "multipleactiveplayer",
@@ -85,9 +85,10 @@ $machinestates = [
         "descriptionmyturn" => clienttranslate('${you} must choose an action'),
         "type" => "activeplayer",
         "action" => "",
+        "args" => "argPlayerturn",
         "possibleactions" => [
             // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            "plan", "choose", "return", "choosePattern", "placeBlocks", "returnBlocks"],
+            "plan", "choose", "return", "choosePattern", "placeBlocks", "returnBlocks", "actPass"],
         "transitions" => ["nextPlayer"=>3, "return"=>13]
     ],
 
@@ -115,106 +116,6 @@ $machinestates = [
         "action" => "stCheckReturn",
         "transitions" => ["returnBlock" => 13, "nextPlayer" => 3]
     ],
-
-
-    // 4 => [
-    //     "name" => "playerTurn2",
-    //     "description" => clienttranslate('${actplayer} must choose a second action or pass'),
-    //     "descriptionmyturn" => clienttranslate('${you} must choose a second action or pass'),
-    //     "type" => "activeplayer",
-    //     "action" => "turnCards",
-    //     "args" => "argAnimation",
-    //     "possibleactions" => ["plan", "choose", "return", "actPass"],
-    //     "transitions" => ["plan" => 8, "choose" => 9, "return" => 10, "pass" => 3]
-    // ],
-
-    // 5 => [
-    //     "name" => "plan",
-    //     "description" => clienttranslate('${actplayer} must choose a pattern'),
-    //     "descriptionmyturn" => clienttranslate('${you} must choose a pattern'),
-    //     "type" => "activeplayer",
-    //     "args" => "argPlan",
-    //     "possibleactions" => ["choosePattern", "back"],
-    //     "transitions" => ["back" => 2, "nextTurn" => 4]
-    // ],
-    // 6 => [
-    //     "name" => "choose",
-    //     "description" => clienttranslate('${actplayer} must choose quilt blocks'),
-    //     "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
-    //     "type" => "activeplayer",
-    //     "args" => "argChoose",
-    //     "possibleactions" => ["placeBlocks", "back"],
-    //     "transitions" => ["back" => 2, "nextTurn" => 4]
-    // ],
-    // 7 => [
-    //     "name" => "return",
-    //     "description" => clienttranslate('${actplayer} may return tiles'),
-    //     "descriptionmyturn" => clienttranslate('${you} may select 1-4 tiles to return'),
-    //     "type" => "activeplayer",
-    //     "args" => "argReturn",
-    //     "possibleactions" => ["returnBlocks", "back"],
-    //     "transitions" => ["back" => 2, "returnBlock" => 13]
-    // ],
-    // 8 => [
-    //     "name" => "plan2",
-    //     "description" => clienttranslate('${actplayer} must choose a pattern'),
-    //     "descriptionmyturn" => clienttranslate('${you} must choose a pattern'),
-    //     "type" => "activeplayer",
-    //     "args" => "argPlan",
-    //     "possibleactions" => ["choosePattern", "back"],
-    //     "transitions" => ["back" => 4, "nextTurn" => 3]
-    // ],
-    // 9 => [
-    //     "name" => "choose2",
-    //     "description" => clienttranslate('${actplayer} must choose quilt blocks'),
-    //     "descriptionmyturn" => clienttranslate('${you} must choose quilt blocks'),
-    //     "type" => "activeplayer",
-    //     "args" => "argChoose",
-    //     "possibleactions" => ["placeBlocks", "back"],
-    //     "transitions" => ["back" => 4, "nextTurn" => 3]
-    // ],
-    // 10 => [
-    //     "name" => "return2",
-    //     "description" => clienttranslate('${actplayer} may return tiles'),
-    //     "descriptionmyturn" => clienttranslate('${you} may select 1-4 tiles to return'),
-    //     "type" => "activeplayer",
-    //     "args" => "argReturn",
-    //     "possibleactions" => ["returnBlocks", "back"],
-    //     "transitions" => ["back" => 4, "returnBlock" => 11]
-    // ],
-
-    // 11 => [
-    //     "name" => "returnBlock2",
-    //     "description" => clienttranslate('${actplayer} must return tile'),
-    //     "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
-    //     "type" => "activeplayer",
-    //     "args" => "argReturnTile",
-    //     "possibleactions" => ["confirmReturn"],
-    //     "transitions" => ["checkReturn" => 12]
-    // ],
-    // 12 => [
-    //     "name" => "checkReturn2",
-    //     "type" => "game",
-    //     "action" => "stCheckReturn",
-    //     "transitions" => ["returnBlock" => 11, "nextTurn" => 3]
-    // ],
-
-    
-    // 13 => [
-    //     "name" => "returnBlock",
-    //     "description" => clienttranslate('${actplayer} must return tile'),
-    //     "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
-    //     "type" => "activeplayer",
-    //     "args" => "argReturnTile",
-    //     "possibleactions" => ["confirmReturn"],
-    //     "transitions" => ["checkReturn" => 14]
-    // ],
-    // 14 => [
-    //     "name" => "checkReturn",
-    //     "type" => "game",
-    //     "action" => "stCheckReturn",
-    //     "transitions" => ["returnBlock" => 13, "nextTurn" => 4]
-    //],
 
     98 => [
         "name" => "postEnd",
