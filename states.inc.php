@@ -71,7 +71,7 @@ $machinestates = [
         "type" => "multipleactiveplayer",
         "args" => "argChooseAssistant",
         "action" => "stChooseAssistant",
-        "possibleactions" => ["chooseAssistant"],
+        "possibleactions" => ["actChooseAssistant"],
         "transitions" => array(
         "next" => 2
     )
@@ -88,8 +88,8 @@ $machinestates = [
         "args" => "argPlayerturn",
         "possibleactions" => [
             // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            "plan", "choose", "return", "choosePattern", "placeBlocks", "returnBlocks", "actPass"],
-        "transitions" => ["nextPlayer"=>3, "return"=>13]
+            "actPlan", "actChoose", "actReturn", "actChoosePattern", "actPlaceBlocks", "actReturnBlocks", "actPass", "actBack", "actShiftQuilt", "actAssistantAction"],
+        "transitions" => ["nextPlayer"=>3, "return"=>13, "back"=>2]
     ],
 
     3 => [
@@ -107,7 +107,7 @@ $machinestates = [
         "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
         "type" => "activeplayer",
         "args" => "argReturnTile",
-        "possibleactions" => ["confirmReturn"],
+        "possibleactions" => ["actConfirmReturn"],
         "transitions" => ["checkReturn" => 14]
     ],
     14 => [
@@ -120,7 +120,6 @@ $machinestates = [
     98 => [
         "name" => "postEnd",
         "type" => "game",
-        "args" => "argAnimation",
         "action" => "stPostEnd",
         "transitions" => ["endGame" => 99]
     ],
