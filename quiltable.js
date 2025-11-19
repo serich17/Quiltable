@@ -114,25 +114,25 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                         <div class="title" style="color:#${player.color}">${player.name}</div>
                         <div class="quilt-cont">
                         <div class="quilt-board">
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
+                            <div class="item" location="208"></div>
+                            <div class="item" location="209"></div>
+                            <div class="item" location="210"></div>
+                            <div class="item" location="211"></div>
                         
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
+                            <div class="item" location="212"></div>
+                            <div class="item" location="213"></div>
+                            <div class="item" location="214"></div>
+                            <div class="item" location="215"></div>
                         
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
+                            <div class="item" location="216"></div>
+                            <div class="item" location="217"></div>
+                            <div class="item" location="218"></div>
+                            <div class="item" location="219"></div>
                         
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
-                            <div class="item"></div>
+                            <div class="item" location="220"></div>
+                            <div class="item" location="221"></div>
+                            <div class="item" location="222"></div>
+                            <div class="item" location="223"></div>
                         </div>
                         </div>
                     </div>
@@ -609,8 +609,14 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             original.setAttribute("type", element.flip)
                             original.style.position = "static"
                         } else {
-                            target = document.getElementById("pattern-board");
-                            gridElement = this.getGridElement("#pattern-board", this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
+                            if (element.target == "player-table-"+this.playerId) {
+                                target = dojo.query(`#${element.target} .quilt-board`)[0]
+                                gridElement = this.getGridElement(`#${element.target} .quilt-board`, this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
+                            } else {
+                                target = document.getElementById("pattern-board");
+                                gridElement = this.getGridElement("#pattern-board", this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
+                            }
+                            
                         }
                         // Enhanced flip animation
                         this.createEnhancedFlipAnimation(card, original, gridElement, element,target, delay)
@@ -687,6 +693,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     // Final placement and cleanup
                     setTimeout(() => {
                         if (element.loc != "0") {
+                            if (element.target == "player-table-"+this.playerId) {
+                                target.appendChild(original)
+                            }
                             original.style.top = this.locations[element.loc].y + "px";
                             original.style.left = this.locations[element.loc].x + "px";
                             original.style.display = "block";
@@ -1913,6 +1922,64 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
+        turnOver: function() {
+            let block = dojo.query("#pattern-board .selected")
+            let loc = dojo.query("#player-tables .selected")
+
+            if (block.length > 0 && loc.length > 0) {
+                this.bgaPerformAction("actSam", {
+                        pattern: parseInt(block[0].id),
+                        loc: parseInt(loc[0].getAttribute("location"))
+            }).then(() => {
+                dojo.query('.selected, .selectable-card').forEach(el => {
+                    dojo.removeClass(el, 'selected');
+                    dojo.removeClass(el, 'selectable-card');
+                });
+            });
+            }
+        },
+
+        notif_sam: function(args) {
+            patterns = args.patts
+            board = args.items
+
+            console.log(args)
+
+            board.forEach(block => {
+                block = dojo.query(`#player-table-${this.playerId} [location=${block}]`)[0]
+                block.classList.add("selectable-card")
+                block.boundSam = (event) => {
+                    board.forEach(block => {
+                        block = dojo.query(`#player-table-${this.playerId} [location=${block}]`)[0];
+                        block.classList.remove("selectable-card")
+                        block.removeEventListener('click', block.boundSam)
+                        delete block.boundSam
+                    })
+                    event.target.classList.add("selected", "selectable-card")
+                    this.turnOver()
+                }
+                block.addEventListener("click", block.boundSam)
+            })
+            Object.values(patterns).forEach(block => {
+                block = dojo.byId(block)
+                block.classList.add("selectable-card")
+                block.boundSam = (event) => {
+                    Object.values(patterns).forEach(block => {
+                        block = dojo.byId(`${block}`)
+                        block.classList.remove("selectable-card")
+                        block.removeEventListener('click', block.boundSam)
+                        delete block.boundSam
+                    })
+                    event.target.classList.add("selected", "selectable-card")
+                    this.turnOver()
+                }
+                block.addEventListener("click", block.boundSam)
+            })
+            dojo.style('back', 'display', 'inline-block')
+            this.hide_turn_buttons()
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select a pattern and a place to turn it over') : _('${actplayer} must select a pattern and a place to turn it over'), "")
+        },
+        
         flip: function(event) {
             this.bgaPerformAction("actGranny", { 
                         id: event.target.id
@@ -1982,7 +2049,7 @@ synchronizeValidationState: function() {
                         delete block.boundSandra
                     })
                     event.target.classList.add("selected", "selectable-card")
-                    this.swap(event, blocks, board)
+                    this.swap()
                 }
                 block.addEventListener("click", block.boundSandra)
             })
