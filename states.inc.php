@@ -88,8 +88,8 @@ $machinestates = [
         "args" => "argPlayerturn",
         "possibleactions" => [
             // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            "actPlan", "actChoose", "actReturn", "actChoosePattern", "actPlaceBlocks", "actReturnBlocks", "actPass", "actBack", "actShiftQuilt", "actAssistantAction"],
-        "transitions" => ["nextPlayer"=>3, "return"=>13, "back"=>2]
+            "actPlan", "actChoose", "actReturn", "actChoosePattern", "actPlaceBlocks", "actReturnBlocks", "actPass", "actBack", "actShiftQuilt", "actAssistantAction", "acttim"],
+        "transitions" => ["nextPlayer"=>3, "back"=>2, "assistantAction"=>15]
     ],
 
     3 => [
@@ -107,14 +107,23 @@ $machinestates = [
         "descriptionmyturn" => clienttranslate('${you} may select where to return tile'),
         "type" => "activeplayer",
         "args" => "argReturnTile",
-        "possibleactions" => ["actConfirmReturn"],
-        "transitions" => ["checkReturn" => 14]
+        "possibleactions" => ["actConfirmReturn", "actChoosePattern"],
+        "transitions" => ["checkReturn" => 14, "itterate" => 13]
     ],
     14 => [
         "name" => "checkReturn",
         "type" => "game",
         "action" => "stCheckReturn",
         "transitions" => ["returnBlock" => 13, "nextPlayer" => 3]
+    ],
+
+    15 => [
+        "name" => "assistantAction",
+        "description" => clienttranslate('${actplayer} must complete assistant actions'),
+        "descriptionmyturn" => clienttranslate('${you} may complete assistant action'),
+        "type" => "activeplayer",
+        "possibleactions" => ["actChoosePattern"],
+        "transitions" => ["checkReturn" => 14, "itterate" => 13]
     ],
 
     98 => [

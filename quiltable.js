@@ -243,13 +243,10 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         
         setup_assistant: function(assistant, id) {
             const board = dojo.query(`#player-table-${id} .quilt-controls-container`)[0]
-
-            console.log(board)
             const assis = document.createElement("div")
             assis.classList.add(`${this.types[assistant].class}`, "card")
             assis.setAttribute("assistant", assistant)
             board.appendChild(assis)
-
         },
 
        setup_board_cards: function(data, playerid) {
@@ -318,7 +315,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 this.setUpAssistants(args)
                 break;
             case 'returnBlock':
-                if (this.isCurrentPlayerActive()) {
+                if (this.isCurrentPlayerActive() && args.args[0] != 0) {
                     this.setUpReturnLocations(args)
                 }
                 break;
@@ -390,6 +387,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 switch( stateName )
                 {
                  case 'playerTurn':
+                    this.statusBar.removeActionButtons()
                     if (this.options == "1" || this.playerCount == 1) {
                         this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("actPlan"), {id:'plan_button'})
                     }
@@ -790,14 +788,14 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
 
        },
 
-       selectPatterns: function (args) {
+       selectPatterns: function (args, sally=false) {
                 if (this.isCurrentPlayerActive()) {
                   for (let i = 0; i < 4; i++) {
                     let deck_name = "deck_" + i;
                     if (args[deck_name] != null) {
                         const card = document.getElementById(args[deck_name])
                         card.classList.add("selectable-card")
-                        card.boundSelectPlan = this.selectPlan.bind(this);
+                        card.boundSelectPlan = this.selectPlan.bind(this, sally);
                         card.addEventListener("click", card.boundSelectPlan)
                     }
                 }
@@ -1686,9 +1684,10 @@ synchronizeValidationState: function() {
             });        
         },
 
-        selectPlan: function(element) {
+        selectPlan: function(sally, element) {
             this.bgaPerformAction("actChoosePattern", { 
                 card_id: parseInt(element.target.id),
+                sally: sally
             }).then(() => {
                 this.removePatterns()
                 dojo.style('back', 'display', 'none')
@@ -1898,8 +1897,53 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
-        notif_sally: function(args) {
+        send_trade_request: function(id, player) {
+            this.bgaPerformAction("acttim", { 
+                        player_id: parseInt(player),
+                        card_id: parseInt(id)
+            }).then(() => {
+                assistant = dojo.byId(`${id}`)
+                assistant.removeEventListener('click', assistant.boundTim);
+                delete assistant.boundTim
+            });
+        },
 
+        trade_pattern: function(event, players) {
+            card_id = event.target.id
+            dojo.query('.selectable-card').forEach(card => {card.classList.remove("selectable-card")})
+            event.target.classList.add("selectable-card", "selected")
+            this.statusBar.removeActionButtons()
+            Object.values(players).forEach(player => {
+                this.statusBar.addActionButton(player.player_name, () => this.send_trade_request(card_id, player.player_id))
+            })
+            this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
+                        this.removePatterns()
+                        // Clear previous temporary cards
+                        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                    }), {id:'back', color: 'secondary', style: 'display:none;'});
+        },
+
+        notif_tim: function(args) {
+            Object.keys(args.cards).forEach(id => {
+                pattern = dojo.byId(`${id}`)
+                if(pattern) {
+                    pattern.classList.add("selectable-card")
+                    pattern.boundTim = (event) => this.trade_pattern(event, args.players)
+                    pattern.addEventListener("click", pattern.boundTim)
+                }
+            })
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select a pattern to trade for a turn') : _('${actplayer} must select a pattern to trade'), "")
+            this.hide_turn_buttons()
+            dojo.style('back', 'display', 'inline-block')
+            console.log(args)
+        },
+
+        notif_sally: function(args) {
+            this.selectPatterns(args, sally=true)
+            this.hide_turn_buttons()
+            dojo.style('back', 'display', 'inline-block')
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a pattern') : _('${actplayer} must choose a pattern'), "")
         },
 
         notif_billy: function(args) {
@@ -1994,7 +2038,6 @@ synchronizeValidationState: function() {
         },
 
         notif_assistant: function(args) {
-            console.log(args)
             this.setup_assistant(args.card_arg, args.player_id)
         },
         notif_shift: function(args) {
@@ -2047,35 +2090,40 @@ synchronizeValidationState: function() {
             return this.logInject(text);
         },
 
-        logInject: function (log_entry) {
-    // Check if there's JSON card data in the log entry
-    const json_regex = /(\[{.*?\}\])/;
-    const json_match = log_entry.match(json_regex);
-    
-    if (json_match) {
-        // We have multiple cards as JSON
+       logInject: function (log_entry) {
+
+    //
+    // PASS 1 — Replace JSON groups
+    //
+    const json_regex = /\[(\{.*?\})\]/g;  // finds any [ { ... } ] group
+    const json_matches = [...log_entry.matchAll(json_regex)];
+
+    for (let match of json_matches) {
         try {
-            const card_data = JSON.parse(json_match[1]);
+            const card_data = JSON.parse(match[0]);
             const card_html = this.getHTMLGroupForLog(card_data, 'cards');
-            log_entry = log_entry.replace(json_match[1], card_html);
+            log_entry = log_entry.replace(match[0], card_html);
         } catch (e) {
-            console.error('Failed to parse card data:', e);
-        }
-    } else {
-        // Fall back to single card bracket notation: [card_name(card_type_arg)]
-        const card_regex = /\[(.+?)\((\d+)\)\]/g;
-        const cards_to_replace = log_entry.matchAll(card_regex);
-        
-        for (let card of cards_to_replace) {
-            const match = card[0];
-            const card_type_arg = card[2];
-            const card_span = this.getHTMLForLog(card_type_arg, 'card');
-            log_entry = log_entry.replace(match, card_span);
+            console.error("JSON parse error:", e, match[0]);
         }
     }
-    
+
+    //
+    // PASS 2 — Replace single cards like [CardName(193)]
+    //
+    const card_regex = /\[(.+?)\((\d+)\)\]/g;
+    const card_matches = [...log_entry.matchAll(card_regex)];
+
+    for (let card of card_matches) {
+        const full = card[0];
+        const typeArg = card[2];
+        const card_span = this.getHTMLForLog(typeArg, 'card');
+        log_entry = log_entry.replace(full, card_span);
+    }
+
     return log_entry;
 },
+
 
 getHTMLForLog: function (item, type) {
     switch(type) {
