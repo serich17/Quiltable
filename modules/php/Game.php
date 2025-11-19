@@ -251,6 +251,73 @@ class Game extends \Table
 
     }
 
+    function getAdjacentCards($player_id) {
+        $cards = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+        $locations = [];
+        $adjacents = [
+                208=> [209, 212],
+                209=> [208, 210, 213],
+                210=> [209, 211, 214],
+                211=> [210, 215],
+                212=> [208, 213, 216],
+                213=> [209, 212, 214, 217],
+                214=> [210, 213, 215, 218],
+                215=> [211, 214, 219],
+                216=> [212, 217, 220],
+                217=> [213, 216, 218, 221],
+                218=> [214, 217, 219, 222],
+                219=> [215, 218, 223],
+                220=> [216, 221],
+                221=> [217, 220, 222],
+                222=> [218, 221, 223],
+                223=> [219, 222]];
+        if (count($cards) == 0) {
+            return array_keys($adjacents);
+        }
+        foreach($cards as $card) {
+            $locations = array_merge($locations, $adjacents[intval($card["location_arg"])]);
+        }
+        // var_dump($locations);
+        $locations = array_values(array_unique($locations));
+        foreach($cards as $card) {
+            if (in_array(intval($card["location_arg"]), $locations)) {
+                $locations = array_values(array_diff($locations, [$card["location_arg"]]));
+            }
+        }
+        return $locations;
+    }
+
+    public function actSam(int $pattern, int $loc) {
+        $player_id = $this->getCurrentPlayerId();
+        $card = $this->cards->getCard($pattern);
+        if (count($this->cards->getCardsOfTypeInLocation("back", null, $player_id, $loc)) > 0 || !$this->checkIfTopCard($pattern)) {
+            throw new \BgaUserException(_('Invalid card options'));
+        }
+
+        $new_type_arg = $this->quilt_cards[$card["type_arg"]]["other_side"];
+
+        $this->cards->moveCard($pattern, $player_id, $loc);
+        $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = 'back' WHERE card_id = $pattern");
+
+        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Uncle Sam(197)] to flip pattern [${card_name1}(${card_arg1})] to block [${card_name2}(${card_arg2})] in quilt'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg1" => $card["type_arg"],
+                        "card_name1" => "pattern card",
+                        "card_arg2" => $new_type_arg,
+                        "card_name2" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
+
+        $this->notify->all("animation", "", ["animation"=>[
+            $pattern => ["card_id"=>$pattern, "target"=>"player-table-" . $player_id, "loc"=>$loc, "flip"=>$new_type_arg]
+        ]]);
+
+        $this->setGameStateValue("use_assistant", 0);
+        $this->gamestate->nextState("nextPlayer");
+
+    }
+
 
     public function actAssistantAction(int $assistant) : void {
         $player_id = (int)$this->getActivePlayerId();
@@ -296,6 +363,11 @@ class Game extends \Table
                 break;
             case 197:
                 # Uncle Sam
+                $args = $this->argPlan();
+                if (count($args) < 1) {
+                    throw new \BgaUserException(_('No patterns available'));
+                }
+                $this->notify->player($player_id, "sam", "", ["patts" => $args, "items" => $this->getAdjacentCards($player_id)]);
                 break;
             case 198:
                 # Planning Peter
@@ -994,7 +1066,7 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [196];
+            $assistants = [197];
             // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
         } else {
             $assistants = [192, 194];
