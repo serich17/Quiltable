@@ -602,11 +602,18 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             
                     // Flipping logic for cards
                     if (element.flip > 0) {
-                        target = document.getElementById("pattern-board");
-                        const gridElement = this.getGridElement("#pattern-board", this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
-                        
+                        if (element.loc == "0") {
+                            target = dojo.query("#"+element.target + " .patterns")[0]
+                            gridElement = dojo.create("div", {className: "temp-pattern", id: "placeholder"}, target)
+                            original.setAttribute("location", element.loc)
+                            original.setAttribute("type", element.flip)
+                            original.style.position = "static"
+                        } else {
+                            target = document.getElementById("pattern-board");
+                            gridElement = this.getGridElement("#pattern-board", this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
+                        }
                         // Enhanced flip animation
-                        this.createEnhancedFlipAnimation(card, original, gridElement, element, delay)
+                        this.createEnhancedFlipAnimation(card, original, gridElement, element,target, delay)
                     } else if (element.loc == "0") {
                         // Existing pattern placement logic remains the same
                         target = dojo.query("#"+element.target + " .patterns")[0]
@@ -645,7 +652,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 });
             },
             
-            createEnhancedFlipAnimation: function(card, original, gridElement, element, delay) {
+            createEnhancedFlipAnimation: function(card, original, gridElement, element,target, delay) {
                 // Prepare the card for transformation
                 card.style.transition = 'transform 0.5s';
                 card.style.transformStyle = 'preserve-3d';
@@ -679,9 +686,18 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             
                     // Final placement and cleanup
                     setTimeout(() => {
-                        original.style.top = this.locations[element.loc].y + "px";
-                        original.style.left = this.locations[element.loc].x + "px";
-                        original.style.display = "block";
+                        if (element.loc != "0") {
+                            original.style.top = this.locations[element.loc].y + "px";
+                            original.style.left = this.locations[element.loc].x + "px";
+                            original.style.display = "block";
+                        } else {
+                            target.appendChild(original)
+                            original.setAttribute("location", element.loc)
+                            original.setAttribute("type", element.flip)
+                            original.style.display = ""
+                            original.style.position = "static"
+                            gridElement.remove()
+                        }
                         
                         // Reset transform and clean up
                         card.style.transform = '';
@@ -1897,7 +1913,31 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
-        swap: function(event, blocks, board) {
+        flip: function(event) {
+            this.bgaPerformAction("actGranny", { 
+                        id: event.target.id
+            }).then(() => {})
+        },
+
+        notif_granny: function(args) {
+            Object.keys(args).forEach(block => {
+                block = dojo.byId(`${block}`)
+                block.classList.add("selectable-card")
+                block.boundGranny = (event) => {
+                    Object.keys(args).forEach(block => {
+                        block = dojo.byId(`${block}`)
+                        block.classList.remove("selectable-card")
+                        block.removeEventListener('click', block.boundGranny)
+                        delete block.boundGranny
+                    })
+                    event.target.classList.add("selected", "selectable-card")
+                    this.flip(event)
+                }
+                block.addEventListener("click", block.boundGranny)
+            })
+        },
+
+        swap: function() {
             let block = dojo.query("#pattern-board .selected")
             let player_board = dojo.query("#player-tables .selected")
 
@@ -1924,7 +1964,7 @@ synchronizeValidationState: function() {
                         delete block.boundSandra
                     })
                     event.target.classList.add("selected", "selectable-card")
-                    this.swap(event, blocks, board)
+                    this.swap()
                 }
                 block.addEventListener("click", block.boundSandra)
             })
