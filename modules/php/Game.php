@@ -221,6 +221,36 @@ class Game extends \Table
 
     }
 
+    public function actGranny(int $id) {
+        $player_id = $this->getCurrentPlayerId();
+        $card = $this->cards->getCard($id);
+        if ($card["location"] != $player_id || $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id") != 196) {
+            throw new \BgaUserException(_('Invalid option'));
+        }
+        $new_type_arg = $this->quilt_cards[$card["type_arg"]]["other_side"];
+
+        $this->cards->moveCard($id, $player_id, 0);
+        $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = 'pattern' WHERE card_id = $id");
+
+        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Granny Smith(196)] to flip [${card_name1}(${card_arg1})] to pattern [${card_name2}(${card_arg2})]'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg1" => $card["type_arg"],
+                        "card_name1" => "pattern card",
+                        "card_arg2" => $new_type_arg,
+                        "card_name2" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
+
+        $this->notify->all("animation", "", ["animation"=>[
+            $id => ["card_id"=>$id, "target"=>"player-table-" . $player_id, "loc"=>"0", "flip"=>$new_type_arg]
+        ]]);
+
+        $this->setGameStateValue("use_assistant", 0);
+        $this->gamestate->nextState("nextPlayer");
+
+    }
+
 
     public function actAssistantAction(int $assistant) : void {
         $player_id = (int)$this->getActivePlayerId();
@@ -258,6 +288,11 @@ class Game extends \Table
                 break;
             case 196:
                 # Granny Smith
+                $board = $this->cards->getCardsOfTypeInLocation("back", null, (string)$player_id, null);
+                if (count($board) < 1) {
+                    throw new \BgaUserException(_('You don\'t have blocks in your quilt'));
+                }
+                $this->notify->player($player_id, "granny", "", $board);
                 break;
             case 197:
                 # Uncle Sam
@@ -959,7 +994,7 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [195];
+            $assistants = [196];
             // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
         } else {
             $assistants = [192, 194];
