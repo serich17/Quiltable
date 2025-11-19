@@ -1935,6 +1935,9 @@ synchronizeValidationState: function() {
                 }
                 block.addEventListener("click", block.boundGranny)
             })
+            dojo.style('back', 'display', 'inline-block')
+            this.hide_turn_buttons()
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select a quilt block to flip to a pattern') : _('${actplayer} must a quilt block to flip to a pattern'), "")
         },
 
         swap: function() {
