@@ -135,7 +135,7 @@ class Game extends \Table
         $this->activeNextPlayer();
         $player = $this->getActivePlayerId();
         $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player"));
-        $this->gamestate->setPlayerNonMultiactive($player_id, "next");
+        $this->gamestate->setPlayerNonMultiactive((int)$player_id, "next");
     }
 
     public function actPlayCard(int $card_id): void
@@ -190,6 +190,37 @@ class Game extends \Table
         $this->gamestate->nextState("back");
     }
 
+    public function actSally(int $block, int $player_board) {
+        $player_id = $this->getActivePlayerId();
+        $block = $this->cards->getCard($block);
+        $player_board = $this->cards->getCard($player_board);
+
+        if ($player_board["location"] != $player_id || $block["location"] != "pattern_area") {
+            throw new \BgaUserException(_('Invalid cards selected'));
+        }
+
+        $this->cards->moveCard($block["id"], $player_id, $player_board["location_arg"]);
+        $this->cards->moveCard($player_board["id"], "pattern_area", $block["location_arg"]);
+
+        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Swap Sally(195)] to swap [${card_name1}(${card_arg1})] with [${card_name2}(${card_arg2})]'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg1" => $player_board["type_arg"],
+                        "card_name1" => "pattern card",
+                        "card_arg2" => $block["type_arg"],
+                        "card_name2" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
+
+        $this->notify->all("animation", "", ["animation"=>[
+            $block["id"] => ["card_id"=>$block["id"], "target"=>"player-table-" . $player_id, "loc"=>$player_board["location_arg"], "flip"=>0],
+            $player_board["id"] => ["card_id"=>$player_board["id"], "target"=>"pattern-cont", "loc"=>$block["location_arg"], "flip"=>0]
+    ]]);
+    $this->setGameStateValue("use_assistant", 0);
+    $this->gamestate->nextState("nextPlayer");
+
+    }
+
 
     public function actAssistantAction(int $assistant) : void {
         $player_id = (int)$this->getActivePlayerId();
@@ -218,6 +249,12 @@ class Game extends \Table
                 break;
             case 195:
                 # Swap Shop Sandra
+                $board = $this->cards->getCardsOfTypeInLocation("back", null, (string)$player_id, null);
+                $blocks = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", null);
+                if (count($board) < 1 || count($blocks) < 1) {
+                    throw new \BgaUserException(_('You don\'t have cards to swap'));
+                }
+                $this->notify->player($player_id, "sandra", "", ["board" => $board, "blocks" => $blocks]);
                 break;
             case 196:
                 # Granny Smith
@@ -922,7 +959,7 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [194];
+            $assistants = [195];
             // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
         } else {
             $assistants = [192, 194];
