@@ -1897,6 +1897,57 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
+        swap: function(event, blocks, board) {
+            let block = dojo.query("#pattern-board .selected")
+            let player_board = dojo.query("#player-tables .selected")
+
+            if (block.length > 0 && player_board.length > 0) {
+                this.bgaPerformAction("actSally", { 
+                        block: parseInt(block[0].id),
+                        player_board: parseInt(player_board[0].id)
+            }).then(() => {});
+            }
+        },
+
+        notif_sandra: function(args) {
+            blocks = args.blocks
+            board = args.board
+
+            Object.keys(board).forEach(block => {
+                block = dojo.byId(`${block}`)
+                block.classList.add("selectable-card")
+                block.boundSandra = (event) => {
+                    Object.keys(board).forEach(block => {
+                        block = dojo.byId(`${block}`)
+                        block.classList.remove("selectable-card")
+                        block.removeEventListener('click', block.boundSandra)
+                        delete block.boundSandra
+                    })
+                    event.target.classList.add("selected", "selectable-card")
+                    this.swap(event, blocks, board)
+                }
+                block.addEventListener("click", block.boundSandra)
+            })
+            Object.keys(blocks).forEach(block => {
+                block = dojo.byId(`${block}`)
+                block.classList.add("selectable-card")
+                block.boundSandra = (event) => {
+                    Object.keys(blocks).forEach(block => {
+                        block = dojo.byId(`${block}`)
+                        block.classList.remove("selectable-card")
+                        block.removeEventListener('click', block.boundSandra)
+                        delete block.boundSandra
+                    })
+                    event.target.classList.add("selected", "selectable-card")
+                    this.swap(event, blocks, board)
+                }
+                block.addEventListener("click", block.boundSandra)
+            })
+            dojo.style('back', 'display', 'inline-block')
+            this.hide_turn_buttons()
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select two blocks to swap') : _('${actplayer} must select blocks to swap'), "")
+        },
+
         send_trade_request: function(id, player) {
             this.bgaPerformAction("acttim", { 
                         player_id: parseInt(player),
