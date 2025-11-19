@@ -52,6 +52,7 @@ class Game extends \Table
             "return_block_index" => 13,
             "turn_counter" => 73,
             "use_assistant" => 74,
+            "sally_counter" => 75,
             "solo_options" => 100,
             "game_variants" => 101,
             "patches" => 102,
@@ -115,11 +116,9 @@ class Game extends \Table
         // ));
 
         // Mark this player as done
-        $this->activeNextPlayer();
-        $this->gamestate->setPlayerNonMultiactive($player_id, "next");
 
         // If all players are done, notify players
-        if (!$this->gamestate->isMultiactiveState() && ($this->getGameStateValue("quilting_assistants") == 1)) {
+        if ((count($this->gamestate->getActivePlayerList()) == 1) && ($this->getGameStateValue("quilting_assistants") == 1)) {
             $players = $this->getCollectionFromDB("SELECT player_id, player_no, assistant FROM player ORDER BY player_no ASC");
             foreach($players as $playerId => $info) {
                 $card_arg = $info["assistant"];
@@ -132,10 +131,11 @@ class Game extends \Table
                     "player_name" => $this->getPlayerNameById($playerId)
                 ));
             }
-            $player = $this->getActivePlayerId();
-            $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player"));
         }
-            
+        $this->activeNextPlayer();
+        $player = $this->getActivePlayerId();
+        $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player"));
+        $this->gamestate->setPlayerNonMultiactive($player_id, "next");
     }
 
     public function actPlayCard(int $card_id): void
@@ -166,16 +166,41 @@ class Game extends \Table
         $this->gamestate->nextState("playCard");
     }
 
-
-    public function actAssistantAction(int $assistant) : void {
-        if ($this->getGameStateValue("use_assistant") == 0) {
+    public function acttim(int $player_id, int $card_id) {
+        $active_player = (int)$this->getActivePlayerId();
+        $player_asistant = $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $active_player");
+        if ($this->getGameStateValue("use_assistant") == 0 || 194 != $player_asistant) {
             throw new \BgaUserException(_('Assistant not available'));
         }
+
+        $this->cards->moveCard($card_id, (string)$player_id);
+
+        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Terrific Tim(194)] to trade [${card_name}(${card_arg})] for extra turn'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg" => $this->cards->getCard($card_id)["type_arg"],
+                        "card_name" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
+
+            $target = "player-table-" . $player_id;    
+            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+        
+        $this->DbQuery("UPDATE player SET num_turns = num_turns + 1 WHERE player_id = $active_player");
+        $this->gamestate->nextState("back");
+    }
+
+
+    public function actAssistantAction(int $assistant) : void {
         $player_id = (int)$this->getActivePlayerId();
+        $player_asistant = $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id");
+        if ($this->getGameStateValue("use_assistant") == 0 || $assistant != $player_asistant) {
+            throw new \BgaUserException(_('Assistant not available'));
+        }
         switch ($assistant) {
             case 192:
                 # Sneaky Sally
-                $this->notify->player($player_id, "sally", "", []);
+                $this->notify->player($player_id, "sally", "", $this->argPlan());
                 break;
             case 193:
                 # Big Billy
@@ -183,6 +208,13 @@ class Game extends \Table
                 break;
             case 194:
                 # Terrific Tim
+                $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, $this->getCurrentPlayerId(), null);
+                $player_names = $this->loadPlayersBasicInfos();
+                unset($player_names[$player_id]);
+                if (count($patterns) == 0) {
+                    throw new \BgaUserException(_('You don\'t have patterns to donate'));
+                }
+                $this->notify->player($player_id, "tim", "", ["cards"=>$patterns, "players"=>$player_names]);
                 break;
             case 195:
                 # Swap Shop Sandra
@@ -264,30 +296,53 @@ class Game extends \Table
         $this->notify->player((int)$this->getActivePlayerId(), "return_args", "", $this->argReturn());
     }
 
-    public function actChoosePattern(int $card_id) {
-        if(!$this->checkIfTopCard($card_id)) {                                
+    public function actChoosePattern(int $card_id, bool $sally) {
+        $player_id = (int)$this->getActivePlayerId();
+        if(!$this->checkIfTopCard($card_id)) {
             // Throw an exception to stop further processing
             throw new \BgaUserException('Invalid card choice');
         }
+        if ($this->gamestate->getCurrentState($player_id) == "playerTurn" && $sally) {
+            $this->gamestate->nextState("assistantAction");
+        }
 
-        $this->cards->moveCard($card_id, $this->getActivePlayerId());
+            $this->cards->moveCard($card_id, $this->getActivePlayerId());
 
-        $this->notify->all("plan", clienttranslate('${player_name} draws pattern card [${card_name}(${card_arg})]'),
-                array(
-                    "player_id" => $this->getActivePlayerId(),
-                    "card_arg" => $this->cards->getCard($card_id)["type_arg"],
-                    "card_name" => "pattern card",
-                    "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
-                ));
+            if ($sally) {
+                $this->incGameStateValue("sally_counter", 1);
+                $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Sneaky Sally(192)] to draw pattern card [${card_name}(${card_arg})]'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg" => $this->cards->getCard($card_id)["type_arg"],
+                        "card_name" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
 
-        $target = "player-table-" . $this->getActivePlayerId();
+            } else {
+            $this->notify->all("plan", clienttranslate('${player_name} draws pattern card [${card_name}(${card_arg})]'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg" => $this->cards->getCard($card_id)["type_arg"],
+                        "card_name" => "pattern card",
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                    ));
 
-        $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+            }
 
-        
-        $this->refillPatternArea();
+            $target = "player-table-" . $this->getActivePlayerId();    
+            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
 
-        $this->gamestate->nextState("nextPlayer");
+            $this->refillPatternArea();
+
+            if (!$sally) {
+                $this->gamestate->nextState("nextPlayer");
+            } else if ($this->getGameStateValue("sally_counter") < 3) {
+                $this->notify->player($player_id, "sally", "", $this->argPlan());
+            } else {
+                $this->setGameStateValue("sally_counter", 0);
+                $this->setGameStateValue("turn_counter", 5);
+                $this->gamestate->nextState("nextPlayer");
+            }
     }
 
 
@@ -331,9 +386,10 @@ class Game extends \Table
         if ($billy) {
             $this->setGameStateValue("use_assistant", 0);
             $this->notify->All("chooseTiles",
-            clienttranslate('${player_name} uses assistant ${assistant_arg} to add ${card_arg} to quilt'),
+            clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
             [
                 "player_name" => $this->getActivePlayerName(),
+                "card_name" => $this->quilt_cards[193]["name"],
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
                 "assistant_arg" => 193
             ]);
@@ -373,7 +429,7 @@ class Game extends \Table
         // Reset the internal pointer to the first card
         $this->setGameStateValue("return_block_index", 0);
     
-        $this->gamestate->nextState("return");
+        $this->gamestate->nextState("itterate");
     }
     
     
@@ -553,9 +609,8 @@ class Game extends \Table
     public function argReturnTile() {
         $player_id = (int)$this->getActivePlayerId();
         $index = $this->getGameStateValue("return_block_index");
-
         $cards = [];
-        $cards["card"] = self::getObjectFromDB("SELECT card_id, location FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
+        $cards["card"] = $this->getObjectFromDB("SELECT card_id, location FROM return_blocks ORDER BY id ASC LIMIT 1 OFFSET $index");
     
         return $cards;
     }
@@ -630,6 +685,7 @@ class Game extends \Table
                 if ($this->getGameStateValue("quilting_assistants") == 1) {
                     $next = $this->getPlayerAfter((int)$this->getActivePlayerId());
                     $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $next"));
+                    $this->DbQuery("UPDATE player SET num_turns = 2 WHERE player_id = $player_id");
                 }
                 $this->setGameStateValue("turn_counter", 0);
                 $this->activeNextPlayer();
@@ -866,10 +922,11 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [192,193];
-            // 192, 194, 195, 196, 197, 198, 199, 206, 207
+            $assistants = [194];
+            // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
         } else {
-            $assistants = [192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 206, 207];
+            $assistants = [192, 194];
+            // 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 206, 207
         }
 
 
@@ -877,7 +934,6 @@ class Game extends \Table
         if (($this->getGameStateValue("game_variants") != 2 && $this->getGameStateValue("quilting_assistants") == 1) || ($this->getPlayersNumber() == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
             # get random assistant cards the players can choose from
             $players = $this->loadPlayersBasicInfos();
-            
 
             # set assigned assistant card to choose from
             foreach($players as $player_id => $info) {
