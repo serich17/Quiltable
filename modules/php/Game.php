@@ -1202,11 +1202,9 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [198];
-            // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
+            $assistants = [192,194,196,198];
         } else {
-            $assistants = [192, 200];
-            // 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 206, 207
+            $assistants = [192,194,196,198,200];
         }
 
 
