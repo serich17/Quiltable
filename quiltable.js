@@ -297,6 +297,12 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 
                 break;
            */
+            case 'helperAction':
+                if (this.isCurrentPlayerActive()) {
+                this.helper(args.args)
+                }
+                break;
+
             case 'playerTurn':
                 this.gladys = false
                 if (args.args.turn_num > 0 && this.isCurrentPlayerActive()) {
@@ -1992,6 +1998,92 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
+        notif_flip_animation: function(args) {
+            card = dojo.query(`[assistant=${args.id}]`)[0]
+
+            card.style.transition = 'transform 0.5s';
+            card.style.transformStyle = 'preserve-3d';
+            card.style.backfaceVisibility = 'hidden';
+
+            card.style.transform = 'rotateY(360deg)';
+
+            setTimeout(() => {
+
+                // Remove old type classes
+                card.classList.remove(this.types[args.id].class);
+
+                // Add new type classes
+                card.classList.add(this.types[args.other].class);
+
+                // Update type and location attributes
+                card.setAttribute("assistant", args.other);
+            }, 250);
+
+            setTimeout(() => {
+                // Reset transform and clean up
+                card.style.transition = '';
+                card.style.transform = '';
+                }, 500);
+
+        },
+
+        helper: function(args) {
+            this.statusBar.removeActionButtons()
+            this.statusBar.addActionButton(_('Allow'), () => this.bgaPerformAction("actMaddieOption", {option: 0}))
+            this.statusBar.addActionButton(_('Give Pattern Instead'), () => {
+                this.statusBar.removeActionButtons()
+                this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actHelperBack"), {id:'back', color: 'secondary', style: 'display:none;'})
+
+                console.log(args.patterns)
+                this.statusBar.setTitle( _('${you} must choose a pattern to give'), "")
+
+                Object.keys(args.patterns).forEach(id => {
+                    block = dojo.byId(id)
+                    block.classList.add("selectable-card")
+                    block.boundMaddie = (event) => {
+                        Object.keys(args.patterns).forEach(id => {
+                            block = dojo.byId(`${id}`)
+                            block.classList.remove("selectable-card")
+                            block.removeEventListener('click', block.boundMaddie)
+                            delete block.boundMaddie
+                        })
+                        this.bgaPerformAction("actMaddieOption", {
+                            option: event.target.id
+                        })
+                        
+                        
+                    }
+                    block.addEventListener("click", block.boundMaddie)
+                })
+
+            })
+            console.log("###HELPER NOTIF")
+            console.log(args)
+            this.statusBar.setTitle(
+                dojo.string.substitute(_('${player_name} is trying to flip your assistant'), {
+                    player_name: args.name
+                })
+            );
+        
+        
+        },
+
+        notif_maddie: function(args) {
+            this.statusBar.removeActionButtons()
+            Object.values(args).forEach(arg => {
+                this.statusBar.addActionButton(arg.player_name, () => this.bgaPerformAction("actMaddie", {
+                    tar_player: arg.player_id
+                }))
+            })
+            this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
+                        this.removePatterns()
+                        // Clear previous temporary cards
+                        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                    }), {id:'back', color: 'secondary', style: 'display:none;'});
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a player to flip their assistant') : _('${actplayer} must choose a player to flip their assistant'), "")
+        },
+
         notif_fix_assistants: function(args) {
             Object.values(args).forEach(arg =>{
                 const old = dojo.query(`#player-table-${arg.player_id} [assistant]`)[0]
@@ -2007,7 +2099,6 @@ synchronizeValidationState: function() {
         },
 
         notif_travis: function(args) {
-            console.log(args)
             this.statusBar.removeActionButtons()
             Object.values(args).forEach(arg => {
                 this.statusBar.addActionButton(arg.player_name, () => this.bgaPerformAction("actTravis", {
@@ -2020,6 +2111,7 @@ synchronizeValidationState: function() {
                         dojo.query('.temp-card', this.board).forEach(dojo.destroy);
                         dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
                     }), {id:'back', color: 'secondary', style: 'display:none;'});
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose which other player to switch assistants with') : _('${actplayer} must choose which other player to switch assistants with'), "")
         },
 
         notif_gladys: function(args) {
