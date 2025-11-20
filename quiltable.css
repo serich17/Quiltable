@@ -85,6 +85,12 @@
   font-size: 2em;
 }
 
+#score_header {
+  text-align: center;
+  font-size: 2em;
+  font-family: "Playwrite US Modern";
+}
+
 /* Main score sheet container */
 .score-sheet-background {
     background: linear-gradient(135deg, rgba(137, 137, 137, 0.6) 0%, rgba(100, 100, 100, 0.5) 100%);
