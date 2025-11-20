@@ -318,6 +318,33 @@ class Game extends \Table
 
     }
 
+    public function actTravis(string $tar_player) {
+        $player_id = $this->getActivePlayerId();
+        $player_assis = $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id");
+        $tar_assis = $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $tar_player");
+        if ($this->getGameStateValue("use_assistant") == 0 || $player_assis != 200 || !$tar_assis) {
+            throw new \BgaUserException(_('Assistant not available'));
+        }
+
+        $this->DbQuery("UPDATE player SET assistant = $tar_assis WHERE player_id = $player_id");
+        $this->DbQuery("UPDATE player SET assistant = $player_assis WHERE player_id = $tar_player");
+
+        $this->notify->all("plan", clienttranslate('${player_name} swaps assistants with ${player_name1} [Tricky Travis(200)] ↔️ [Other Assistant(${card_arg1})]'),
+                    array(
+                        "player_id" => $this->getActivePlayerId(),
+                        "card_arg1" => $tar_assis,
+                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId()),
+                        "player_name1" => $this->getPlayerNameById((int)$tar_player)
+                    ));
+
+        $this->notify->all("fix_assistants", "", $this->getCollectionFromDB("SELECT player_id, assistant FROM player"));
+
+        $this->setGameStateValue("use_assistant", 0);
+        $this->gamestate->nextState("nextPlayer");
+
+
+    }
+
 
     public function actAssistantAction(int $assistant) : void {
         $player_id = (int)$this->getActivePlayerId();
@@ -371,12 +398,16 @@ class Game extends \Table
                 break;
             case 198:
                 # Planning Peter
+                // handled in the normal placeblocks and return functions
                 break;
             case 199:
                 # Gifted Gladys
+                $this->notify->player($player_id, "gladys", "", []);
                 break;
             case 200:
                 # Tricky Travis
+                
+                $this->notify->player($player_id, "travis", "", $this->getCollectionFromDB("SELECT player_id, player_name, assistant FROM player WHERE player_id != $player_id"));
                 break;
             case 201:
                 # Mayhem Maddie
@@ -490,7 +521,7 @@ class Game extends \Table
     }
 
 
-    public function actPlaceBlocks(#[JsonParam(associative: true)] mixed $args, bool $billy) {
+    public function actPlaceBlocks(#[JsonParam(associative: true)] mixed $args, bool $billy, bool $gladys=false) {
         $player_id = (int)$this->getActivePlayerId();
 
         if ($billy && $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id") != 193) {
@@ -537,7 +568,17 @@ class Game extends \Table
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
                 "assistant_arg" => 193
             ]);
-        } else {
+        } else if ($gladys) {
+            $this->notify->All("chooseTiles",
+            clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
+            [
+                "player_name" => $this->getActivePlayerName(),
+                "card_name" => $this->quilt_cards[193]["name"],
+                "card_arg" => json_encode($card_data), // This will be substituted as a string
+                "assistant_arg" => 199
+            ]);
+        }
+        else {
             $this->notify->All("chooseTiles",
                 clienttranslate('${player_name} adds ${card_arg} to quilt'),
                 [
@@ -1066,10 +1107,10 @@ class Game extends \Table
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [197];
+            $assistants = [198];
             // 192, 193 194, 195, 196, 197, 198, 199, 206, 207
         } else {
-            $assistants = [192, 194];
+            $assistants = [192, 200];
             // 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 206, 207
         }
 
@@ -1641,28 +1682,28 @@ function calculatePoints() {
     }
 
     function validatePlayerCards($args, $billy) {
+        $player_id = $this->getActivePlayerId();
         $allCardsPlayerTable = $this->cards->getCardsOfTypeInLocation("back", null, $this->getActivePlayerId(), null);
         foreach ($args as $arg) {
             $card_id = $arg["cardId"];
             $loc = $arg["locationId"];
             // validation
-            // TODO update number validation for specific player cards
             if (!$this->cards->getCard($card_id)) {
-                var_dump("#1");
+                // var_dump("#1");
                 return false;
             }
             if ($this->cards->getCard($card_id)["location"] != "pattern_area") {
-                var_dump("#2");
+                // var_dump("#2");
                 return false;
             } if ((count($args) < 2 || count($args) > 3) && !$billy) {
-                var_dump("#3");
+                // var_dump("#3");
                 return false;
             } if ((count($args) < 1 || count($args) > 4) && (!$billy || $this->getGameStateValue("use_assistant") == 0)) {
-                var_dump("#4");
+                // var_dump("#4");
                 return false;
             }
              if ($this->cards->countCardInLocation($this->getActivePlayerId(), $loc) > 0) {
-                var_dump("#5");
+                // var_dump("#5");
                 return false;
             }
         }
@@ -1705,20 +1746,31 @@ function calculatePoints() {
     }
 
     // Check if all positions were visited (i.e. connected)
-    if (count($visited) != count($positions)) {
-        var_dump("#5");
+    if (count($visited) != count($positions) && $this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id") != 199) {
+        // var_dump("#5");
+        return false;
+    } else if (count($allCardsPlayerTable) == 0 && count($visited) != count($positions)) {
         return false;
     }
 
     // Check that at least one of the new cards is adjacent to an existing card on the player table
     $adjacentFound = false;
+
+    if ($this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id") == 198) {
+        $adjacentFound = true;
+    }
+
+    $gladys = [];
+    for ($i=0; $i < count($positions); $i++) {
+        $gladys[$i] = false;
+    }
     
     foreach ($allCardsPlayerTable as $existingCard) {
         $existingPos = $this->quilt_cards[$existingCard['location_arg']];
         $erow = $existingPos['row']-1;
         $ecol = $existingPos['col']-1;
 
-        
+        $counter = 0;
         foreach ($positions as $newPos) {
             $nrow = $newPos['row'];
             $ncol = $newPos['col'];
@@ -1728,20 +1780,20 @@ function calculatePoints() {
                 ($ncol == $ecol && abs($nrow - $erow) == 1)
             ) {
                 $adjacentFound = true;
-                break 2;
+                $gladys[$counter] = true;
             }
+            $counter++;
         }
-        //var_dump($positions);
-        //var_dump($allCardsPlayerTable);
     }
 
-    if (!$adjacentFound && count($allCardsPlayerTable) > 0) {
-        var_dump("#6");
+    if (in_array(false,array_values($gladys)) && count($allCardsPlayerTable) > 0) {
         return false;
     }
 
-
-            
+    if (!$adjacentFound && count($allCardsPlayerTable) > 0) {
+        // var_dump("#6");
+        return false;
+    }            
         return true;
     }
 

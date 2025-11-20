@@ -37,6 +37,8 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.tempCards = []; // Temporary card elements for preview
             this.board
             this.isShiftEnabled = true
+            this.unconected = false
+            this.gladys = false
         },
         
         /*
@@ -247,6 +249,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             assis.classList.add(`${this.types[assistant].class}`, "card")
             assis.setAttribute("assistant", assistant)
             board.appendChild(assis)
+            if (assistant == 198) {
+                this.unconected = true
+            }
         },
 
        setup_board_cards: function(data, playerid) {
@@ -293,6 +298,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 break;
            */
             case 'playerTurn':
+                this.gladys = false
                 if (args.args.turn_num > 0 && this.isCurrentPlayerActive()) {
                     dojo.style('pass', 'display', 'inline-block');
                 }
@@ -300,7 +306,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 // Clear previous temporary cards
                 dojo.query('.temp-card', this.board).forEach(dojo.destroy);
                 dojo.query('.card-group-controls', this.board).forEach(dojo.destroy); 
-                if (args.args.use_assistant != 0 && this.isCurrentPlayerActive()) {
+                if (args.args.use_assistant != 0 && this.isCurrentPlayerActive() && !this.unconected) {
                     //TODO set assistant to send request on click to server to return args for specific assistant
                     card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0]
                     card.boundAssistant = this.assistant.bind(this)
@@ -587,7 +593,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 delay = 0
                 Object.values(args.animation).forEach(element => {
                     let target
-                    const original = document.getElementById(element.card_id)
+                    const original = document.getElementById(element.card_id) || dojo.query(`[assistant=${element.card_id}]`)[0]
                     const card = original.cloneNode(true)
                     card.style.zIndex = 300
                     card.id = element.card_id+100
@@ -828,14 +834,65 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 }
        },
 
+
+       // generated from chat gpt after I gave it a working function for a single separate block
+       checkReturnAjacency: function(ids) {
+        if (this.unconected) {
+            return true;
+        }
+
+        // STEP 1: get all non-selected card locations
+        const allCards = dojo.query('.card', this.board);
+        const remaining = [];
+
+        allCards.forEach(card => {
+            const id = parseInt(card.id);
+            if (!ids.includes(id)) {
+                remaining.push(card.getAttribute("location"));
+            }
+        });
+
+        // If 0 or 1 cards remain → trivially connected
+        if (remaining.length <= 1) return true;
+
+        // STEP 2: BFS from first card
+        const visited = new Set();
+        const queue = [remaining[0]];
+
+        while (queue.length > 0) {
+            const loc = queue.shift();
+            if (visited.has(loc)) continue;
+
+            visited.add(loc);
+
+            // neighbors
+            const adj = this.getAdjacentLocations(loc);
+
+            adj.forEach(a => {
+                // Only consider neighbors that are in remaining
+                if (remaining.includes(String(a)) && !visited.has(String(a))) {
+                    queue.push(String(a));
+                }
+            });
+        }
+
+    // STEP 3: connected if BFS reached all remaining cards
+    return visited.size === remaining.length;
+},
+
+
        confirmReturnCards: function () {
             const cards = dojo.query(".card.selectable-card.selected", "player-table-" + this.player_id);
             const cardIds = []
 
             cards.forEach(card => {
-
                 cardIds.push(parseInt(card.id))
             })
+
+            if (!this.checkReturnAjacency(cardIds)) {
+                this.showMessage(_("You may not return blocks that will leave part of the quilt unconnected."), "error");
+                return;
+            }
 
             this.bgaPerformAction("actReturnBlocks", { 
                 cards: JSON.stringify(cardIds)
@@ -915,7 +972,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
         
         // Validate adjacency
-        if (!this.areCardsAdjacent(selectedCards.map(card => card.location))) {
+        if (!this.areCardsAdjacent(selectedCards.map(card => card.location))&& !this.gladys) {
             this.showMessage(_("Selected cards must be adjacent"), "error");
             return;
         }
@@ -1396,7 +1453,11 @@ finalizeCardPlacement: function(billy=false) {
     const isAdjacent = isFirstPlacement || this.checkAnyCardAdjacentToExisting();
     
     if (!isAdjacent) {
-        this.showMessage(_("At least one card must be adjacent to an existing card."), "error");
+        if (this.gladys) {
+            this.showMessage(_("All selected cards adjacent to an existing card."), "error");
+        } else {
+            this.showMessage(_("At least one card must be adjacent to an existing card."), "error");
+        }
         return;
     }
     
@@ -1497,7 +1558,7 @@ checkAdjacentToExistingCards: function(tempCard) {
         
         // Cards are adjacent if they're in the same row with adjacent columns
         // OR in the same column with adjacent rows
-        return (sameRow && adjacentCol) || (sameCol && adjacentRow);
+        return (sameRow && adjacentCol) || (sameCol && adjacentRow) || this.unconected;
     });
 },
 
@@ -1511,14 +1572,14 @@ getLocationIdFromPosition: function(row, col) {
 // Send placements to server with proper ajaxcall
 sendCardPlacements: function(placements, billy) {
     console.log("Sending placements to server:", placements);
+    
     // send move to server
     this.bgaPerformAction("actPlaceBlocks", { 
         args: JSON.stringify(placements),// Format the placements for server
-        billy: billy
+        billy: billy,
+        gladys: this.gladys
     }).then(() => {
     });
-    
-    console.log(placementData)
 },
 getCardLocation: function(cardId, area) {
     const loc = this.locations[cardId]
@@ -1568,15 +1629,19 @@ checkAnyCardAdjacentToExisting: function() {
     if (existingCards.length === 0) {
         return true; // First placement is always valid
     }
+
+    let connected = false
     
     // Check if any temp card is adjacent to an existing card
     for (let i = 0; i < this.tempCards.length; i++) {
         if (this.checkAdjacentToExistingCards(this.tempCards[i])) {
-            return true;
+            connected = true;
+        } else if (this.gladys) {
+            return false;
         }
     }
     
-    return false;
+    return connected;
 },
 
 
@@ -1673,7 +1738,7 @@ synchronizeValidationState: function() {
     }
     
     // If any card is invalid, make all cards invalid
-    if (anyInvalid || !this.checkAnyCardAdjacentToExisting()) {
+    if ((anyInvalid || !this.checkAnyCardAdjacentToExisting()) && !this.unconected) {
         for (let i = 0; i < this.tempCards.length; i++) {
             dojo.toggleClass(this.tempCards[i], 'valid-placement', false);
         }
@@ -1800,6 +1865,11 @@ synchronizeValidationState: function() {
                 //locations that should not be added if there is a deck
                 adjacents.forEach(adj => adjacentLocations.add(adj));
             });
+
+            if (this.gladys) {
+                all = [208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243]
+                all.forEach(v => adjacentLocations.add(v))
+            }
         
             console.log("Adjacent Locations:", adjacentLocations); // Debugging line
         
@@ -1921,6 +1991,48 @@ synchronizeValidationState: function() {
             // dojo.subscribe('shift', this, "notif_quiltShift")
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
+
+        notif_fix_assistants: function(args) {
+            Object.values(args).forEach(arg =>{
+                const old = dojo.query(`#player-table-${arg.player_id} [assistant]`)[0]
+                const assis = document.createElement("div")
+                assis.classList.add(`${this.types[arg.assistant].class}`, "card")
+                assis.setAttribute("assistant", arg.assistant)
+                dojo.place(assis, old, 'before')
+                old.remove()
+                if (arg.assistant == 198 && this.playerId == arg.player_id) {
+                    this.unconected = true
+                }
+            })
+        },
+
+        notif_travis: function(args) {
+            console.log(args)
+            this.statusBar.removeActionButtons()
+            Object.values(args).forEach(arg => {
+                this.statusBar.addActionButton(arg.player_name, () => this.bgaPerformAction("actTravis", {
+                    tar_player: arg.player_id
+                }))
+            })
+            this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
+                        this.removePatterns()
+                        // Clear previous temporary cards
+                        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                    }), {id:'back', color: 'secondary', style: 'display:none;'});
+        },
+
+        notif_gladys: function(args) {
+            this.gladys = true
+            this.hide_turn_buttons()
+            dojo.style('choose_button', 'display', 'inline-block')
+            dojo.style('return_button', 'display', 'inline-block')
+            dojo.style('back', 'display', 'inline-block')
+            
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose which action to use with assistant') : _('${actplayer} must choose action'), "")
+
+        },
+
 
         turnOver: function() {
             let block = dojo.query("#pattern-board .selected")
