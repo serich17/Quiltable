@@ -955,7 +955,7 @@ class Game extends \Table
         $this->notify->all("endScores", "",[ 'endScores' => $points ]);
         if ($this->getPlayersNumber() == 1) {
             $players = $this->loadPlayersBasicInfos();
-            if ($points[array_keys($players)[0]] < $points["999"]) {
+            if ($points[array_keys($players)[0]]["total"] < $points["999"]["total"]) {
                 $this->DbQuery("UPDATE player SET player_score = 0");
             }
         }
