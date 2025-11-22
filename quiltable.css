@@ -85,6 +85,11 @@
   font-size: 2em;
 }
 
+#overall-content {
+    /* background-image: url('img/background.png');
+    background-size: repeat; */
+}
+
 #score_header {
   text-align: center;
   font-size: 2em;
