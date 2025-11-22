@@ -56,6 +56,8 @@ class Game extends \Table
             "main_player"=> 76,
             "helper_player" => 77,
             "which_transition" => 78,
+            "quilt_master" => 79,
+            "quilt_master_turns" => 80,
             "solo_options" => 100,
             "game_variants" => 101,
             "patches" => 102,
@@ -111,13 +113,6 @@ class Game extends \Table
     // Save choice in DB
         
 
-        // Notify table
-        // self::notifyAllPlayers("optionChosen", clienttranslate('${player_name} chose an option'), array(
-        //     "player_id" => $player_id,
-        //     "player_name" => $this->getPlayerNameById($player_id),
-        //     "option" => $option
-        // ));
-
         // Mark this player as done
 
         // If all players are done, notify players
@@ -139,6 +134,92 @@ class Game extends \Table
         $player = $this->getActivePlayerId();
         $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player"));
         $this->gamestate->setPlayerNonMultiactive((int)$player_id, "next");
+        if ($this->getPlayersNumber() == 1) {
+            $this->notify->player((int)$this->getActivePlayerId(), "choose_corner", "", [224,227,229,232,234,237,239,242]);
+            $this->setGameStateValue("quilt_master", 234);
+        }
+    }
+
+    function actQuiltMaster(int $id) {
+        $this->setGameStateValue("quilt_master", $id);
+        $this->gamestate->nextState("back");
+    }
+
+    function quiltMasterTurn() {
+        $args = [];
+        $key_pairs = [
+            224 => 208,
+            225 => 209,
+            226 => 210,
+            227 => 211,
+
+            229 => 211,
+            230 => 215,
+            231 => 219,
+            232 => 223,
+
+            234 => 223,
+            235 => 222,
+            236 => 221,
+            237 => 220,
+
+            239 => 220,
+            240 => 216,
+            241 => 212,
+            242 => 208
+        ];
+
+        $keys   = array_keys($key_pairs);
+        $values = array_values($key_pairs);
+        $current_position = $this->getGameStateValue("quilt_master");
+        $current_index = array_search($current_position, $keys);
+
+        // get the cards that he chooses
+        $start_value_index = $current_index;
+        $chosen = [];
+        $num_to_take = $this->getGameStateValue("quilt_master_turns");
+
+        for ($i = 0; $i < $num_to_take; $i++) {
+            $cycled_index = ($start_value_index + $i) % count($values);
+            $chosen[] = $values[$cycled_index];
+        }
+
+
+        $animations = [];
+        $animations["animation"] = [];
+        foreach($chosen as $index => $id) {
+            $cards = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", $id);
+            if (count($cards) == 1) {
+                $card = array_values($cards)[0];
+                $card_id = $card["id"];
+                $target = "pattern-board";
+                $animations["animation"][$card_id] = ["card_id"=>$card_id, "target"=>$target, "loc"=>$current_position, "flip"=>0];
+
+                $this->cards->moveCard($card_id, "quiltMaster");
+                $new_type_arg = $this->quilt_cards[$card["type_arg"]]["other_side"];
+                $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = 'pattern' WHERE card_id = $card_id");
+            }
+        }
+        $args["cards"] = $animations;
+
+        // $this->notify->all("animation", "", ["animation"=>$animations]);
+
+        $this->notify->all("return", clienttranslate('<b>Quilting Master</b> takes ${card_num} cards'),
+                array(
+                    "card_num" => $num_to_take,
+        ));      
+
+        // update new position for quilt_master
+        $current_index = ($current_index + 1) % count($keys);
+        $this->setGameStateValue("quilt_master", $keys[$current_index]);
+
+
+        $args["moveMaster"] = ["animation"=>[205 => ["card_id"=>205, "target"=>"pattern-board", "loc"=>$keys[$current_index], "flip"=>0]]];
+
+
+        $this->notify->all("quilt_master", "", $args);
+
+        $this->refillPatternArea();
     }
 
     public function actPlayCard(int $card_id): void
@@ -791,7 +872,6 @@ class Game extends \Table
         }
         # Real args
         $this->notify->all("shift", "", $this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null));
-        $this->notify->all("showPoints", "", $this->calculatePoints());
 
     }
     
@@ -871,9 +951,17 @@ class Game extends \Table
     }
 
     public function stPostEnd() {
-        $this->notify->all("endScores", "",[ 'endScores' => $this->calculatePoints() ]);
+        $points = $this->calculatePoints();
+        $this->notify->all("endScores", "",[ 'endScores' => $points ]);
+        if ($this->getPlayersNumber() == 1) {
+            $players = $this->loadPlayersBasicInfos();
+            if ($points[array_keys($players)[0]] < $points["999"]) {
+                $this->DbQuery("UPDATE player SET player_score = 0");
+            }
+        }
         $this->gamestate->nextState("endGame");
     }
+
 
 
     
@@ -945,15 +1033,12 @@ class Game extends \Table
         // add points to db
         if ($endTriggered == 1) {
             foreach($this->calculatePoints() as $id => $data) {
-                $total = 0;
-                foreach($data as $source => $point) {
-                    if ($point == "N/A") {
-                        continue;
-                    }
-                    $total += $point;
+                if ($id == "999") {
+                    continue;
                 }
+                $total = $data["total"];
                 $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
-            }
+            }            
 
             $this->gamestate->nextState("postEnd");
         } else {
@@ -966,6 +1051,9 @@ class Game extends \Table
                     $next = $this->getPlayerAfter((int)$this->getActivePlayerId());
                     $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $next"));
                     $this->DbQuery("UPDATE player SET num_turns = 2 WHERE player_id = $player_id");
+                }
+                if ($this->getPlayersNumber() == 1) {
+                    $this->quiltMasterTurn();
                 }
                 $this->setGameStateValue("turn_counter", 0);
                 $this->activeNextPlayer();
@@ -1062,6 +1150,9 @@ class Game extends \Table
 
         $result["options"] = $this->getGameStateValue("game_variants");
 
+        $result["master"] = ($this->getPlayersNumber() == 1) ? $this->getGameStateValue("quilt_master") : null;
+
+
         // return player boards
         $player_ids = array_keys($this->loadPlayersBasicInfos());
 
@@ -1138,6 +1229,22 @@ class Game extends \Table
         // TODO: Setup the initial game situation here.
 
         // create new deck
+
+        // set counter for single player
+        if ($this->getPlayersNumber() == 1) {
+            # check if game with advanced options
+            if ($this->getGameStateValue("patches") == 1 || $this->getGameStateValue("symmetry") == 1 || $this->getGameStateValue("quilting_assistants") == 1) {
+                $num_turns = 1;
+            } else {
+                $num_turns = 0;
+            }
+            $solo_option = $this->getGameStateValue("solo_options");
+            $num_turns += $solo_option;
+
+            $this->setGameStateValue("quilt_master_turns", $num_turns);
+        }
+
+
 
         $cards = [];
         foreach ($this->quilt_cards as $card_id => $card) {
@@ -1309,7 +1416,7 @@ class Game extends \Table
                 $points += intval($this->quilt_cards[$card_info["type_arg"]]["points"]);
             }
         } else {
-            $points = "N/A";
+            $points = "-";
         }
         return $points;
     }
@@ -1439,7 +1546,7 @@ class Game extends \Table
             }       
             return $total;
         } else {
-            return "N/A";
+            return "-";
         }
         }
         #helper
@@ -1486,7 +1593,7 @@ class Game extends \Table
     
     function getCompletedQuiltPoints($player_id) {
         if ($this->getGameStateValue("game_variants") == 2) {
-            return "N/A";
+            return "-";
         }
         if (count(array_keys($this->cards->getCardsOfTypeInLocation("back", null, $player_id, null))) == 16) {
             return 5;
@@ -1497,7 +1604,7 @@ class Game extends \Table
     }
     function getSymmetryPoints($player_id) {
         if ($this->getGameStateValue("symmetry") == 2 && ($this->getPlayersNumber() == 1 || $this->getGameStateValue("game_variants") == 1)) {
-            return "N/A";
+            return "-";
         }
 
         $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
@@ -1661,7 +1768,7 @@ class Game extends \Table
     
     function getPatchesPoints($player_id) {
         if ($this->getGameStateValue("game_variants") == 2 || $this->getGameStateValue("patches") == 2) {
-            return "N/A";
+            return "-";
         }
         $total = 0;
         $patchPoints = 3;
@@ -1730,13 +1837,38 @@ function calculatePoints() {
     $players = $this->loadPlayersBasicInfos();
 
     foreach ($players as $player_id => $data) {
-        $scores[$player_id] = [
-                'premium'   => $this->getPremiumPoints($player_id),
+        $player_score = ['premium'   => $this->getPremiumPoints($player_id),
                 'patterns'  => $this->getPatternPoints($player_id),
                 'completed' => $this->getCompletedQuiltPoints($player_id),
                 'symmetry'  => $this->getSymmetryPoints($player_id),
-                'patches'   => $this->getPatchesPoints($player_id),
-                'total' => $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id")
+                'patches'   => $this->getPatchesPoints($player_id)];
+
+        $sum = 0;
+        foreach($player_score as $i => $val) {
+            if ($sum != "-") {
+                $sum += $val;
+            }
+        }
+
+        $player_score['total'] = $sum;
+        $scores[$player_id] = $player_score;
+    }
+
+    if ($this->getPlayersNumber() == 1) {
+        $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, "quiltMaster", null);
+        $total = 0;
+
+        foreach ($patterns as $id => $card) {
+            $total += intval($this->quilt_cards[$card["type_arg"]]["points"]);
+        }
+
+        $scores["999"] = [
+            'premium'   => "-",
+            'patterns'  => $total,
+            'completed' => "-",
+            'symmetry'  => "-",
+            'patches'   => "-",
+            'total' => $total
         ];
     }
 

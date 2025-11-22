@@ -87,6 +87,18 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     pattern_area.appendChild(card_cont)
                 })
             })
+         if (gamedatas.master && this.playerCount == 1) {
+                const master = document.createElement("div")
+                master.classList.add("card")
+                master.id = 205
+                master.style.zIndex = 205
+                master.classList.add(gamedatas.type_arg[205].class)
+                master.style.left = gamedatas.locations[gamedatas.master].x + "px"
+                master.style.top = gamedatas.locations[gamedatas.master].y + "px"
+                master.setAttribute("location", gamedatas.master)
+                master.setAttribute("type", 205)
+                pattern_area.appendChild(master)
+            }
 
             // back cards placed in position
             Object.keys(gamedatas.pattern_area).forEach((card) => {
@@ -157,11 +169,13 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.addShiftControls(gamedatas)
             
             Object.values(gamedatas.players).forEach(player => {
+                if (player.id == 999) {
+                    return
+                }
             if (gamedatas.gamestate.name != "chooseAssistant" && gamedatas.players[player.id].assistant != "0") {
                     this.setup_assistant(gamedatas.players[player.id].assistant, player.id)
                 }
             });
-
 
             
             // TODO: Set up your game interface here, according to "gamedatas"
@@ -171,6 +185,16 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.setupNotifications();
             console.log("gamedatas")
             console.log(gamedatas)
+            console.log(gamedatas.endScores)
+            const scorePlayers = { ...gamedatas.players };
+
+            scorePlayers["999"] = {
+                id: "999",
+                name: _("Quilt Master"),
+                color: "#000000",
+            };
+
+            console.log(scorePlayers)
 
             if (this.options != 2) {
                 this.scoreSheet = new BgaScoreSheet.ScoreSheet(
@@ -182,7 +206,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     entryLabelWidth: 120,
                     entryLabelHeight: 20,
                     classes: 'score-sheet-background',
-                    players: gamedatas.players,
+                    players: scorePlayers,
                     entries: [
                         {
                         property: 'completed',
@@ -220,7 +244,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     ],
                     scores: gamedatas.endScores, // to defined if the game state is 99, else null, so the score displays directly on reload when the game is ended. If unset, the score sheet will be hidden by default.
                     onScoreDisplayed: (property, playerId, score) => { // if you want to do something when a score is revealed
-                        if (property === 'total') {
+                        if (property === 'total' && playerId != 999) {
                         this.scoreCtrl[playerId].setValue(score);
                         }
                     },
@@ -594,7 +618,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             },
             
 
-            animateCards: function(args, delay_inc=50) {
+            animateCards: function(args, delay_inc=50, delete_card = false) {
+                return new Promise((resolve) => {
+                const anims = [];
                 console.log(args)
                 delay = 0
                 Object.values(args.animation).forEach(element => {
@@ -631,13 +657,14 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             
                         }
                         // Enhanced flip animation
-                        this.createEnhancedFlipAnimation(card, original, gridElement, element,target, delay)
+                        this.createEnhancedFlipAnimation(card, original, gridElement, element,target, delay, anims, delete_card)
                     } else if (element.loc == "0") {
                         // Existing pattern placement logic remains the same
                         target = dojo.query("#"+element.target + " .patterns")[0]
                         const placeholder = dojo.create("div", {className: "temp-pattern", id: "placeholder"}, target)
             
                         let patternAnimation = this.slideToObject(card, placeholder, 500, delay).play();
+                        anims.push(patternAnimation);
                         dojo.connect(patternAnimation, "onEnd", () => {
                             target.appendChild(original)
                             original.setAttribute("location", element.loc)
@@ -645,11 +672,15 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             original.style.position = "static"
                             this.destroyAnimation(element.card_id+100);
                             placeholder.remove()
+                            if (delete_card) {
+                                original.remove()
+                            }
                         })
                     } else {
                         // Existing movement logic remains the same
                         target = element.target !== "pattern-board" ? document.getElementById(element.target).querySelector(".quilt-board") : document.getElementById("pattern-board");
                         let animation = this.slideToObjectPos(card, target, this.locations[element.loc].x, this.locations[element.loc].y, 500, delay).play();
+                        anims.push(animation);
                         dojo.connect(animation, "onEnd", () => {
                             target.appendChild(original)
                             original.setAttribute("location", element.loc)
@@ -657,6 +688,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             original.style.left = this.locations[element.loc].x + "px"
                             original.style.display = ""
                             this.destroyAnimation(element.card_id+100);
+                            if (delete_card) {
+                                original.remove()
+                            }
                         });
                     }
             
@@ -668,9 +702,11 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     }
                     delay += delay_inc
                 });
+                dojo.fx.combine(anims).play().onEnd = resolve();
+            })
             },
             
-            createEnhancedFlipAnimation: function(card, original, gridElement, element,target, delay) {
+            createEnhancedFlipAnimation: function(card, original, gridElement, element,target, delay, anims, delete_card) {
                 // Prepare the card for transformation
                 card.style.transition = 'transform 0.5s';
                 card.style.transformStyle = 'preserve-3d';
@@ -678,6 +714,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             
                 // Slide and flip animation
                 let slideAnimation = this.slideToObject(card, gridElement, 500, delay)
+                anims.push(slideAnimation);
                 dojo.connect(slideAnimation, "onEnd", () => {
                     // Perform the flip in a single step
                     card.style.transform = 'rotateY(360deg)';
@@ -723,6 +760,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                         // Reset transform and clean up
                         card.style.transform = '';
                         this.destroyAnimation(card.id);
+                        if (delete_card) {
+                            original.remove()
+                        }
                     }, 500);  // Full animation duration
                 });
                 
@@ -1998,6 +2038,47 @@ synchronizeValidationState: function() {
             //this.notifqueue.setSynchronous( 'shift', 3000 );
         },
 
+        notif_choose_corner: function(args) {
+                this.statusBar.setTitle( _('You must choose a starting point for the quilt master'), "")
+                this.hide_turn_buttons()
+            return new Promise((resolve) => {
+            args.forEach((i) => {
+                const pattern_area = document.querySelector(".pattern-board")
+                const newElement = dojo.create("div", {
+                    className: "possible-card",
+                    id: i
+                }, pattern_area);
+                newElement.style.left = this.locations[i].x + "px"
+                newElement.style.top = this.locations[i].y + "px"
+                newElement.boundSelectPlan = (element) => {
+                    this.bgaPerformAction("actQuiltMaster", {
+                    id: parseInt(element.target.id)
+                }).then(() => {
+                    const cards = dojo.query(".possible-card")
+                    cards.forEach(card => {
+                        card.remove()
+                    })
+                    const master = document.createElement("div")
+                    master.classList.add("card")
+                    master.id = 205
+                    master.style.zIndex = 205
+                    master.classList.add(this.types[205].class)
+                    master.style.left = this.locations[element.target.id].x + "px"
+                    master.style.top = this.locations[element.target.id].y + "px"
+                    master.setAttribute("location", element.target.id)
+                    master.setAttribute("type", 205)
+                    pattern_area.appendChild(master)
+                }) 
+                return resolve();
+                }
+                newElement.addEventListener("click", newElement.boundSelectPlan)
+            })
+
+            });
+            
+                
+        },
+
         notif_flip_animation: function(args) {
             card = dojo.query(`[assistant=${args.id}]`)[0]
 
@@ -2025,6 +2106,21 @@ synchronizeValidationState: function() {
                 card.style.transform = '';
                 }, 500);
 
+        },
+
+        notif_quilt_master: function(args) {
+            // Example animation
+            // this.slideToObject(args.card, args.destination, 1000).play();
+            this.statusBar.setTitle( _('Quilt Master is moving...'), "")
+            
+            // delay = 1000
+            // count = args.cards.length
+
+            const p1 = this.animateCards(args.cards, 500, true)
+
+            return p1.then(() => {
+                return this.animateCards(args.moveMaster);
+            });
         },
 
         helper: function(args) {
@@ -2387,8 +2483,8 @@ synchronizeValidationState: function() {
         }
         },
 
-        async notif_animation(args) {
-            await this.animateCards(args)
+        notif_animation(args) {
+            return this.animateCards(args)
         },
 
         notif_plan: function(args) {
@@ -2419,11 +2515,6 @@ synchronizeValidationState: function() {
                 this.setup_board_cards(args, id)
                 this.isShiftEnabled = true
             }
-        },
-
-        notif_showPoints: function(args) {
-            console.log("POINTS")
-            console.log(args)
         },
         
         // TODO: from this point and below, you can write your game notifications handling methods
