@@ -2116,7 +2116,7 @@ synchronizeValidationState: function() {
             // delay = 1000
             // count = args.cards.length
 
-            const p1 = this.animateCards(args.cards, 500, true)
+            const p1 = this.animateCards(args.cards, 1500, true)
 
             return p1.then(() => {
                 return this.animateCards(args.moveMaster);
@@ -2476,6 +2476,7 @@ synchronizeValidationState: function() {
         notif_endScores(args) {
             // console.log("endScores")
             // console.log(args)
+            this.statusBar.setTitle( _('Calculating End Scores...'), "")
             if (this.options != 2) {
                 return this.scoreSheet.setScores(args.endScores, {
                     startBy: this.playerId
