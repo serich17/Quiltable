@@ -33,25 +33,25 @@
 <div id="pattern-cont" style="display: flex; flex-direction:column;">
 <div id="pattern-wrapper">
 <div class="quilt-board pattern-board" id="pattern-board">
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-  
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-  
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-  
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
+    <div class="item" location="208"></div>
+    <div class="item" location="209"></div>
+    <div class="item" location="210"></div>
+    <div class="item" location="211"></div>
+   
+    <div class="item" location="212"></div>
+    <div class="item" location="213"></div>
+    <div class="item" location="214"></div>
+    <div class="item" location="215"></div>
+   
+    <div class="item" location="216"></div>
+    <div class="item" location="217"></div>
+    <div class="item" location="218"></div>
+    <div class="item" location="219"></div>
+   
+    <div class="item" location="220"></div>
+    <div class="item" location="221"></div>
+    <div class="item" location="222"></div>
+    <div class="item" location="223"></div>
   </div>
   </div>
   </div>
