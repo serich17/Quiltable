@@ -20,6 +20,7 @@ define([
     "ebg/core/gamegui",
     "ebg/counter", "dojo/query",
     getLibUrl('bga-score-sheet', '1.x'),
+    "ebg/counter"
 
 ],
 function (dojo, declare, gui, counter, query, BgaScoreSheet) {
@@ -62,6 +63,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.playerId = this.player_id
             this.locations = gamedatas.locations
             this.types = gamedatas.type_arg
+            this.miniCounters = {};
             // Example to add a div on the game area
             document.getElementById('play-board').insertAdjacentHTML('beforeend', `
                 <div id="player-tables"></div>
@@ -87,17 +89,23 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     pattern_area.appendChild(card_cont)
                 })
             })
-         if (gamedatas.master && this.playerCount == 1) {
+         if (this.playerCount == 1) {
                 const master = document.createElement("div")
                 master.classList.add("card")
-                master.id = 205
+                master.id = "205"
                 master.style.zIndex = 205
                 master.classList.add(gamedatas.type_arg[205].class)
-                master.style.left = gamedatas.locations[gamedatas.master].x + "px"
-                master.style.top = gamedatas.locations[gamedatas.master].y + "px"
+                master.style.display = "none"
                 master.setAttribute("location", gamedatas.master)
-                master.setAttribute("type", 205)
+                master.setAttribute("type", "205")
                 pattern_area.appendChild(master)
+
+                if(gamedatas.master){
+                    master.style.left = gamedatas.locations[gamedatas.master].x + "px"
+                    master.style.top = gamedatas.locations[gamedatas.master].y + "px"
+                    master.setAttribute("location", gamedatas.master)
+                    master.style.display = "block"
+                }
             }
 
             // back cards placed in position
@@ -118,9 +126,17 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             // Setting up player boards
             Object.values(gamedatas.players).forEach(player => {
                 // example of setting up players boards
-                this.getPlayerPanelElement(player.id).insertAdjacentHTML('beforeend', `
-                    <div id="player-counter-${player.id}">A player counter</div>
-                `);
+                if (this.playerCount == 1) {
+                    this.getPlayerPanelElement(player.id).insertAdjacentHTML('beforeend', `
+                            <div id="miniCounter_${player.id}" class="mini-counter">
+                                <div class="mini-card"></div>
+                                <span id="miniCounterValue_${player.id}" class="mini-counter-value"></span>
+                            </div>
+                        `);
+                    this.miniCounters[player.id] = new ebg.counter();
+                    this.miniCounters[player.id].create(`miniCounterValue_${player.id}`);
+                    this.miniCounters[player.id].setValue(parseInt(gamedatas.master_num)); // starting value
+                }
 
                 // example of adding a div for each player
                 document.getElementById('player-tables').insertAdjacentHTML('beforeend', `
@@ -188,11 +204,13 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             console.log(gamedatas.endScores)
             const scorePlayers = { ...gamedatas.players };
 
-            scorePlayers["999"] = {
+            if (this.playerCount == 1) {
+                scorePlayers["999"] = {
                 id: "999",
                 name: _("Quilt Master"),
                 color: "#000000",
-            };
+                };  
+            }
 
             console.log(scorePlayers)
 
@@ -323,6 +341,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
            */
 
             case 'helperAction':
+                if (args.args.corner) {
+                    this.choose_corner(args.args.corner)
+                }
                 if (args.args.flip_info) {
                     this.flip_cards(args.args.flip_info);
                 }
@@ -345,11 +366,22 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     //TODO set assistant to send request on click to server to return args for specific assistant
                     card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0]
                     card.boundAssistant = this.assistant.bind(this)
+                    // this.statusBar.addActionButton(_('Assistant'), () => this.assistant())
                     card.addEventListener("click", card.boundAssistant)
                     setTimeout(() => {
                     card.classList.add("selectable-card")
                     }, 100);
                 }
+
+                if (this.isCurrentPlayerActive() && args.args.last_turn) {
+                    $(`last_turn`).style.display = "inline-block";
+                    $(`last_turn`).innerText = _("Last Turn");
+                } else {
+                    document.querySelectorAll('.lastTurnMarker')
+                .forEach(div => div.style.display = "none");
+                }
+
+                
                 break;
 
             case 'chooseAssistant':
@@ -547,7 +579,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                                 args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-1}
                                 index ++
                             })
-                            this.animateCards(args, 0)
+                            this.shift_animation(args)
                         }
                     } else if (direction == "up") {
                         cards.forEach(card => {
@@ -564,7 +596,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                                 args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc-4}
                                 index ++
                             })
-                            this.animateCards(args, 0)
+                            this.shift_animation(args)
                         }
                     } else if (direction == "right") {
                         cards.forEach(card => {
@@ -581,7 +613,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                                 args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+1}
                                 index ++
                             })
-                            this.animateCards(args, 0)
+                            this.shift_animation(args)
                         }
                     } else if (direction == "down") {
                         cards.forEach(card => {
@@ -598,7 +630,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                                 args.animation[index] = {"card_id":card.id, "target":`player-table-${this.playerId}`, "loc":loc+4}
                                 index ++
                             })
-                            this.animateCards(args, 0)
+                            this.shift_animation(args)
                         }
                     }
                     if (shift) {
@@ -631,210 +663,148 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             },
             
 
-            animateCards: function(args, delay_inc = 50, delete_card = false) {
-    return new Promise((resolve) => {
-        const anims = [];
-        let delay = 0;
-
-        Object.values(args.animation).forEach(element => {
-            const original = document.getElementById(element.card_id) || dojo.query(`[assistant=${element.card_id}]`)[0];
-            const card = original.cloneNode(true);
-            card.style.zIndex = 300;
-            card.id = element.card_id + 100;
-            
-            // Append to the correct parent
-            if (original.hasAttribute("arg")) {
-                document.getElementById(original.getAttribute("arg"))
-                    .querySelector(".quilt-board")
-                    .appendChild(card);
-            } else {
-                document.getElementById("pattern-board").appendChild(card);
-            }
-            original.style.display = "none";
-
-            let target, gridElement;
-
-            // FLIP ANIMATION
-            if (element.flip > 0) {
-                if (element.loc == "0") {
-                    target = dojo.query("#" + element.target + " .patterns")[0];
-                    gridElement = dojo.create("div", {
-                        className: "temp-pattern",
-                        id: "placeholder"
-                    }, target);
-                    original.setAttribute("location", element.loc);
-                    original.setAttribute("type", element.flip);
-                    original.style.position = "static";
-                } else {
-                    if (element.target == "player-table-" + this.playerId) {
-                        target = dojo.query(`#${element.target} .quilt-board`)[0];
-                        gridElement = this.getGridElement(
-                            `#${element.target} .quilt-board`,
-                            this.locations[element.loc].row - 1,
-                            this.locations[element.loc].col - 1,
-                            4
-                        );
+            animateCards: function(resolve, element, delay=0, delete_card = false) {
+                    let target
+                    const original = document.getElementById(element.card_id) || dojo.query(`[assistant=${element.card_id}]`)[0]
+                    const card = original.cloneNode(true)
+                    card.style.zIndex = 300
+                    card.id = element.card_id+100
+                    
+                    // Append to the correct parent
+                    if (original.hasAttribute("arg")) {
+                        document.getElementById(original.getAttribute("arg")).querySelector(".quilt-board").appendChild(card)
                     } else {
-                        target = document.getElementById("pattern-board");
-                        gridElement = this.getGridElement(
-                            "#pattern-board",
-                            this.locations[element.loc].row - 1,
-                            this.locations[element.loc].col - 1,
-                            4
-                        );
+                        document.getElementById("pattern-board").appendChild(card)
                     }
-                }
-
-                // Push the promise from flip animation
-                const flipPromise = this.createEnhancedFlipAnimation(
-                    card, original, gridElement, element, target, delay, delete_card
-                );
-                anims.push(flipPromise);
-
-            // PATTERN BOARD PLACEMENT
-            } else if (element.loc == "0") {
-                target = dojo.query("#" + element.target + " .patterns")[0];
-                const placeholder = dojo.create("div", {
-                    className: "temp-pattern",
-                    id: "placeholder"
-                }, target);
-
-                const patternAnimation = this.slideToObject(card, placeholder, 500, delay).play();
-                
-                // Wrap animation in promise
-                anims.push(
-                    new Promise(res => {
-                        dojo.connect(patternAnimation, "onEnd", () => {
-                            target.appendChild(original);
-                            original.setAttribute("location", element.loc);
-                            original.style.display = "";
-                            original.style.position = "static";
-                            this.destroyAnimation(element.card_id + 100);
-                            placeholder.remove();
-                            if (delete_card) {
-                                original.remove();
+                    original.style.display = "none"
+            
+                    // Flipping logic for cards
+                    if (element.flip > 0) {
+                        if (element.loc == "0") {
+                            target = dojo.query("#"+element.target + " .patterns")[0]
+                            gridElement = dojo.create("div", {className: "temp-pattern", id: "placeholder"}, target)
+                            original.setAttribute("location", element.loc)
+                            original.setAttribute("type", element.flip)
+                            original.style.position = "static"
+                        } else {
+                            if (element.target == "player-table-"+this.playerId) {
+                                target = dojo.query(`#${element.target} .quilt-board`)[0]
+                                gridElement = this.getGridElement(`#${element.target} .quilt-board`, this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
+                            } else {
+                                target = document.getElementById("pattern-board");
+                                gridElement = this.getGridElement("#pattern-board", this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
                             }
-                            res();
-                        });
-                    })
-                );
-
-            // GENERAL MOVEMENT
-            } else {
-                target = (element.target !== "pattern-board")
-                    ? document.getElementById(element.target).querySelector(".quilt-board")
-                    : document.getElementById("pattern-board");
-
-                const animation = this.slideToObjectPos(
-                    card,
-                    target,
-                    this.locations[element.loc].x,
-                    this.locations[element.loc].y,
-                    500,
-                    delay
-                ).play();
-
-                // Wrap animation in promise
-                anims.push(
-                    new Promise(res => {
+                            
+                        }
+                        // Enhanced flip animation
+                        this.createEnhancedFlipAnimation(resolve, card, original, gridElement, element,target, delay, delete_card)
+                    } else if (element.loc == "0") {
+                        // Existing pattern placement logic remains the same
+                        target = dojo.query("#"+element.target + " .patterns")[0]
+                        const placeholder = dojo.create("div", {className: "temp-pattern", id: "placeholder"}, target)
+            
+                        let patternAnimation = this.slideToObject(card, placeholder, 500, delay).play();
+                        dojo.connect(patternAnimation, "onEnd", () => {
+                            target.appendChild(original)
+                            original.setAttribute("location", element.loc)
+                            original.style.display = ""
+                            original.style.position = "static"
+                            this.destroyAnimation(element.card_id+100);
+                            placeholder.remove()
+                            if (delete_card) {
+                                original.remove()
+                            }
+                            resolve()
+                        })
+                    } else {
+                        // Existing movement logic remains the same
+                        target = element.target !== "pattern-board" ? document.getElementById(element.target).querySelector(".quilt-board") : document.getElementById("pattern-board");
+                        let animation = this.slideToObjectPos(card, target, this.locations[element.loc].x, this.locations[element.loc].y, 500, delay).play();
                         dojo.connect(animation, "onEnd", () => {
-                            target.appendChild(original);
-                            original.setAttribute("location", element.loc);
+                            target.appendChild(original)
+                            original.setAttribute("location", element.loc)
+                            original.style.top = this.locations[element.loc].y+ "px"
+                            original.style.left = this.locations[element.loc].x + "px"
+                            original.style.display = ""
+                            this.destroyAnimation(element.card_id+100);
+                            if (delete_card) {
+                                original.remove()
+                            }
+                            resolve()
+                        });
+                    }
+            
+                    // Set or remove arg attribute
+                    if (element.target != "pattern-board") {
+                        original.setAttribute("arg", element.target)
+                    } else {
+                        original.removeAttribute("arg")
+                    }
+            },
+            
+            createEnhancedFlipAnimation: function(resolve, card, original, gridElement, element,target, delay, delete_card) {
+                // Prepare the card for transformation
+                card.style.transition = 'transform 0.5s';
+                card.style.transformStyle = 'preserve-3d';
+                card.style.backfaceVisibility = 'hidden';
+            
+                // Slide and flip animation
+                let slideAnimation = this.slideToObject(card, gridElement, 500, delay)
+                dojo.connect(slideAnimation, "onEnd", () => {
+                    // Perform the flip in a single step
+                    card.style.transform = 'rotateY(360deg)';
+                    
+                    // Use a timeout to change classes after half the animation
+                    setTimeout(() => {
+                        // Change the card's classes and attributes
+                        const currentClasses = card.classList;
+                        const originalClasses = original.classList;
+                        
+                        // Remove old type classes
+                        currentClasses.remove(this.types[this.types[element.flip].other_side].class);
+                        originalClasses.remove(this.types[this.types[element.flip].other_side].class);
+                        
+                        // Add new type classes
+                        currentClasses.add(this.types[element.flip].class);
+                        originalClasses.add(this.types[element.flip].class);
+                        
+                        // Update type and location attributes
+                        original.style.zIndex = ""
+                        original.setAttribute("type", element.flip)
+                        original.setAttribute("location", element.loc)
+                    }, 250);  // Halfway through the animation
+            
+                    // Final placement and cleanup
+                    setTimeout(() => {
+                        if (element.loc != "0") {
+                            if (element.target == "player-table-"+this.playerId) {
+                                target.appendChild(original)
+                            }
                             original.style.top = this.locations[element.loc].y + "px";
                             original.style.left = this.locations[element.loc].x + "px";
-                            original.style.display = "";
-                            this.destroyAnimation(element.card_id + 100);
-                            if (delete_card) {
-                                original.remove();
-                            }
-                            res();
-                        });
-                    })
-                );
-            }
-
-            // Set or remove arg attribute
-            if (element.target != "pattern-board") {
-                original.setAttribute("arg", element.target);
-            } else {
-                original.removeAttribute("arg");
-            }
-
-            delay += delay_inc;
-        });
-
-        // Wait for ALL animations to complete before resolving
-        Promise.all(anims).then(resolve);
-    });
-},
-
-createEnhancedFlipAnimation: function(card, original, gridElement, element, target, delay, delete_card) {
-    return new Promise((resolve) => {
-        // Prepare the card for transformation
-        card.style.transition = 'transform 0.5s';
-        card.style.transformStyle = 'preserve-3d';
-        card.style.backfaceVisibility = 'hidden';
-
-        // Slide animation
-        let slideAnimation = this.slideToObject(card, gridElement, 500, delay);
-        
-        dojo.connect(slideAnimation, "onEnd", () => {
-            // Perform the flip
-            card.style.transform = 'rotateY(360deg)';
-            
-            // Change classes halfway through flip
-            setTimeout(() => {
-                const currentClasses = card.classList;
-                const originalClasses = original.classList;
+                            original.style.display = "block";
+                        } else {
+                            target.appendChild(original)
+                            original.setAttribute("location", element.loc)
+                            original.setAttribute("type", element.flip)
+                            original.style.display = ""
+                            original.style.position = "static"
+                            gridElement.remove()
+                        }
+                        
+                        // Reset transform and clean up
+                        card.style.transform = '';
+                        this.destroyAnimation(card.id);
+                        if (delete_card) {
+                            original.remove()
+                        }
+                        resolve()
+                    }, 500);  // Full animation duration
+                });
                 
-                // Remove old type classes
-                currentClasses.remove(this.types[this.types[element.flip].other_side].class);
-                originalClasses.remove(this.types[this.types[element.flip].other_side].class);
-                
-                // Add new type classes
-                currentClasses.add(this.types[element.flip].class);
-                originalClasses.add(this.types[element.flip].class);
-                
-                // Update attributes
-                original.style.zIndex = "";
-                original.setAttribute("type", element.flip);
-                original.setAttribute("location", element.loc);
-            }, 250);  // Halfway through the animation
-
-            // Final placement and cleanup
-            setTimeout(() => {
-                if (element.loc != "0") {
-                    if (element.target == "player-table-" + this.playerId) {
-                        target.appendChild(original);
-                    }
-                    original.style.top = this.locations[element.loc].y + "px";
-                    original.style.left = this.locations[element.loc].x + "px";
-                    original.style.display = "block";
-                } else {
-                    target.appendChild(original);
-                    original.setAttribute("location", element.loc);
-                    original.setAttribute("type", element.flip);
-                    original.style.display = "";
-                    original.style.position = "static";
-                    gridElement.remove();
-                }
-                
-                // Reset transform and clean up
-                card.style.transform = '';
-                this.destroyAnimation(card.id);
-                if (delete_card) {
-                    original.remove();
-                }
-                
-                // Resolve the promise after everything is complete
-                resolve();
-            }, 500);  // Full animation duration
-        });
-        
-        // Start the slide animation
-        slideAnimation.play();
-    });
-},
+                // Start the slide and flip sequence
+                slideAnimation.play();
+            },
         
        returnCard: function (event) {
         this.bgaPerformAction("actConfirmReturn", { 
@@ -2156,7 +2126,7 @@ synchronizeValidationState: function() {
                 }
         },
 
-        notif_choose_corner: function(args) {
+        choose_corner: function(args) {
                 this.statusBar.setTitle( _('You must choose a starting point for the quilt master'), "")
                 this.hide_turn_buttons()
             return new Promise((resolve) => {
@@ -2176,16 +2146,13 @@ synchronizeValidationState: function() {
                     cards.forEach(card => {
                         card.remove()
                     })
-                    const master = document.createElement("div")
-                    master.classList.add("card")
-                    master.id = 205
-                    master.style.zIndex = 205
-                    master.classList.add(this.types[205].class)
-                    master.style.left = this.locations[element.target.id].x + "px"
-                    master.style.top = this.locations[element.target.id].y + "px"
-                    master.setAttribute("location", element.target.id)
-                    master.setAttribute("type", 205)
-                    pattern_area.appendChild(master)
+                    const master = dojo.byId("205")
+
+                    master.style.left = gamedatas.locations[gamedatas.master].x + "px"
+                    master.style.top = gamedatas.locations[gamedatas.master].y + "px"
+                    master.setAttribute("location", gamedatas.master)
+                    master.style.display = "block"
+
                 }) 
                 return resolve();
                 }
@@ -2226,20 +2193,42 @@ synchronizeValidationState: function() {
 
         },
 
-        notif_quilt_master: function(args) {
-            this.statusBar.setTitle(_('Quilt Master is moving...'), "");
+        notif_quilt_master: function (args) {
+            return new Promise((resolveNotif) => {
+                console.log(args)
+                this.statusBar.setTitle(_('Quilt Master is moving...'), "");
 
-            // 1. Animation for deck cards
-            let deckAnim = this.animateCards(args.cards, 500, true);
+                let animations = [];
+                let delay = 0;
 
-            // 2. Animation for Quilt Master after delay
-            let masterAnim = deckAnim.then(() =>{
-                this.animateCards(args.moveMaster)
-            })
+                // 1. Queue animations for deck cards
+                Object.values(args.cards.animation).forEach(element => {
+                    animations.push(
+                        new Promise((resolveCard) => {
+                            this.animateCards(resolveCard, element, delay, true);
+                        }).then(()=>{
+                            this.miniCounters[this.playerId].incValue(1)
+                        })
+                    );
+                    delay += 500;
+                });
 
-            // 3. Wait for BOTH animations
-            return Promise.all([deckAnim, masterAnim])
+                // 2. When all deck card animations finish → animate the master
+                Promise.all(animations)
+                    .then(() => {
+                        return new Promise((resolveMaster) => {
+                            Object.values(args.moveMaster.animation).forEach(element => {
+                                this.animateCards(resolveMaster, element);
+                            })
+                        });
+                    })
+                    .then(() => {
+                        // 3. FINAL: resolve the global notification promise
+                        resolveNotif();
+                    });
+            });
         },
+
 
 
         helper: function(args) {
@@ -2617,7 +2606,49 @@ synchronizeValidationState: function() {
         },
 
         notif_animation(args) {
-            return this.animateCards(args)
+            return new Promise((resolveNotif) => {
+                let animations = [];
+                let delay = 0;
+
+                // 1. Queue animations for deck cards
+                Object.values(args.animation).forEach(element => {
+                    animations.push(
+                        new Promise((resolveCard) => {
+                            this.animateCards(resolveCard, element, delay);
+                        })
+                    );
+                    delay += 200;
+                });
+
+                // 2. When all deck card animations finish → animate the master
+                Promise.all(animations)
+                    .then(() => {
+                        // 3. FINAL: resolve the global notification promise
+                        resolveNotif();
+                    });
+            });
+        },
+        shift_animation(args) {
+            return new Promise((resolveNotif) => {
+                let animations = [];
+                let delay = 0;
+
+                // 1. Queue animations for deck cards
+                Object.values(args.animation).forEach(element => {
+                    animations.push(
+                        new Promise((resolveCard) => {
+                            this.animateCards(resolveCard, element, delay);
+                        })
+                    );
+                });
+
+                // 2. When all deck card animations finish → animate the master
+                Promise.all(animations)
+                    .then(() => {
+                        // 3. FINAL: resolve the global notification promise
+                        resolveNotif();
+                    });
+            });
         },
 
         notif_plan: function(args) {
