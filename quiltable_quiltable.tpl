@@ -24,7 +24,9 @@
     
     Please REMOVE this comment before publishing your game on BGA
 -->
-
+<div id="lastTurnContainer">
+  <div id="last_turn" class="lastTurnMarker" style="display:none;"></div>
+</div>
 <div class="storage"><div id="storage-item"></div></div>
 <div id="play-board">
 <div id="my-score-sheet">
