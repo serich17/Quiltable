@@ -96,7 +96,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 master.style.zIndex = 205
                 master.classList.add(gamedatas.type_arg[205].class)
                 master.style.display = "none"
-                master.setAttribute("location", gamedatas.master)
+                // master.setAttribute("location", gamedatas.master)
                 master.setAttribute("type", "205")
                 pattern_area.appendChild(master)
 
@@ -2148,9 +2148,9 @@ synchronizeValidationState: function() {
                     })
                     const master = dojo.byId("205")
 
-                    master.style.left = gamedatas.locations[gamedatas.master].x + "px"
-                    master.style.top = gamedatas.locations[gamedatas.master].y + "px"
-                    master.setAttribute("location", gamedatas.master)
+                    master.style.left = this.locations[element.target.id].x + "px"
+                    master.style.top = this.locations[element.target.id].y + "px"
+                    master.setAttribute("location", element.target.id)
                     master.style.display = "block"
 
                 }) 
@@ -2607,6 +2607,7 @@ synchronizeValidationState: function() {
 
         notif_animation(args) {
             return new Promise((resolveNotif) => {
+                this.statusBar.setTitle(_('Moving cards...'), "");
                 let animations = [];
                 let delay = 0;
 
@@ -2655,7 +2656,27 @@ synchronizeValidationState: function() {
 
         },
         notif_chooseTiles: function(args) {
-            console.log(args)
+            // return new Promise((resolveNotif) => {
+            //     let animations = [];
+            //     let delay = 0;
+
+            //     // 1. Queue animations for deck cards
+            //     Object.values(args.animation).forEach(element => {
+            //         animations.push(
+            //             new Promise((resolveCard) => {
+            //                 this.animateCards(resolveCard, element, delay);
+            //             })
+            //         );
+            //         delay += 0;
+            //     });
+
+            //     // 2. When all deck card animations finish → animate the master
+            //     Promise.all(animations)
+            //         .then(() => {
+            //             // 3. FINAL: resolve the global notification promise
+            //             resolveNotif();
+            //         })
+            // })
         },
 
         notif_return: function(args) {

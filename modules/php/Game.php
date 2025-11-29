@@ -721,6 +721,7 @@ function quiltMasterTurn() {
             $this->notify->All("chooseTiles",
             clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
             [
+                "animation"=> $animation["animation"],
                 "player_name" => $this->getActivePlayerName(),
                 "card_name" => $this->quilt_cards[193]["name"],
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
@@ -730,6 +731,7 @@ function quiltMasterTurn() {
             $this->notify->All("chooseTiles",
             clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
             [
+                "animation"=> $animation["animation"],
                 "player_name" => $this->getActivePlayerName(),
                 "card_name" => $this->quilt_cards[193]["name"],
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
@@ -740,13 +742,24 @@ function quiltMasterTurn() {
             $this->notify->All("chooseTiles",
                 clienttranslate('${player_name} adds ${card_arg} to quilt'),
                 [
+                    "animation"=> $animation["animation"],
                     "player_name" => $this->getActivePlayerName(),
                     "card_arg" => json_encode($card_data) // This will be substituted as a string
             ]);
         }
 
+        $this->DbQuery("
+            UPDATE player
+            SET mydata = '".json_encode($animation)."'
+            WHERE player_id = $player_id
+        ");        
+        // $this->notify->all("animation", "", $animation);
+        $this->gamestate->nextState("transition");
+
+    }
+
+    function actBlockRefill() {
         $this->gamestate->nextState("refill");
-        $this->notify->all("animation", "", $animation);
     }
 
     public function actReturnBlocks(#[JsonParam(associative: null)] mixed $cards) {
@@ -1058,6 +1071,29 @@ function quiltMasterTurn() {
 
     function stTransition() {
         $transition = $this->getGameStateValue("which_transition");
+         $player_id = $this->getActivePlayerId();
+        $raw = $this->getUniqueValueFromDB("SELECT mydata FROM player WHERE player_id=$player_id");
+        if ($raw === null) {
+            // empty
+        } else {
+            $data = json_decode($raw, true);
+            $this->notify->all("animation", "", $data);
+            $this->DbQuery("UPDATE player SET mydata = NULL WHERE player_id=$player_id");
+        }
+
+
+
+        $result = $this->refillPatternArea();
+
+        if ($result === null && $transition!=1 && $this->getGameStateValue("quilt_master") != 0) {
+            // Go directly to next player
+            $this->gamestate->nextState("helperAction");
+            return;
+        } else if ($result != null && $transition!=1 && $this->getGameStateValue("quilt_master") != 0) {
+            $this->gamestate->nextState("helperAction");
+            return;
+        }
+
 
         if ($transition == 0) {
             $helper = $this->getGameStateValue('helper_player');
@@ -2326,7 +2362,9 @@ function refillPatternArea($setup = false)
 }
 
 
+
 function executeFlip($card_id, $loc) {
+    // to avoid bug for placeblocks when changing states
     $card = $this->cards->getCard($card_id);
     $cardsInLoc = $this->getCollectionFromDB("SELECT * FROM card WHERE card_location = 'pattern_area' AND card_location_arg = $loc");
 
