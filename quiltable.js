@@ -431,13 +431,12 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 break;
            */
             case 'playerTurn':
-                dojo.query("[assistant]").forEach(card => {
-                    if (card.boundAssistant) {
-                        card.removeEventListener("click", card.boundAssistant);
-                        delete card.boundAssistant;
-                    }
-                });
-
+                cards = dojo.query(`[assistant=]`)
+                cards.forEach(card => {
+                    card.removeEventListener('click', card.boundAssistant);
+                    delete card.boundAssistant
+                    card.classList.remove("selectable-card")
+                })
                 break;
             case 'returnBlock':
                 this.removePatterns()
