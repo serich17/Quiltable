@@ -63,6 +63,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.playerId = this.player_id
             this.locations = gamedatas.locations
             this.types = gamedatas.type_arg
+            this.assistantHandler = this.assistant.bind(this);
             this.miniCounters = {};
             // Example to add a div on the game area
             document.getElementById('play-board').insertAdjacentHTML('beforeend', `
@@ -364,10 +365,17 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
 
                 if (args.args.use_assistant != 0 && this.isCurrentPlayerActive() && !this.unconected) {
                     //TODO set assistant to send request on click to server to return args for specific assistant
+                    if (!dojo.byId("assistant_action")) {
+                        this.statusBar.addActionButton(_('Assistant'), () => this.bgaPerformAction("actAssistantAction", { 
+                        assistant: args.args.use_assistant
+                    }), {id: 'assistant_action'});
+                    }
+                    dojo.place('assistant_action', 'back', 'before');
+                    dojo.style('assistant_action', 'display', 'inline-block')
                     card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0]
-                    card.boundAssistant = this.assistant.bind(this)
+                    card.boundAssistant = this.assistantHandler;
                     // this.statusBar.addActionButton(_('Assistant'), () => this.assistant())
-                    card.addEventListener("click", card.boundAssistant)
+                    card.addEventListener("click", this.assistantHandler)
                     setTimeout(() => {
                     card.classList.add("selectable-card")
                     }, 100);
@@ -385,7 +393,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 break;
 
             case 'chooseAssistant':
-                this.setUpAssistants(args)
+                if (!this.isSpectator) {
+                    this.setUpAssistants(args)
+                }
                 break;
             case 'returnBlock':
                 if (this.isCurrentPlayerActive() && args.args[0] != 0) {
@@ -421,12 +431,13 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 break;
            */
             case 'playerTurn':
-                cards = dojo.query(`[assistant=]`)
-                cards.forEach(card => {
-                    card.removeEventListener('click', card.boundAssistant);
-                    delete card.boundAssistant
-                    card.classList.remove("selectable-card")
-                })
+                dojo.query("[assistant]").forEach(card => {
+                    if (card.boundAssistant) {
+                        card.removeEventListener("click", card.boundAssistant);
+                        delete card.boundAssistant;
+                    }
+                });
+
                 break;
             case 'returnBlock':
                 this.removePatterns()
@@ -507,7 +518,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 }
                 this.bgaPerformAction("actAssistantAction", { 
                         assistant: event.target.getAttribute("assistant")
-                    }).then(() => {});
+                    })
             },
 
             addShiftControls: function(gamedatas) {
@@ -663,7 +674,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             },
             
 
-            animateCards: function(resolve, element, delay=0, delete_card = false) {
+            animateCards: function(resolve, element, delay=0, delete_card = false, player_id = null) {
                     let target
                     const original = document.getElementById(element.card_id) || dojo.query(`[assistant=${element.card_id}]`)[0]
                     const card = original.cloneNode(true)
@@ -687,7 +698,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             original.setAttribute("type", element.flip)
                             original.style.position = "static"
                         } else {
-                            if (element.target == "player-table-"+this.playerId) {
+                            if (element.target == "player-table-"+player_id) {
                                 target = dojo.query(`#${element.target} .quilt-board`)[0]
                                 gridElement = this.getGridElement(`#${element.target} .quilt-board`, this.locations[element.loc].row-1, this.locations[element.loc].col-1, 4)
                             } else {
@@ -697,7 +708,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                             
                         }
                         // Enhanced flip animation
-                        this.createEnhancedFlipAnimation(resolve, card, original, gridElement, element,target, delay, delete_card)
+                        this.createEnhancedFlipAnimation(resolve, card, original, gridElement, element,target, delay, delete_card, player_id)
                     } else if (element.loc == "0") {
                         // Existing pattern placement logic remains the same
                         target = dojo.query("#"+element.target + " .patterns")[0]
@@ -742,7 +753,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     }
             },
             
-            createEnhancedFlipAnimation: function(resolve, card, original, gridElement, element,target, delay, delete_card) {
+            createEnhancedFlipAnimation: function(resolve, card, original, gridElement, element,target, delay, delete_card, player_id) {
                 // Prepare the card for transformation
                 card.style.transition = 'transform 0.5s';
                 card.style.transformStyle = 'preserve-3d';
@@ -777,8 +788,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     // Final placement and cleanup
                     setTimeout(() => {
                         if (element.loc != "0") {
-                            if (element.target == "player-table-"+this.playerId) {
+                            if (element.target == "player-table-"+player_id) {
                                 target.appendChild(original)
+                                original.style.position = "absolute"
                             }
                             original.style.top = this.locations[element.loc].y + "px";
                             original.style.left = this.locations[element.loc].x + "px";
@@ -2080,8 +2092,11 @@ synchronizeValidationState: function() {
 
         flip_cards: function(args) {
             console.log(args)
-            this.statusBar.setTitle( _('You must choose where to turn over card from deck'), "")
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose where to turn over card from deck') : _('${actplayer} must choose where to turn over card from deck'), "")
 
+            if (this.isSpectator) {
+                    return
+                }
             args.locations.forEach(loc => {
                 console.log(loc)
                 const card = document.querySelector(`.pattern-board [location="${loc}"]`)
@@ -2127,9 +2142,11 @@ synchronizeValidationState: function() {
         },
 
         choose_corner: function(args) {
-                this.statusBar.setTitle( _('You must choose a starting point for the quilt master'), "")
-                this.hide_turn_buttons()
-            return new Promise((resolve) => {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a starting point for the quilt master') : _('${actplayer} must choose a starting point for the quilt master'), "")
+            if (this.isSpectator) {
+                return
+            }
+            this.hide_turn_buttons()
             args.forEach((i) => {
                 const pattern_area = document.querySelector(".pattern-board")
                 const newElement = dojo.create("div", {
@@ -2141,27 +2158,22 @@ synchronizeValidationState: function() {
                 newElement.boundSelectPlan = (element) => {
                     this.bgaPerformAction("actQuiltMaster", {
                     id: parseInt(element.target.id)
-                }).then(() => {
-                    const cards = dojo.query(".possible-card")
-                    cards.forEach(card => {
-                        card.remove()
-                    })
-                    const master = dojo.byId("205")
-
-                    master.style.left = this.locations[element.target.id].x + "px"
-                    master.style.top = this.locations[element.target.id].y + "px"
-                    master.setAttribute("location", element.target.id)
-                    master.style.display = "block"
-
-                }) 
-                return resolve();
+                })
                 }
                 newElement.addEventListener("click", newElement.boundSelectPlan)
+            })   
+        },
+        notif_plQuilt: function(args) {
+            console.log(args)
+            const cards = dojo.query(".possible-card")
+            cards.forEach(card => {
+                card.remove()
             })
-
-            });
-            
-                
+            const master = dojo.byId("205")
+            master.style.left = this.locations[args.loc].x + "px"
+            master.style.top = this.locations[args.loc].y + "px"
+            master.setAttribute("location", args.loc)
+            master.style.display = "block"
         },
 
         notif_flip_animation: function(args) {
@@ -2207,7 +2219,7 @@ synchronizeValidationState: function() {
                         new Promise((resolveCard) => {
                             this.animateCards(resolveCard, element, delay, true);
                         }).then(()=>{
-                            this.miniCounters[this.playerId].incValue(1)
+                            this.miniCounters[args.player_id].incValue(1)
                         })
                     );
                     delay += 500;
@@ -2332,7 +2344,7 @@ synchronizeValidationState: function() {
 
         turnOver: function() {
             let block = dojo.query("#pattern-board .selected, #player-tables .patterns .selected")
-            let loc = dojo.query("#player-tables .selected")
+            let loc = dojo.query("#player-tables .quilt-board .selected")
 
             console.log(block)
             if (block.length > 0 && loc.length > 0) {
@@ -2349,6 +2361,7 @@ synchronizeValidationState: function() {
         },
 
         notif_sam: function(args) {
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select a pattern and a place to turn it over') : _('${actplayer} must select a pattern and a place to turn it over'), "")
             patterns = args.patts
             board = args.items
 
@@ -2360,20 +2373,20 @@ synchronizeValidationState: function() {
                 }
                 block = dojo.query(`#player-table-${this.playerId} [location=${block}]`)[0]
                 block.classList.add("selectable-card")
-                block.boundSam = (event) => {
+                block.boundAssistant = (event) => {
                     board.forEach(block => {
                         if (block == null) {
                             return
                         }
                         block = dojo.query(`#player-table-${this.playerId} [location=${block}]`)[0];
                         block.classList.remove("selectable-card")
-                        block.removeEventListener('click', block.boundSam)
-                        delete block.boundSam
+                        block.removeEventListener('click', block.boundAssistant)
+                        delete block.boundAssistant
                     })
                     event.target.classList.add("selected", "selectable-card")
                     this.turnOver()
                 }
-                block.addEventListener("click", block.boundSam)
+                block.addEventListener("click", block.boundAssistant)
             })
             Object.values(patterns).forEach(block => {
                 if (block == null) {
@@ -2381,24 +2394,23 @@ synchronizeValidationState: function() {
                 }
                 block = dojo.byId(block)
                 block.classList.add("selectable-card")
-                block.boundSam = (event) => {
+                block.boundAssistant = (event) => {
                     Object.values(patterns).forEach(block => {
                         if (block == null) {
                             return
                         }
                         block = dojo.byId(`${block}`)
                         block.classList.remove("selectable-card")
-                        block.removeEventListener('click', block.boundSam)
-                        delete block.boundSam
+                        block.removeEventListener('click', block.boundAssistant)
+                        delete block.boundAssistant
                     })
                     event.target.classList.add("selected", "selectable-card")
                     this.turnOver()
                 }
-                block.addEventListener("click", block.boundSam)
+                block.addEventListener("click", block.boundAssistant)
             })
             dojo.style('back', 'display', 'inline-block')
             this.hide_turn_buttons()
-            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must select a pattern and a place to turn it over') : _('${actplayer} must select a pattern and a place to turn it over'), "")
         },
         
         flip: function(event) {
@@ -2551,6 +2563,7 @@ synchronizeValidationState: function() {
             dojo.byId('plan_button') && dojo.style('plan_button', 'display', 'none')
             dojo.byId('choose_button') && dojo.style('choose_button', 'display', 'none')
             dojo.byId('choose_button') && dojo.style('return_button', 'display', 'none')
+            dojo.byId('assistant_action') && dojo.style('assistant_action', 'display', 'none')
             dojo.byId('pass') && dojo.style('pass', 'display', 'none')
         },
 
@@ -2615,7 +2628,7 @@ synchronizeValidationState: function() {
                 Object.values(args.animation).forEach(element => {
                     animations.push(
                         new Promise((resolveCard) => {
-                            this.animateCards(resolveCard, element, delay);
+                            this.animateCards(resolveCard, element, delay, false, args.player_id);
                         })
                     );
                     delay += 200;
