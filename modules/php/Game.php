@@ -142,6 +142,7 @@ class Game extends \Table
 
     function actQuiltMaster(int $id) {
         $this->setGameStateValue("quilt_master", $id);
+        $this->notify->all("plQuilt", "", ["loc"=>$id]);
         $this->gamestate->nextState("turn");
     }
 
@@ -222,6 +223,7 @@ function quiltMasterTurn() {
             ]
         ]
     ];
+    $args["player_id"] = $this->getActivePlayerId();
     $this->notify->all("quilt_master", "", $args);
 }
 
@@ -271,7 +273,7 @@ function quiltMasterTurn() {
                     ));
 
             $target = "player-table-" . $player_id;    
-            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+            $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
         
         $this->DbQuery("UPDATE player SET num_turns = num_turns + 1 WHERE player_id = $active_player");
         $this->gamestate->nextState("back");
@@ -299,7 +301,7 @@ function quiltMasterTurn() {
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $block["id"] => ["card_id"=>$block["id"], "target"=>"player-table-" . $player_id, "loc"=>$player_board["location_arg"], "flip"=>0],
             $player_board["id"] => ["card_id"=>$player_board["id"], "target"=>"pattern-cont", "loc"=>$block["location_arg"], "flip"=>0]
     ]]);
@@ -329,7 +331,7 @@ function quiltMasterTurn() {
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $id => ["card_id"=>$id, "target"=>"player-table-" . $player_id, "loc"=>"0", "flip"=>$new_type_arg]
         ]]);
 
@@ -396,7 +398,7 @@ function quiltMasterTurn() {
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $pattern => ["card_id"=>$pattern, "target"=>"player-table-" . $player_id, "loc"=>$loc, "flip"=>$new_type_arg]
         ]]);
 
@@ -462,7 +464,7 @@ function quiltMasterTurn() {
                         "player_name1" => $this->getPlayerNameById((int)$player)
                     ));
 
-                $this->notify->all("animation", "", ["animation"=>[
+                $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
                     $option => ["card_id"=>$option, "target"=>"player-table-" . $active_player, "loc"=>0, "flip"=>0]
                 ]]);
 
@@ -663,7 +665,7 @@ function quiltMasterTurn() {
             }
 
             $target = "player-table-" . $this->getActivePlayerId();    
-            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+            $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
 
             $this->refillPatternArea(true);
             if (!$sally) {
@@ -703,6 +705,7 @@ function quiltMasterTurn() {
             
             $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0];
         }
+        $animation["player_id"] = $this->getActivePlayerId();
 
         $card_data = array();
         foreach ($args as $tile) {
@@ -820,7 +823,7 @@ function quiltMasterTurn() {
         $card_id = $tile["card_id"];
         $target = "pattern-board";
 
-        $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0]]]);
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0]]]);
         $this->gamestate->nextState("checkReturn");
         
     }
@@ -1077,6 +1080,7 @@ function quiltMasterTurn() {
             // empty
         } else {
             $data = json_decode($raw, true);
+            $data["player_id"] = $this->getActivePlayerId();
             $this->notify->all("animation", "", $data);
             $this->DbQuery("UPDATE player SET mydata = NULL WHERE player_id=$player_id");
         }
@@ -1433,7 +1437,8 @@ function quiltMasterTurn() {
 
 
         if ($this->getPlayersNumber() == 1) {
-            $assistants = [192,194,196,198];
+            // $assistants = [192,194,196,198];
+            $assistants = [196];
         } else {
             $assistants = [192,194,196,198,200];
         }
@@ -2377,6 +2382,7 @@ function executeFlip($card_id, $loc) {
         $this->DbQuery("UPDATE card SET card_type_arg=$new_type_arg, card_type='$new_type' WHERE card_id=$card_id");
 
         $this->notify->all('animation', '', [
+            "player_id"=> $this->getActivePlayerId(),
             'animation' => [
                 $card_id => [
                     'card_id' => $card_id,
