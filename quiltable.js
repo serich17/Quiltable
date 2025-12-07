@@ -572,7 +572,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 const cards = dojo.query(`#player-table-${this.playerId} .quilt-board .card`)
                 let shift = true
 
-                if (this.isShiftEnabled && cards.length > 0) {
+                if (this.isShiftEnabled && cards.length > 0 && this.isCurrentPlayerActive()) {
 
                     if (direction == "left") {
                         cards.forEach(card => {

@@ -1032,7 +1032,7 @@ function quiltMasterTurn() {
     $transition = $this->getGameStateValue("which_transition");
     $result = $this->refillPatternArea();
 
-    if ($result === null && $transition!=1 && $this->getGameStateValue("quilt_master") != 0) {
+    if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
         // Go directly to next player
         $this->gamestate->nextState("nextPlayer");
         return;
@@ -1042,7 +1042,7 @@ function quiltMasterTurn() {
     function argsHelper() {
         $transition = $this->getGameStateValue("which_transition");
 
-        if ($this->getGameStateValue("quilt_master")== 0) {
+        if ($this->getGameStateValue("quilt_master")== 0 && $this->getPlayersNumber()==1) {
             return [
                 "corner"=> [229,232,239,242]
             ];
@@ -1089,11 +1089,11 @@ function quiltMasterTurn() {
 
         $result = $this->refillPatternArea();
 
-        if ($result === null && $transition!=1 && $this->getGameStateValue("quilt_master") != 0) {
+        if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
             // Go directly to next player
             $this->gamestate->nextState("helperAction");
             return;
-        } else if ($result != null && $transition!=1 && $this->getGameStateValue("quilt_master") != 0) {
+        } else if ($result != null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0|| $this->getPlayersNumber()!=1)) {
             $this->gamestate->nextState("helperAction");
             return;
         }
@@ -1163,7 +1163,6 @@ function quiltMasterTurn() {
                         $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $next"));
                         $this->DbQuery("UPDATE player SET num_turns = 2 WHERE player_id = $player_id");
                     }
-                    $this->activeNextPlayer();
 
                     // count patterns
                     $locations = ['deck_0', 'deck_1', 'deck_2', 'deck_3'];
@@ -1176,7 +1175,7 @@ function quiltMasterTurn() {
 
                     // Now: total count of pattern cards across all decks
                     $totalPatterns = count($allPatterns);                    
-                    if($totalPatterns == 0 && $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1;") != 1) {
+                    if($totalPatterns == 0) {
                         $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
                     }
                     if ($this->getPlayersNumber() == 1) {
@@ -1184,6 +1183,7 @@ function quiltMasterTurn() {
                         $this->refillPatternArea(true);
                     }
                     $this->setGameStateValue("turn_counter", 0);
+                    $this->activeNextPlayer();
                     $this->gamestate->nextState("nextPlayer");
                     }
             }
