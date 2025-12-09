@@ -56,6 +56,8 @@ class Game extends \Table
             "main_player"=> 76,
             "helper_player" => 77,
             "which_transition" => 78,
+            "quilt_master" => 79,
+            "quilt_master_turns" => 80,
             "solo_options" => 100,
             "game_variants" => 101,
             "patches" => 102,
@@ -111,13 +113,6 @@ class Game extends \Table
     // Save choice in DB
         
 
-        // Notify table
-        // self::notifyAllPlayers("optionChosen", clienttranslate('${player_name} chose an option'), array(
-        //     "player_id" => $player_id,
-        //     "player_name" => $this->getPlayerNameById($player_id),
-        //     "option" => $option
-        // ));
-
         // Mark this player as done
 
         // If all players are done, notify players
@@ -138,8 +133,99 @@ class Game extends \Table
         $this->activeNextPlayer();
         $player = $this->getActivePlayerId();
         $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player"));
-        $this->gamestate->setPlayerNonMultiactive((int)$player_id, "next");
+        if ($this->getPlayersNumber() == 1) {
+            $this->gamestate->setPlayerNonMultiactive((int)$player_id, "helper");
+        } else {
+            $this->gamestate->setPlayerNonMultiactive((int)$player_id, "next");
+        }
     }
+
+    function actQuiltMaster(int $id) {
+        $this->setGameStateValue("quilt_master", $id);
+        $this->notify->all("plQuilt", "", ["loc"=>$id]);
+        $this->gamestate->nextState("turn");
+    }
+
+function quiltMasterTurn() {
+    $args = [];
+    $key_pairs = [
+         225 => 209, 226 => 210, 229 => 211,
+         230 => 215, 231 => 219, 232 => 223,
+         235 => 222, 236 => 221, 239 => 220,
+         240 => 216, 241 => 212, 242 => 208,
+    ];
+
+    $keys   = array_keys($key_pairs);
+    $values = array_values($key_pairs);
+    $current_position = $this->getGameStateValue("quilt_master");
+    $current_index = array_search($current_position, $keys);
+
+    // Get the cards that he chooses
+    $chosen = [];
+    $num_to_take = $this->getGameStateValue("quilt_master_turns");
+    
+    $i = 0;  // Index in the circular array
+    while (count($chosen) < $num_to_take) {
+        $cycled_index = ($current_index + $i) % count($values);
+        $next = $values[$cycled_index];
+        
+        // Only add if not already in chosen (skip duplicates)
+        if (!in_array($next, $chosen)) {
+            $chosen[] = $next;
+        }
+        
+        $i++;  // Always move to the next position
+        
+        // Safety check to prevent infinite loop
+        if ($i > count($values) * 2) {
+            break;
+        }
+    }
+
+
+    $animations = [];
+    $animations["animation"] = [];
+    foreach($chosen as $index => $id) {
+        $cards = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", $id);
+        if (count($cards) == 1) {
+            $card = array_values($cards)[0];
+            $card_id = $card["id"];
+            $target = "pattern-board";
+            $animations["animation"][] = [
+                "card_id" => $card_id,
+                "target" => $target,
+                "loc" => $current_position,
+                "flip" => 0
+            ];
+
+            $this->cards->moveCard($card_id, "quiltMaster");
+            $new_type_arg = $this->quilt_cards[$card["type_arg"]]["other_side"];
+            $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = 'pattern' WHERE card_id = $card_id");
+        }
+    }
+    $args["cards"] = $animations;
+
+    $this->notify->all("return", clienttranslate('<b>Quilting Master</b> takes ${card_num} cards'),
+        array("card_num" => $num_to_take)
+    );      
+
+    // Update new position for quilt_master
+    $current_index = ($current_index + $i) % count($keys);
+    $this->setGameStateValue("quilt_master", $keys[$current_index]);
+
+    $args["moveMaster"] = [
+        "animation" => [
+            205 => [
+                "card_id" => 205,
+                "target" => "pattern-board",
+                "loc" => $keys[$current_index],
+                "flip" => 0
+            ]
+        ]
+    ];
+    $args["player_id"] = $this->getActivePlayerId();
+    $this->notify->all("quilt_master", "", $args);
+}
 
     public function actPlayCard(int $card_id): void
     {
@@ -176,24 +262,30 @@ class Game extends \Table
             throw new \BgaUserException(_('Assistant not available'));
         }
 
-        $this->cards->moveCard($card_id, (string)$player_id);
+        if ($this->getPlayerCount() == 1) {
+            $this->cards->moveCard($card_id, "out_of_play");
+            $target = 1;
+        } else {
+            $this->cards->moveCard($card_id, (string)$player_id);
+            $target = "player-table-" . $player_id;
+        }
+
 
         $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Terrific Tim(194)] to trade [${card_name}(${card_arg})] for extra turn'),
                     array(
-                        "player_id" => $this->getActivePlayerId(),
+                        "player_id" => $active_player,
                         "card_arg" => $this->cards->getCard($card_id)["type_arg"],
                         "card_name" => "pattern card",
-                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                        "player_name" => $this->getPlayerNameById($active_player)
                     ));
 
-            $target = "player-table-" . $player_id;    
-            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+            $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
         
         $this->DbQuery("UPDATE player SET num_turns = num_turns + 1 WHERE player_id = $active_player");
         $this->gamestate->nextState("back");
     }
 
-    public function actSally(int $block, int $player_board) {
+    public function actSandra(int $block, int $player_board) {
         $player_id = $this->getActivePlayerId();
         $block = $this->cards->getCard($block);
         $player_board = $this->cards->getCard($player_board);
@@ -205,7 +297,7 @@ class Game extends \Table
         $this->cards->moveCard($block["id"], $player_id, $player_board["location_arg"]);
         $this->cards->moveCard($player_board["id"], "pattern_area", $block["location_arg"]);
 
-        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Swap Sally(195)] to swap [${card_name1}(${card_arg1})] with [${card_name2}(${card_arg2})]'),
+        $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Swap Sandra(195)] to swap [${card_name1}(${card_arg1})] with [${card_name2}(${card_arg2})]'),
                     array(
                         "player_id" => $this->getActivePlayerId(),
                         "card_arg1" => $player_board["type_arg"],
@@ -215,7 +307,7 @@ class Game extends \Table
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $block["id"] => ["card_id"=>$block["id"], "target"=>"player-table-" . $player_id, "loc"=>$player_board["location_arg"], "flip"=>0],
             $player_board["id"] => ["card_id"=>$player_board["id"], "target"=>"pattern-cont", "loc"=>$block["location_arg"], "flip"=>0]
     ]]);
@@ -245,7 +337,7 @@ class Game extends \Table
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $id => ["card_id"=>$id, "target"=>"player-table-" . $player_id, "loc"=>"0", "flip"=>$new_type_arg]
         ]]);
 
@@ -293,7 +385,7 @@ class Game extends \Table
     public function actSam(int $pattern, int $loc) {
         $player_id = $this->getCurrentPlayerId();
         $card = $this->cards->getCard($pattern);
-        if (count($this->cards->getCardsOfTypeInLocation("back", null, $player_id, $loc)) > 0 || !$this->checkIfTopCard($pattern)) {
+        if (count($this->cards->getCardsOfTypeInLocation("back", null, $player_id, $loc)) > 0 || (!$this->checkIfTopCard($pattern) && count($this->cards->getCardsOfTypeInLocation("pattern", null, $player_id, 0))<1)) {
             throw new \BgaUserException(_('Invalid card options'));
         }
 
@@ -312,12 +404,12 @@ class Game extends \Table
                         "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
                     ));
 
-        $this->notify->all("animation", "", ["animation"=>[
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
             $pattern => ["card_id"=>$pattern, "target"=>"player-table-" . $player_id, "loc"=>$loc, "flip"=>$new_type_arg]
         ]]);
 
         $this->setGameStateValue("use_assistant", 0);
-        $this->gamestate->nextState("nextPlayer");
+        $this->gamestate->nextState("refill");
 
     }
 
@@ -378,7 +470,7 @@ class Game extends \Table
                         "player_name1" => $this->getPlayerNameById((int)$player)
                     ));
 
-                $this->notify->all("animation", "", ["animation"=>[
+                $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[
                     $option => ["card_id"=>$option, "target"=>"player-table-" . $active_player, "loc"=>0, "flip"=>0]
                 ]]);
 
@@ -459,7 +551,12 @@ class Game extends \Table
                 break;
             case 197:
                 # Uncle Sam
-                $args = $this->argPlan();
+                $patt = [];
+
+                foreach($this->cards->getCardsOfTypeInLocation("pattern",null, (string)$player_id, 0) as $i => $v) {
+                    $patt[$v["id"]] = $v["id"];
+                }
+                $args = array_merge($this->argPlan(), $patt);
                 if (count($args) < 1) {
                     throw new \BgaUserException(_('No patterns available'));
                 }
@@ -574,10 +671,9 @@ class Game extends \Table
             }
 
             $target = "player-table-" . $this->getActivePlayerId();    
-            $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
+            $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
 
-            $this->refillPatternArea();
-
+            $this->refillPatternArea(true);
             if (!$sally) {
                 $this->gamestate->nextState("nextPlayer");
             } else if ($this->getGameStateValue("sally_counter") < 3) {
@@ -615,6 +711,7 @@ class Game extends \Table
             
             $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0];
         }
+        $animation["player_id"] = $this->getActivePlayerId();
 
         $card_data = array();
         foreach ($args as $tile) {
@@ -633,6 +730,7 @@ class Game extends \Table
             $this->notify->All("chooseTiles",
             clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
             [
+                "animation"=> $animation["animation"],
                 "player_name" => $this->getActivePlayerName(),
                 "card_name" => $this->quilt_cards[193]["name"],
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
@@ -642,6 +740,7 @@ class Game extends \Table
             $this->notify->All("chooseTiles",
             clienttranslate('${player_name} uses assistant [${card_name}(${assistant_arg})] to add ${card_arg} to quilt'),
             [
+                "animation"=> $animation["animation"],
                 "player_name" => $this->getActivePlayerName(),
                 "card_name" => $this->quilt_cards[193]["name"],
                 "card_arg" => json_encode($card_data), // This will be substituted as a string
@@ -652,18 +751,24 @@ class Game extends \Table
             $this->notify->All("chooseTiles",
                 clienttranslate('${player_name} adds ${card_arg} to quilt'),
                 [
+                    "animation"=> $animation["animation"],
                     "player_name" => $this->getActivePlayerName(),
                     "card_arg" => json_encode($card_data) // This will be substituted as a string
             ]);
         }
-        $this->notify->all("animation", "", $animation);
 
+        $this->DbQuery("
+            UPDATE player
+            SET mydata = '".json_encode($animation)."'
+            WHERE player_id = $player_id
+        ");        
+        // $this->notify->all("animation", "", $animation);
+        $this->gamestate->nextState("transition");
 
+    }
 
-        $this->refillPatternArea();
-
-        $this->gamestate->nextState("nextPlayer");
-
+    function actBlockRefill() {
+        $this->gamestate->nextState("refill");
     }
 
     public function actReturnBlocks(#[JsonParam(associative: null)] mixed $cards) {
@@ -724,7 +829,7 @@ class Game extends \Table
         $card_id = $tile["card_id"];
         $target = "pattern-board";
 
-        $this->notify->all("animation", "", ["animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0]]]);
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>$loc, "flip"=>0]]]);
         $this->gamestate->nextState("checkReturn");
         
     }
@@ -791,7 +896,6 @@ class Game extends \Table
         }
         # Real args
         $this->notify->all("shift", "", $this->cards->getCardsOfTypeInLocation("back", null, $this->getCurrentPlayerId(), null));
-        $this->notify->all("showPoints", "", $this->calculatePoints());
 
     }
     
@@ -808,11 +912,20 @@ class Game extends \Table
     public function argPlayerTurn(): array
     {
         // Get some values from the current game situation from the database.
-
+        $player_id = $this->getActivePlayerId();
         return [
             "use_assistant" => $this->getGameStateValue("use_assistant"),
-            "turn_num" => $this->getGameStateValue("turn_counter")
+            "turn_num" => $this->getGameStateValue("turn_counter"),
+            "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0
         ];
+    }
+
+    public function argNextPlayer() {
+        $matches = [];
+        foreach($this->loadPlayersBasicInfos() as $player => $data) {
+            $matches[$player] = $this->getPatternPoints($player);
+        }
+        return ["matches" => $matches];
     }
 
     public function argChooseAssistant() {
@@ -871,9 +984,11 @@ class Game extends \Table
     }
 
     public function stPostEnd() {
-        $this->notify->all("endScores", "",[ 'endScores' => $this->calculatePoints() ]);
+        $points = $this->calculatePoints();
+        $this->notify->all("endScores", "",[ 'endScores' => $points ]);
         $this->gamestate->nextState("endGame");
     }
+
 
 
     
@@ -893,9 +1008,17 @@ class Game extends \Table
      */
     public function getGameProgression()
     {
-        // TODO: compute and return the game progression
+        $players = array_keys($this->loadPlayersBasicInfos());
 
-        return 0;
+        $total = 0;
+
+        foreach($players as $id) {
+            $cards = $this->cards->getCardsOfTypeInLocation("back", null, $id, null);
+
+            $total += count($cards);
+        }
+
+        return $total / (count($players) * 16)*100;
     }
 
     /**
@@ -904,12 +1027,101 @@ class Game extends \Table
      * The action method of state `nextPlayer` is called everytime the current game state is set to `nextPlayer`.
      */
 
-    function argsHelper() {
-        return ["name"=> $this->getPlayerNameById($this->getGameStateValue("main_player")), "patterns" => $this->cards->getCardsOfTypeInLocation("pattern", null, $this->getActivePlayerId(), null)];
+
+    function actTurnCard(int $loc) {
+        #turn over card
+
+        $result = $this->refillPatternArea();
+         // Place the card at chosen location
+        $id = $result["card_id"];
+
+        $this->executeFlip($id, $loc);
+
+        $this->gamestate->nextState("loop");
     }
+
+    function actSlideValidate(int $loc) {
+        $result = $this->refillPatternArea();
+         // Place the card at chosen location
+        $id = $result["card_id"];
+
+        $this->cards->moveCard( $id, "pattern_area", $loc);
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$id=>["card_id"=>$id, "target"=>"pattern-board", "loc"=>$loc, "flip"=>0]]]);
+
+        $this->gamestate->nextState("loop");
+    }
+
+    function stHelper()
+{
+    $transition = $this->getGameStateValue("which_transition");
+    $result = $this->refillPatternArea();
+
+    if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
+        // Go directly to next player
+        $this->gamestate->nextState("nextPlayer");
+        return;
+    }
+}
+
+    function argsHelper() {
+        $transition = $this->getGameStateValue("which_transition");
+
+        if ($this->getGameStateValue("quilt_master")== 0 && $this->getPlayersNumber()==1) {
+            return [
+                "corner"=> [229,232,239,242]
+            ];
+        }
+
+        if ($transition == 1) {
+            return [
+                "helper" => [
+                    "name" => $this->getPlayerNameById($this->getGameStateValue("main_player")),
+                    "patterns" => $this->cards->getCardsOfTypeInLocation("pattern", null, $this->getActivePlayerId(), null)
+                ]
+            ];
+        }
+
+        // Normal "flip card" path
+        $result = $this->refillPatternArea();
+
+        if ($result === null) {
+            // No cards to flip
+            return [];
+        }
+
+        // Returning result makes frontend receive it on reload too
+        return [
+            "flip_info" => $result
+        ];
+    }
+
 
     function stTransition() {
         $transition = $this->getGameStateValue("which_transition");
+         $player_id = $this->getActivePlayerId();
+        $raw = $this->getUniqueValueFromDB("SELECT mydata FROM player WHERE player_id=$player_id");
+        if ($raw === null) {
+            // empty
+        } else {
+            $data = json_decode($raw, true);
+            $data["player_id"] = $this->getActivePlayerId();
+            $this->notify->all("animation", "", $data);
+            $this->DbQuery("UPDATE player SET mydata = NULL WHERE player_id=$player_id");
+        }
+
+
+
+        $result = $this->refillPatternArea();
+
+        if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
+            // Go directly to next player
+            $this->gamestate->nextState("helperAction");
+            return;
+        } else if ($result != null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0|| $this->getPlayersNumber()!=1)) {
+            $this->gamestate->nextState("helperAction");
+            return;
+        }
+
 
         if ($transition == 0) {
             $helper = $this->getGameStateValue('helper_player');
@@ -929,54 +1141,79 @@ class Game extends \Table
 
 
     public function stNextPlayer(): void {
-        $this->refillPatternArea();
-
         // Retrieve the active player ID.
         $player_id = (int)$this->getActivePlayerId();
-
         // Give some extra time to the active player when he completed an action
         $this->giveExtraTime($player_id);
 
-        // Check end conditions and trigger last turns for other players
-        $this->checkEndConditions($player_id);
-
-        $nextPlayer = $this->getNextPlayer();
-        $endTriggered = $this->getUniqueValueFromDB("SELECT endTriggered FROM player WHERE player_id = $nextPlayer");
-        // add points to db
-        if ($endTriggered == 1) {
-            foreach($this->calculatePoints() as $id => $data) {
-                $total = 0;
-                foreach($data as $source => $point) {
-                    if ($point == "N/A") {
-                        continue;
-                    }
-                    $total += $point;
-                }
-                $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
-            }
-
-            $this->gamestate->nextState("postEnd");
-        } else {
             $turns = $this->getUniqueValueFromDB("SELECT num_turns FROM player WHERE player_id = $player_id");
             $turn_counter = $this->getGameStateValue("turn_counter");
             if ($turn_counter < $turns-1) {
                 $this->setGameStateValue("turn_counter", $turn_counter + 1);
-            } else {
-                if ($this->getGameStateValue("quilting_assistants") == 1) {
-                    $next = $this->getPlayerAfter((int)$this->getActivePlayerId());
-                    $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $next"));
-                    $this->DbQuery("UPDATE player SET num_turns = 2 WHERE player_id = $player_id");
+                if ($turns-1 - $turn_counter <=1 && $this->getGameStateValue("use_assistant") == 192) {
+                    $this->setGameStateValue("use_assistant", 0);
                 }
-                $this->setGameStateValue("turn_counter", 0);
-                $this->activeNextPlayer();
+                // loop to second turn
+                $this->gamestate->nextState("nextPlayer");
+            } else {
+                // Check end conditions and trigger last turns for other players
+                $this->checkEndConditions($player_id);
+                $nextPlayer = $this->getNextPlayer();
+                $endTriggered = $this->getUniqueValueFromDB("SELECT endTriggered FROM player WHERE player_id = $nextPlayer");
+                // add points to db
+                if ($endTriggered == 1) {
+                    $points = $this->calculatePoints();
+                    foreach($points as $id => $data) {
+                        if ($id == "999") {
+                            continue;
+                        }
+                        $total = $data["total"];
+                        if ($this->getPlayersNumber() == 1) {
+                            if ($points[$id]["total"] < $points["999"]["total"]) {
+                                $this->DbQuery("UPDATE player SET player_score = 0");
+                            } else {
+                                $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
+                            }
+                        } else {
+                            $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
+                        }
+                    }            
+
+                    $this->gamestate->nextState("postEnd");
+                } else {
+
+                    if ($this->getGameStateValue("quilting_assistants") == 1) {
+                        $next = $this->getPlayerAfter((int)$this->getActivePlayerId());
+                        $this->setGameStateValue("use_assistant", (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $next"));
+                        $this->DbQuery("UPDATE player SET num_turns = 2 WHERE player_id = $player_id");
+                    }
+
+                    // count patterns
+                    $locations = ['deck_0', 'deck_1', 'deck_2', 'deck_3'];
+
+                    $allPatterns = [];
+                    foreach ($locations as $loc) {
+                        $cards = $this->cards->getCardsOfTypeInLocation("pattern", null, $loc, null);
+                        $allPatterns = array_merge($allPatterns, $cards);
+                    }
+
+                    // Now: total count of pattern cards across all decks
+                    $totalPatterns = count($allPatterns);                    
+                    if($totalPatterns == 0) {
+                        $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
+                    }
+                    if ($this->getPlayersNumber() == 1) {
+                        $this->quiltMasterTurn();
+                        $this->refillPatternArea(true);
+                    }
+                    $this->setGameStateValue("turn_counter", 0);
+                    $this->activeNextPlayer();
+                    $this->gamestate->nextState("nextPlayer");
+                    }
             }
             // Go to another gamestate
             // Here, we would detect if the game is over, and in this case use "endGame" transition instead 
-            $this->gamestate->nextState("nextPlayer");
-        }
-    }
-    public function turnCards() {
-        $this->refillPatternArea();
+            // $this->gamestate->nextState("nextPlayer");
     }
 
     public function stCheckReturn() {
@@ -1062,6 +1299,10 @@ class Game extends \Table
 
         $result["options"] = $this->getGameStateValue("game_variants");
 
+        $result["master"] = ($this->getPlayersNumber() == 1) ? $this->getGameStateValue("quilt_master") : null;
+
+        $result["master_num"] = ($this->getPlayersNumber() == 1) ? $this->getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE card_location = 'quiltMaster'") : null;
+
         // return player boards
         $player_ids = array_keys($this->loadPlayersBasicInfos());
 
@@ -1139,6 +1380,22 @@ class Game extends \Table
 
         // create new deck
 
+        // set counter for single player
+        if ($this->getPlayersNumber() == 1) {
+            # check if game with advanced options
+            if ($this->getGameStateValue("patches") == 1 || $this->getGameStateValue("symmetry") == 1 || $this->getGameStateValue("quilting_assistants") == 1) {
+                $num_turns = 1;
+            } else {
+                $num_turns = 0;
+            }
+            $solo_option = $this->getGameStateValue("solo_options");
+            $num_turns += $solo_option;
+
+            $this->setGameStateValue("quilt_master_turns", $num_turns);
+        }
+
+
+
         $cards = [];
         foreach ($this->quilt_cards as $card_id => $card) {
             // Only add pattern cards (even IDs) and within the card range (0-190)
@@ -1198,11 +1455,13 @@ class Game extends \Table
             $this->cards->pickCardsForLocation($num/4, $deck_id, 'out_of_play');
         }
 
-        $this->refillPatternArea();
+        $this->refillPatternArea(true);
 
 
         if ($this->getPlayersNumber() == 1) {
             $assistants = [192,194,196,198];
+
+            // $assistants = [196];
         } else {
             $assistants = [192,194,196,198,200];
         }
@@ -1244,8 +1503,13 @@ class Game extends \Table
         if (!($this->getGameStateValue("game_variants") == 1 && $this->getGameStateValue("quilting_assistants") == 1) && !($this->getPlayersNumber() == 1 && $this->getGameStateValue("quilting_assistants") == 1)) {
             $this->activeNextPlayer();
             $this->setGameStateValue("use_assistant", 0);
-            $this->gamestate->nextState("next");
-            
+            // send the arg for single player for the quilt master
+            if ($this->getPlayersNumber() == 1) {
+                $this->gamestate->nextState("helper");
+            } else {
+                $this->gamestate->nextState("next");
+            }
+
         } else {
             $this->gamestate->setAllPlayersMultiactive();
         }
@@ -1309,7 +1573,7 @@ class Game extends \Table
                 $points += intval($this->quilt_cards[$card_info["type_arg"]]["points"]);
             }
         } else {
-            $points = "N/A";
+            $points = "-";
         }
         return $points;
     }
@@ -1318,6 +1582,7 @@ class Game extends \Table
             $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
             $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, $player_id, null);
             $total = 0;
+            $total_matches = [];
 
             # Build dynamic quilt
             $quilt_built = [[],[],[],[]];
@@ -1377,7 +1642,6 @@ class Game extends \Table
                                 $row = $current_row + $r;
                                 foreach($row_value as $name) {
                                     $col = $current_col + $c;
-                                    array_push($match_data, ["row"=>$row, "col"=>$col]);
                                     if ($name == "ANY") {
                                         $current_col++;
                                         continue;
@@ -1399,6 +1663,7 @@ class Game extends \Table
                                         $match = false;
                                     }
                                     $current_col++;
+                                    array_push($match_data, ["row"=>$row, "col"=>$col]);
                                 }
                                 $current_row++;
                             }
@@ -1436,10 +1701,28 @@ class Game extends \Table
                 }
                 # 5. Add count("allMatches")*patternPoint to total points to be returned
                 $total += intval($card["points"])*count($matches);
+                $m = [];
+                // var_dump($matches);
+                $cards = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+                foreach(array_values($matches) as $l) {
+                    foreach(array_values($l) as $g) {
+                        foreach($cards as $id => $rest) {
+                            $r = $this->quilt_cards[$rest["location_arg"]]["row"]-1;
+                            $c = $this->quilt_cards[$rest["location_arg"]]["col"]-1;
+                            // var_dump($l);
+                            if($g["row"]==$r && $g["col"]==$c) {
+                                array_push($m, $id);
+                                break;
+                         }
+                        }
+                    }
+                    $total_matches[$patternCardId][] = $m;
+                    $m = [];
+                }
             }       
-            return $total;
+            return ["total"=> $total, "matches"=>$total_matches];
         } else {
-            return "N/A";
+            return ["total"=> "-", "matches"=>null];
         }
         }
         #helper
@@ -1486,7 +1769,7 @@ class Game extends \Table
     
     function getCompletedQuiltPoints($player_id) {
         if ($this->getGameStateValue("game_variants") == 2) {
-            return "N/A";
+            return "-";
         }
         if (count(array_keys($this->cards->getCardsOfTypeInLocation("back", null, $player_id, null))) == 16) {
             return 5;
@@ -1497,7 +1780,7 @@ class Game extends \Table
     }
     function getSymmetryPoints($player_id) {
         if ($this->getGameStateValue("symmetry") == 2 && ($this->getPlayersNumber() == 1 || $this->getGameStateValue("game_variants") == 1)) {
-            return "N/A";
+            return "-";
         }
 
         $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
@@ -1661,7 +1944,7 @@ class Game extends \Table
     
     function getPatchesPoints($player_id) {
         if ($this->getGameStateValue("game_variants") == 2 || $this->getGameStateValue("patches") == 2) {
-            return "N/A";
+            return "-";
         }
         $total = 0;
         $patchPoints = 3;
@@ -1730,13 +2013,38 @@ function calculatePoints() {
     $players = $this->loadPlayersBasicInfos();
 
     foreach ($players as $player_id => $data) {
-        $scores[$player_id] = [
-                'premium'   => $this->getPremiumPoints($player_id),
-                'patterns'  => $this->getPatternPoints($player_id),
+        $player_score = ['premium'   => $this->getPremiumPoints($player_id),
+                'patterns'  => $this->getPatternPoints($player_id)["total"],
                 'completed' => $this->getCompletedQuiltPoints($player_id),
                 'symmetry'  => $this->getSymmetryPoints($player_id),
-                'patches'   => $this->getPatchesPoints($player_id),
-                'total' => $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id")
+                'patches'   => $this->getPatchesPoints($player_id)];
+
+        $sum = 0;
+        foreach($player_score as $i => $val) {
+            if ($val != "-") {
+                $sum += $val;
+            }
+        }
+
+        $player_score['total'] = $sum;
+        $scores[$player_id] = $player_score;
+    }
+
+    if ($this->getPlayersNumber() == 1) {
+        $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, "quiltMaster", null);
+        $total = 0;
+
+        foreach ($patterns as $id => $card) {
+            $total += intval($this->quilt_cards[$card["type_arg"]]["points"]);
+        }
+
+        $scores["999"] = [
+            'premium'   => "-",
+            'patterns'  => $total,
+            'completed' => "-",
+            'symmetry'  => "-",
+            'patches'   => "-",
+            'total' => $total
         ];
     }
 
@@ -1767,8 +2075,7 @@ function calculatePoints() {
             }
         } else {
             $cardsInQuilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
-            
-            if(count(array_keys($cardsInQuilt)) >= 16 && $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1;") != 1) {
+            if(( count(array_keys($cardsInQuilt)) >= 16) && $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1;") != 1) {
                 $this->DbQuery("UPDATE player SET endTriggered = 1 WHERE player_id = $player_id");
             }
         }
@@ -1924,140 +2231,354 @@ function calculatePoints() {
     }
     
 
-    function refillPatternArea($animation=["animation" => []]) {
-        $pattern_grid = [
-            213 => [208, 209, 212], // Closest to top-left deck
-            214 => [210, 211, 215], // Closest to top-right deck
-            217 => [216, 220, 221], // Closest to bottom-left deck
-            218 => [219, 222, 223]  // Closest to bottom-right deck
-        ];
-    
-        $deck_neighbors = [
-            'deck_0' => ['deck_1', 'deck_2', 'deck_3'],
-            'deck_1' => ['deck_0', 'deck_3', 'deck_2'],
-            'deck_2' => ['deck_3', 'deck_0', 'deck_1'],
-            'deck_3' => ['deck_2', 'deck_1', 'deck_0'], 
-        ];
-        
-    
-        $deck_positions = [213 => 'deck_0', 214 => 'deck_1', 217 => 'deck_2', 218 => 'deck_3'];
-    
-        // Step 1: Identify empty locations
-        $empty_spots = [];
-        foreach (array_merge(...array_values($pattern_grid)) as $loc) {
-            if (empty($this->cards->getCardsInLocation('pattern_area', $loc))) {
+function refillPatternArea($setup = false)
+{
+    //
+    // --- CONFIG ---
+    //
+    $pattern_grid = [
+        213 => [208, 209, 212],
+        214 => [210, 211, 215],
+        217 => [216, 220, 221],
+        218 => [219, 222, 223]
+    ];
+
+    $deck_neighbors = [
+        'deck_0' => ['deck_1','deck_2','deck_3'],
+        'deck_1' => ['deck_0','deck_3','deck_2'],
+        'deck_2' => ['deck_3','deck_0','deck_1'],
+        'deck_3' => ['deck_2','deck_1','deck_0']
+    ];
+
+    $deck_positions = [
+        213 => 'deck_0',
+        214 => 'deck_1',
+        217 => 'deck_2',
+        218 => 'deck_3'
+    ];
+
+    // Define row/col mapping for all positions
+    $position_coords = [
+        208 => ["row" => 2, "col" => 2],
+        209 => ["row" => 2, "col" => 3],
+        210 => ["row" => 2, "col" => 4],
+        211 => ["row" => 2, "col" => 5],
+        212 => ["row" => 3, "col" => 2],
+        213 => ["row" => 3, "col" => 3],
+        214 => ["row" => 3, "col" => 4],
+        215 => ["row" => 3, "col" => 5],
+        216 => ["row" => 4, "col" => 2],
+        217 => ["row" => 4, "col" => 3],
+        218 => ["row" => 4, "col" => 4],
+        219 => ["row" => 4, "col" => 5],
+        220 => ["row" => 5, "col" => 2],
+        221 => ["row" => 5, "col" => 3],
+        222 => ["row" => 5, "col" => 4],
+        223 => ["row" => 5, "col" => 5],
+        224 => ["row" => 1, "col" => 2],
+        225 => ["row" => 1, "col" => 3],
+        226 => ["row" => 1, "col" => 4],
+        227 => ["row" => 1, "col" => 5],
+        228 => ["row" => 1, "col" => 6],
+        229 => ["row" => 2, "col" => 6],
+        230 => ["row" => 3, "col" => 6],
+        231 => ["row" => 4, "col" => 6],
+        232 => ["row" => 5, "col" => 6],
+        233 => ["row" => 6, "col" => 6],
+        234 => ["row" => 6, "col" => 5],
+        235 => ["row" => 6, "col" => 4],
+        236 => ["row" => 6, "col" => 3],
+        237 => ["row" => 6, "col" => 2],
+        238 => ["row" => 6, "col" => 1],
+        239 => ["row" => 5, "col" => 1],
+        240 => ["row" => 4, "col" => 1],
+        241 => ["row" => 3, "col" => 1],
+        242 => ["row" => 2, "col" => 1],
+        243 => ["row" => 1, "col" => 1]
+    ];
+
+    //
+    // --- PREPARE DECK AVAILABILITY ---
+    //
+    $available = [];
+    foreach ($deck_positions as $pos => $deck_id) {
+        $available[$deck_id] = $this->cards->getCardsInLocation($deck_id);
+    }
+
+    //
+    // --------------------------------------------
+    // STEP A: Refill PATTERN SPOTS around each deck
+    // --------------------------------------------
+    //
+
+    $empty_spots = [];
+
+    foreach ($pattern_grid as $deck_pos => $locs) {
+        foreach ($locs as $loc) {
+            if ($this->cards->countCardInLocation('pattern_area', $loc) == 0) {
                 $empty_spots[] = $loc;
             }
         }
-    
-        // Step 2: Find available decks
-        $available_decks = [];
-        foreach ($deck_positions as $pos => $deck_id) {
-            $available_decks[$deck_id] = $this->cards->getCardsInLocation($deck_id);
-        }
-    
-        // Step 3: Refill pattern area spots
-foreach ($empty_spots as $loc) {
-    foreach ($pattern_grid as $deck_pos => $locations) {
-        if (in_array($loc, $locations)) {
-            $deck_id = $deck_positions[$deck_pos];
-            $source_deck = null;
+    }
 
-            // Check if the deck has cards to refill spots (even if it's the last card)
-            if (!empty($available_decks[$deck_id]) || count($available_decks[$deck_id]) > 0) {
-                // If the deck has cards, it can refill its own spots
-                $source_deck = $deck_id;
-            } else {
-                // If the deck is empty, check its neighboring decks
-                foreach ($deck_neighbors[$deck_id] as $neighbor) {
-                    if (!empty($available_decks[$neighbor])) {
-                        $source_deck = $neighbor;
-                        break; // If we found a deck with cards, break and use it
+    foreach ($empty_spots as $loc) {
+
+        //
+        // Find which deck this pattern slot belongs to
+        //
+        $deck_id = null;
+        foreach ($pattern_grid as $deck_pos => $spots) {
+            if (in_array($loc, $spots)) {
+                $deck_id = $deck_positions[$deck_pos];
+                break;
+            }
+        }
+        if ($deck_id === null) continue;
+
+        //
+        // Find a usable source deck
+        //
+        $source = null;
+        if (!empty($available[$deck_id])) {
+            $source = $deck_id;
+        } else {
+            foreach ($deck_neighbors[$deck_id] as $n) {
+                if (!empty($available[$n])) {
+                    $source = $n;
+                    break;
+                }
+            }
+        }
+
+        if ($source === null) continue;
+
+        //
+        // Pull card "virtually"
+        //
+        $card_id = array_key_first($available[$source]);
+        $card = $available[$source][$card_id];
+        unset($available[$source][$card_id]);
+
+        //
+        // Determine possible pattern placements
+        //
+        $possible_spots = [];
+        foreach ($pattern_grid as $deck_pos => $spots) {
+            if ($deck_positions[$deck_pos] === $deck_id) {
+                foreach ($spots as $s) {
+                    if ($this->cards->countCardInLocation('pattern_area', $s) == 0) {
+                        $possible_spots[] = $s;
                     }
                 }
             }
+        }
 
-            // If no source deck was found, continue to the next spot
-            if ($source_deck === null) continue;
+        //
+        // Decide: auto-place vs state-machine choice
+        //
+        if ($setup || count($possible_spots) === 1) {
+            $this->executeFlip($card_id, $possible_spots[0]);
+            continue;
+        }
 
-            // If deck still has cards, and we need to refill a card in any spot
-            if (!empty($available_decks[$source_deck]) || count($available_decks[$source_deck]) > 0) {
-                // Get the card from the source deck
-                $card_id = array_key_first($available_decks[$source_deck]);
-                $card = $available_decks[$source_deck][$card_id];
-                unset($available_decks[$source_deck][$card_id]);
+        return [
+            'card_id' => $card_id,
+            'deck_id' => $deck_id,
+            'locations' => $possible_spots
+        ];
+    }
 
-                // Look up the "other side" in $this->quilt_cards
-                $current_type_arg = $card['type_arg'];
-                $new_type_arg = $this->quilt_cards[$current_type_arg]['other_side'] ?? null;
+    //
+    // ------------------------------------------------
+    // STEP B: Refill DECK POSITIONS THEMSELVES (Step 4)
+    // ------------------------------------------------
+    //
 
-                if ($new_type_arg === null) {
-                    throw new feException("Error: Unable to find other side for card type_arg {$current_type_arg}");
-                }
+    foreach ($deck_positions as $pos => $deck_id) {
 
-                $new_card_type = $this->quilt_cards[$new_type_arg]["type"];
+        // Skip: deck still has its own cards
+        if (!empty($available[$deck_id])) continue;
 
-                // Move to pattern area and update type_arg
-                $this->cards->moveCard($card_id, 'pattern_area', $loc);
-                $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = '$new_card_type' WHERE card_id = $card_id");
-
-                $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>'pattern-board', "loc"=>$loc, "flip"=>$new_type_arg];
-
+        //
+        // Search neighbors
+        //
+        $source = null;
+        foreach ($deck_neighbors[$deck_id] as $nb) {
+            if (!empty($available[$nb])) {
+                $source = $nb;
+                break;
             }
-            break; // Exit after refilling the spot
         }
+        if ($source === null) continue;
+
+        //
+        // Pull virtual card
+        //
+        $card_id = array_key_first($available[$source]);
+        $card = $available[$source][$card_id];
+        unset($available[$source][$card_id]);
+
+        //
+        // DECK POSITION has exactly ONE possible slot
+        // (its slot in pattern_area)
+        //
+        $possible = [$pos];
+
+        //
+        // Decide: no choice unless setup==false but >1 (never happens)
+        //
+        if ($setup || count($possible) === 1) {
+            $this->executeFlip($card_id, $possible[0]);
+            continue;
+        }
+
+        //
+        // If somehow multiple choices existed:
+        //
+        return [
+            'card_id' => $card_id,
+            'deck_id' => $deck_id,
+            'locations' => $possible
+        ];
+    }
+
+    //
+    // ------------------------------------------------
+    // STEP C: VALIDATE ALL CARDS HAVE NEIGHBORS
+    // ------------------------------------------------
+    //
+    
+    // Get all cards in pattern_area
+    $all_cards = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", null);
+    
+    // Build a map of which positions are occupied
+    $occupied_positions = [];
+    foreach ($all_cards as $card) {
+        $occupied_positions[$card['location_arg']] = $card['id'];
+    }
+    
+    // Check each card for horizontal/vertical neighbors
+    foreach ($all_cards as $card) {
+        $loc = $card['location_arg'];
+        
+        // Skip if position not in our coords map
+        if (!isset($position_coords[$loc])) continue;
+        
+        $row = $position_coords[$loc]['row'];
+        $col = $position_coords[$loc]['col'];
+        
+        // Check for neighbors (up, down, left, right)
+        $has_neighbor = false;
+        foreach ($position_coords as $pos => $coords) {
+            // Check if adjacent horizontally or vertically
+            if (($coords['row'] == $row && abs($coords['col'] - $col) == 1) ||
+                ($coords['col'] == $col && abs($coords['row'] - $row) == 1)) {
+                if (isset($occupied_positions[$pos])) {
+                    $has_neighbor = true;
+                    break;
+                }
+            }
+        }
+        
+        // If no neighbor found, find closest valid slide locations
+        if (!$has_neighbor) {
+            $valid_slides = [];
+            
+            // Check all positions where this card could slide to have a neighbor
+            foreach ($position_coords as $target_pos => $target_coords) {
+                // Skip if position is occupied or is current position
+                if (isset($occupied_positions[$target_pos]) || $target_pos == $loc) continue;
+                
+                // Check if target position would have a neighbor
+                $target_row = $target_coords['row'];
+                $target_col = $target_coords['col'];
+                
+                $has_neighbor_at_target = false;
+                foreach ($position_coords as $neighbor_pos => $neighbor_coords) {
+                    if ($neighbor_pos == $target_pos) continue;
+                    
+                    // Check if adjacent horizontally or vertically
+                    if (($neighbor_coords['row'] == $target_row && abs($neighbor_coords['col'] - $target_col) == 1) ||
+                        ($neighbor_coords['col'] == $target_col && abs($neighbor_coords['row'] - $target_row) == 1)) {
+                        // Make sure this neighbor position is occupied (and not the current card)
+                        if (isset($occupied_positions[$neighbor_pos]) && $occupied_positions[$neighbor_pos] != $card['id']) {
+                            $has_neighbor_at_target = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if ($has_neighbor_at_target) {
+                    // Calculate Manhattan distance from current position
+                    $distance = abs($target_row - $row) + abs($target_col - $col);
+                    $valid_slides[] = [
+                        'pos' => $target_pos,
+                        'distance' => $distance
+                    ];
+                }
+            }
+            
+            if (!empty($valid_slides)) {
+                // Sort by distance
+                usort($valid_slides, function($a, $b) {
+                    return $a['distance'] - $b['distance'];
+                });
+                
+                // Get minimum distance
+                $min_distance = $valid_slides[0]['distance'];
+                
+                // Keep only positions with minimum distance
+                $closest_slides = [];
+                foreach ($valid_slides as $slide) {
+                    if ($slide['distance'] == $min_distance) {
+                        $closest_slides[] = $slide['pos'];
+                    }
+                }
+                
+                // Return the card that needs to be moved and closest locations
+                return [
+                    'card_id' => $card['id'],
+                    'current_location' => $loc,
+                    'locations' => $closest_slides
+                ];
+            }
+        }
+    }
+
+    //
+    // Done
+    //
+    return null;
+}
+
+
+function executeFlip($card_id, $loc) {
+    // to avoid bug for placeblocks when changing states
+    $card = $this->cards->getCard($card_id);
+    $cardsInLoc = $this->getCollectionFromDB("SELECT * FROM card WHERE card_location = 'pattern_area' AND card_location_arg = $loc");
+
+    if (count($cardsInLoc) == 0) {
+        $current = $card['type_arg'];
+        $new_type_arg = $this->quilt_cards[$current]['other_side'];
+        $new_type = $this->quilt_cards[$new_type_arg]['type'];
+
+        $this->cards->moveCard($card_id, 'pattern_area', $loc);
+        $this->DbQuery("UPDATE card SET card_type_arg=$new_type_arg, card_type='$new_type' WHERE card_id=$card_id");
+
+        $this->notify->all('animation', '', [
+            "player_id"=> $this->getActivePlayerId(),
+            'animation' => [
+                $card_id => [
+                    'card_id' => $card_id,
+                    'target' => 'pattern-board',
+                    'loc' => $loc,
+                    'flip' => $new_type_arg
+                ]
+            ]
+        ]);
     }
 }
 
-// Step 4: Refill empty deck positions (if the deck is empty, but neighbors have cards)
-foreach ($deck_positions as $pos => $deck_id) {
-    if (!empty($available_decks[$deck_id])) continue; // Skip if deck still has cards
-    
-    // Look for cards in neighboring decks
-    foreach ($deck_neighbors[$deck_id] as $neighbor) {
-        if (!empty($available_decks[$neighbor])) {
-            $source_deck = $neighbor;
-            break;
-        }
-    }
-
-    if (!isset($source_deck) || !isset($available_decks[$source_deck]) || empty($available_decks[$source_deck])) {
-        self::debug("No available deck found for position: " . $pos);
-        continue;
-    }
-
-    $card_id = array_key_first($available_decks[$source_deck]);
-    
-    if (!isset($available_decks[$source_deck][$card_id])) {
-        self::debug("Card ID not found in deck: " . $source_deck);
-        continue;
-    }
-
-    $card = $available_decks[$source_deck][$card_id];
-    unset($available_decks[$source_deck][$card_id]);
-
-    // Make sure the card is flipped when moved
-    $current_type_arg = $card['type_arg'];
-    $new_type_arg = $this->quilt_cards[$current_type_arg]['other_side'] ?? null;
-
-    if ($new_type_arg === null) {
-        throw new \BgaUserException("Error: Unable to find other side for card type_arg {$current_type_arg}"); //line 763
-    }
-
-    $new_card_type = $this->quilt_cards[$new_type_arg]["type"];
-
-    // Ensure there aren't cards placed on top of other turned-over cards in the deck
-    if ($this->cards->countCardInLocation("pattern_area", $pos) == 0) {
-        $this->cards->moveCard($card_id, 'pattern_area', $pos);
-        $this->cards->DbQuery("UPDATE card SET card_type_arg = $new_type_arg, card_type = '$new_card_type' WHERE card_id = $card_id");
-        $animation["animation"][$card_id] = ["card_id"=>$card_id, "target"=>'pattern-board', "loc"=>$pos, "flip"=>$new_type_arg];
-        $this->refillPatternArea($animation);
-    }
-}
-
-    $this->notify->all("animation", "", $animation);
-
-    }
 
     public function checkReturnAdjacency($loc) {
         $corners = [228, 233, 238, 243];

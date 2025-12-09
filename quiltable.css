@@ -80,9 +80,70 @@
   src: url("https://fonts.googleapis.com/css2?family=Playwrite+US+Modern:wght@100..400&display=swap")
 }
 
+.lastTurnMarker {
+    background: #ffcc00;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 12px;
+    border: 1px solid #aa9900;
+
+    /* disable text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+#lastTurnContainer {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+.mini-counter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    background-color: rgba(176, 164, 164, 0.7);
+    width: 54px;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.mini-card {
+    --wid: 30px;
+    width: 30px;
+    height: 30px;
+    background-image: url('img/back.png'); /* or sprite background */
+    background-position: calc(-3 * var(--wid)) calc(-9 * var(--wid));
+    background-size: 330.3px 300px;
+    border-radius: 4px;
+    border: 1px solid black;
+}
+
+.mini-counter-value {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+}
+
+
 .title {
   font-family: "Playwrite US Modern";
   font-size: 2em;
+}
+
+#overall-content {
+    background-image: url('img/fondo.jpg');
+    background-size: repeat;
+}
+.player-board {
+  background-image:
+    linear-gradient(rgba(120, 72, 0, 0.2), rgba(120, 72, 0, 0.2)), /* tint */
+    url('img/fondo.jpg');
+  background-size: repeat;
 }
 
 #score_header {
@@ -352,6 +413,7 @@ background-position: 33.33% 0;
   background-size: 1101px 1000px;
   transition: left 0.1s, top 0.1s;
   touch-action: none; /* Prevents scrolling while touching the element */
+  border-radius: 8px;
 }
 
 .temp-card.valid-placement {
@@ -401,17 +463,17 @@ background-position: 33.33% 0;
 
 .selectable-card {
   transition: all 0.3s ease; /* Smooth transition for hover effects */
-  border: 2px solid yellow; /* Initial border */
+  border: 2px solid #9ab4ff; /* Initial border */
   border-radius: 8px; /* Rounded corners */
   padding: 16px; /* Card padding */
   cursor: pointer; /* Indicate that the card is clickable */
 }
 
-.selectable-card:hover, 
-.selectable-card:focus {
+.selectable-card:hover {
   border-color: #4CAF50; /* Highlight border on hover/focus */
   background-color: rgba(76, 175, 80, 0.1); /* Light green background on hover/focus */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+  scale: 1.01;
 }
 
 .selectable-card.selected {
@@ -2101,8 +2163,6 @@ background-position: 33.33% 0;
 .ADYB {
   background-image: url(img/back.png);
   background-position: calc(-3 * var(--size)) calc(-9 * var(--size));
-  
-  
 }
 
 /* card 104 */

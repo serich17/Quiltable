@@ -73,7 +73,9 @@ $machinestates = [
         "action" => "stChooseAssistant",
         "possibleactions" => ["actChooseAssistant"],
         "transitions" => array(
-        "next" => 2
+        "next" => 2,
+        "helper"=>16
+
     )
     ),
 
@@ -90,9 +92,9 @@ $machinestates = [
             // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
             "actPlan", "actChoose", "actReturn", "actChoosePattern", "actPlaceBlocks",
             "actReturnBlocks", "actPass", "actBack", "actShiftQuilt", "actAssistantAction",
-            "acttim", "actSally", "actGranny", "actSam", "actTravis", "actMaddie"
+            "acttim", "actSandra", "actGranny", "actSam", "actTravis", "actMaddie"
         ],
-        "transitions" => ["nextPlayer"=>3, "back"=>2, "assistantAction"=>15, "itterate" => 13, "transition"=>17]
+        "transitions" => ["nextPlayer"=>3, "back"=>2, "assistantAction"=>15, "itterate" => 13, "transition"=>17, "refill" => 16]
     ],
 
     3 => [
@@ -100,6 +102,7 @@ $machinestates = [
         "description" => '',
         "type" => "game",
         "action" => "stNextPlayer",
+        "args"=>"argNextPlayer",
         "updateGameProgression" => true,
         "transitions" => ["postEnd" => 98, "nextPlayer" => 2]
     ],
@@ -133,9 +136,10 @@ $machinestates = [
     "name" => "helperAction",
     "description" => clienttranslate('${actplayer} must decide whether to flip his assistant'),
     "type" => "activeplayer",
+    "action" => "stHelper",
     "args" => "argsHelper",
-    "possibleactions" => ["actMaddieOption", "actHelperBack"],
-    "transitions" => ["transition" => 17, "back" => 16]
+    "possibleactions" => ["actMaddieOption", "actHelperBack", "actTurnCard", "actSlideValidate", "actQuiltMaster"],
+    "transitions" => ["transition" => 17, "back" => 16, "loop" => 16, "nextPlayer"=>3, "turn"=>2]
     ],
 
 
