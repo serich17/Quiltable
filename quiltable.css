@@ -135,13 +135,16 @@
   font-size: 2em;
 }
 
-/* #overall-content {
-    background-image: url('img/banner1.jpg');
+#overall-content {
+    background-image: url('img/fondo.jpg');
     background-size: repeat;
-    width: 100%;
-    height: 100%;
-     background-size: auto;
-} */
+}
+.player-board {
+  background-image:
+    linear-gradient(rgba(120, 72, 0, 0.2), rgba(120, 72, 0, 0.2)), /* tint */
+    url('img/fondo.jpg');
+  background-size: repeat;
+}
 
 #score_header {
   text-align: center;
@@ -460,7 +463,7 @@ background-position: 33.33% 0;
 
 .selectable-card {
   transition: all 0.3s ease; /* Smooth transition for hover effects */
-  border: 2px solid yellow; /* Initial border */
+  border: 2px solid #9ab4ff; /* Initial border */
   border-radius: 8px; /* Rounded corners */
   padding: 16px; /* Card padding */
   cursor: pointer; /* Indicate that the card is clickable */
