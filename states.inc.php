@@ -102,6 +102,7 @@ $machinestates = [
         "description" => '',
         "type" => "game",
         "action" => "stNextPlayer",
+        "args"=>"argNextPlayer",
         "updateGameProgression" => true,
         "transitions" => ["postEnd" => 98, "nextPlayer" => 2]
     ],
