@@ -405,51 +405,6 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 }
                 break;
             case 'playerTurn':
-                if (args.args.matches && args.args.matches[this.playerId]) {
-
-                    data = args.args.matches[this.playerId].matches
-
-                    for (const key in data) {
-                        const outerArray = data[key];
-                        const patternDiv = dojo.byId(`${key}`);
-                        if (!patternDiv) continue;
-
-                        // Remove old listener if it exists
-                        if (patternDiv._zoomListener) {
-                            patternDiv.removeEventListener("click", patternDiv._zoomListener);
-                        }
-
-                        // Define the listener
-                        const listener = () => {
-                            let delay = 0;
-                            outerArray.forEach((innerArray) => {
-                                innerArray.forEach((value) => {
-                                    const card = dojo.byId(`${value}`);
-                                    if (!card) return;
-
-                                    // Zoom in
-                                    setTimeout(() => {
-                                        dojo.style(card, "transition", "transform 0.3s ease");
-                                        dojo.style(card, "transform", "scale(1.1)");
-                                    }, delay);
-
-                                    // Zoom out
-                                    setTimeout(() => {
-                                        dojo.style(card, "transform", "scale(1)");
-                                    }, delay + 500);
-                                });
-                                delay += 500;
-                            });
-                        };
-
-                        // Store the listener so we can remove it next time
-                        patternDiv._zoomListener = listener;
-                        patternDiv.addEventListener("click", listener);
-                    }
-
-
-                }
-
                 this.gladys = false
                 if (args.args.turn_num > 0 && this.isCurrentPlayerActive()) {
                     dojo.style('pass', 'display', 'inline-block');

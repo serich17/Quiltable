@@ -912,16 +912,11 @@ function quiltMasterTurn() {
     public function argPlayerTurn(): array
     {
         // Get some values from the current game situation from the database.
-        $matches = [];
-        foreach($this->loadPlayersBasicInfos() as $player => $data) {
-            $matches[$player] = $this->getPatternPoints($player);
-        }
         $player_id = $this->getActivePlayerId();
         return [
             "use_assistant" => $this->getGameStateValue("use_assistant"),
             "turn_num" => $this->getGameStateValue("turn_counter"),
             "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0,
-            "matches" => $matches
         ];
     }
 
