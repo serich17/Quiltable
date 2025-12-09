@@ -346,7 +346,12 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     this.choose_corner(args.args.corner)
                 }
                 if (args.args.flip_info) {
-                    this.flip_cards(args.args.flip_info);
+                    console.log(args.args.flip_info)
+                    if (args.args.flip_info.deck_id == null) {
+                        this.slide(args.args.flip_info)
+                    } else {
+                        this.flip_cards(args.args.flip_info);
+                    }
                 }
                 if (args.args.helper) {
                     this.helper(args.args.helper);
@@ -990,8 +995,8 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             this.bgaPerformAction("actReturnBlocks", { 
                 cards: JSON.stringify(cardIds)
             }).then(() => {
-                dojo.style('confirm_selection', 'display', 'none')
-                dojo.style('back', 'display', 'none')
+                dojo.byId('confirm_selection') && dojo.style('confirm_selection', 'display', 'none')
+                dojo.byId('back') && dojo.style('back', 'display', 'none')
             }); 
 
        },
@@ -2089,11 +2094,46 @@ synchronizeValidationState: function() {
                 })
         },
 
+        slide: function(args) {
+            console.log(args)
+            this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose where to slide card to be in valid location') : _('${actplayer} must choose where to slide card to be in valid location'), "")
+
+            if (this.isSpectator || !this.isCurrentPlayerActive()) {
+                    return
+                }
+
+            args.locations.forEach(loc => {
+                const pattern_area = document.querySelector(".pattern-board")
+                const newElement = dojo.create("div", {
+                    className: "possible-card",
+                    id: loc
+                }, pattern_area);
+                newElement.setAttribute("location", loc)
+                newElement.style.left = this.locations[loc].x + "px"
+                newElement.style.top = this.locations[loc].y + "px"
+
+                newElement.boundClick = (event) => {
+                    this.bgaPerformAction("actSlideValidate", {
+                        loc: parseInt(event.target.getAttribute("location"))
+                    })
+                    dojo.query(".possible-card").forEach(loc => {
+                            loc.classList.remove("selectable-card")
+                            loc.removeEventListener('click', loc.boundClick)
+                            delete loc.boundClick
+                            loc.remove()
+                        })
+                    this.removePatterns()
+                }
+                newElement.addEventListener("click", newElement.boundClick)
+            })
+            
+        },
+
         flip_cards: function(args) {
             console.log(args)
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose where to turn over card from deck') : _('${actplayer} must choose where to turn over card from deck'), "")
 
-            if (this.isSpectator) {
+            if (this.isSpectator || !this.isCurrentPlayerActive()) {
                     return
                 }
             args.locations.forEach(loc => {
@@ -2111,7 +2151,7 @@ synchronizeValidationState: function() {
                     this.removePatterns()
                     this.bgaPerformAction("actTurnCard", {
                         loc: parseInt(c.getAttribute("location"))
-                    }).then(()=> {})
+                    })
                 }
                 card.addEventListener("click", card.boundClick)
             })
@@ -2494,17 +2534,16 @@ synchronizeValidationState: function() {
             this.bgaPerformAction("acttim", { 
                         player_id: parseInt(player),
                         card_id: parseInt(id)
-            }).then(() => {
-                assistant = dojo.byId(`${id}`)
-                assistant.removeEventListener('click', assistant.boundTim);
-                delete assistant.boundTim
-            });
+            })
         },
 
         trade_pattern: function(event, players) {
             card_id = event.target.id
             dojo.query('.selectable-card').forEach(card => {card.classList.remove("selectable-card")})
             event.target.classList.add("selectable-card", "selected")
+            if (this.playerCount == 1) {
+                this.send_trade_request(card_id, 1234)
+            }
             this.statusBar.removeActionButtons()
             Object.values(players).forEach(player => {
                 this.statusBar.addActionButton(player.player_name, () => this.send_trade_request(card_id, player.player_id))
@@ -2627,7 +2666,13 @@ synchronizeValidationState: function() {
                 Object.values(args.animation).forEach(element => {
                     animations.push(
                         new Promise((resolveCard) => {
-                            this.animateCards(resolveCard, element, delay, false, args.player_id);
+                            if (element.target == 1) {
+                                console.log(element)
+                                this.fadeOutAndDestroy(String(element.card_id), 500,0)
+                                resolveCard()
+                            } else {
+                                this.animateCards(resolveCard, element, delay, false, args.player_id)
+                            }
                         })
                     );
                     delay += 200;

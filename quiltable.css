@@ -135,10 +135,13 @@
   font-size: 2em;
 }
 
-#overall-content {
-    /* background-image: url('img/background.png');
-    background-size: repeat; */
-}
+/* #overall-content {
+    background-image: url('img/banner1.jpg');
+    background-size: repeat;
+    width: 100%;
+    height: 100%;
+     background-size: auto;
+} */
 
 #score_header {
   text-align: center;
