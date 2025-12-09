@@ -823,6 +823,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             },
         
        returnCard: function (event) {
+        dojo.byId("205") && dojo.style("205", "z-index", 205)
         this.bgaPerformAction("actConfirmReturn", { 
             loc: event.target.id
         }).then(() => {});
@@ -884,6 +885,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
        setUpReturnLocations: function (args) {
         console.log("SETUP RETURN")
         console.log(args)
+        dojo.byId("205") && dojo.style("205", "z-index", 0)
         args = args.args
             for (let i=224; i<= 243; i++) {
                 const pattern_area = document.querySelector(".pattern-board")
@@ -1607,6 +1609,7 @@ finalizeCardPlacement: function(billy=false) {
     this.sendCardPlacements(placements, billy);
     
     // Hide placement button, show selection button again
+    dojo.byId("205") && dojo.style("205", "z-index", 205)
     dojo.style('confirm_placement', 'display', 'none');
     dojo.style('confirm_selection', 'display', 'inline-block');
 },
@@ -2624,6 +2627,7 @@ synchronizeValidationState: function() {
 
         notif_choose_args: function(args) {
             if (this.isCurrentPlayerActive()) {
+                dojo.byId("205") && dojo.style("205", "z-index", 0)
                 this.selectableBlocks = args
                 args.forEach((item) => {const card = document.getElementById(item.id)
                     card.classList.add("selectable-card")
