@@ -912,13 +912,25 @@ function quiltMasterTurn() {
     public function argPlayerTurn(): array
     {
         // Get some values from the current game situation from the database.
-
+        $matches = [];
+        foreach($this->loadPlayersBasicInfos() as $player => $data) {
+            $matches[$player] = $this->getPatternPoints($player);
+        }
         $player_id = $this->getActivePlayerId();
         return [
             "use_assistant" => $this->getGameStateValue("use_assistant"),
             "turn_num" => $this->getGameStateValue("turn_counter"),
-            "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0
+            "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0,
+            "matches" => $matches
         ];
+    }
+
+    public function argNextPlayer() {
+        $matches = [];
+        foreach($this->loadPlayersBasicInfos() as $player => $data) {
+            $matches[$player] = $this->getPatternPoints($player);
+        }
+        return ["matches" => $matches];
     }
 
     public function argChooseAssistant() {
@@ -1296,8 +1308,6 @@ function quiltMasterTurn() {
 
         $result["master_num"] = ($this->getPlayersNumber() == 1) ? $this->getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE card_location = 'quiltMaster'") : null;
 
-
-
         // return player boards
         $player_ids = array_keys($this->loadPlayersBasicInfos());
 
@@ -1577,6 +1587,7 @@ function quiltMasterTurn() {
             $quilt = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
             $patterns = $this->cards->getCardsOfTypeInLocation("pattern", null, $player_id, null);
             $total = 0;
+            $total_matches = [];
 
             # Build dynamic quilt
             $quilt_built = [[],[],[],[]];
@@ -1695,10 +1706,28 @@ function quiltMasterTurn() {
                 }
                 # 5. Add count("allMatches")*patternPoint to total points to be returned
                 $total += intval($card["points"])*count($matches);
+                $m = [];
+                // var_dump($matches);
+                $cards = $this->cards->getCardsOfTypeInLocation("back", null, $player_id, null);
+                foreach(array_values($matches) as $l) {
+                    foreach(array_values($l) as $g) {
+                        foreach($cards as $id => $rest) {
+                            $r = $this->quilt_cards[$rest["location_arg"]]["row"]-1;
+                            $c = $this->quilt_cards[$rest["location_arg"]]["col"]-1;
+                            // var_dump($l);
+                            if($g["row"]==$r && $g["col"]==$c) {
+                                array_push($m, $id);
+                                break;
+                         }
+                        }
+                    }
+                    $total_matches[$patternCardId][] = $m;
+                    $m = [];
+                }
             }       
-            return $total;
+            return ["total"=> $total, "matches"=>$total_matches];
         } else {
-            return "-";
+            return ["total"=> "-", "matches"=>null];
         }
         }
         #helper
@@ -1990,7 +2019,7 @@ function calculatePoints() {
 
     foreach ($players as $player_id => $data) {
         $player_score = ['premium'   => $this->getPremiumPoints($player_id),
-                'patterns'  => $this->getPatternPoints($player_id),
+                'patterns'  => $this->getPatternPoints($player_id)["total"],
                 'completed' => $this->getCompletedQuiltPoints($player_id),
                 'symmetry'  => $this->getSymmetryPoints($player_id),
                 'patches'   => $this->getPatchesPoints($player_id)];
