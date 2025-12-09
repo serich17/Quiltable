@@ -262,17 +262,23 @@ function quiltMasterTurn() {
             throw new \BgaUserException(_('Assistant not available'));
         }
 
-        $this->cards->moveCard($card_id, (string)$player_id);
+        if ($this->getPlayerCount() == 1) {
+            $this->cards->moveCard($card_id, "out_of_play");
+            $target = 1;
+        } else {
+            $this->cards->moveCard($card_id, (string)$player_id);
+            $target = "player-table-" . $player_id;
+        }
+
 
         $this->notify->all("plan", clienttranslate('${player_name} uses assistant [Terrific Tim(194)] to trade [${card_name}(${card_arg})] for extra turn'),
                     array(
-                        "player_id" => $this->getActivePlayerId(),
+                        "player_id" => $active_player,
                         "card_arg" => $this->cards->getCard($card_id)["type_arg"],
                         "card_name" => "pattern card",
-                        "player_name" => $this->getPlayerNameById((int)$this->getActivePlayerId())
+                        "player_name" => $this->getPlayerNameById($active_player)
                     ));
 
-            $target = "player-table-" . $player_id;    
             $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$card_id => ["card_id"=>$card_id, "target"=>$target, "loc"=>0, "flip"=>0]]]);
         
         $this->DbQuery("UPDATE player SET num_turns = num_turns + 1 WHERE player_id = $active_player");
@@ -1027,6 +1033,17 @@ function quiltMasterTurn() {
         $this->gamestate->nextState("loop");
     }
 
+    function actSlideValidate(int $loc) {
+        $result = $this->refillPatternArea();
+         // Place the card at chosen location
+        $id = $result["card_id"];
+
+        $this->cards->moveCard( $id, "pattern_area", $loc);
+        $this->notify->all("animation", "", ["player_id"=> $this->getActivePlayerId(),"animation"=>[$id=>["card_id"=>$id, "target"=>"pattern-board", "loc"=>$loc, "flip"=>0]]]);
+
+        $this->gamestate->nextState("loop");
+    }
+
     function stHelper()
 {
     $transition = $this->getGameStateValue("which_transition");
@@ -1437,8 +1454,9 @@ function quiltMasterTurn() {
 
 
         if ($this->getPlayersNumber() == 1) {
-            // $assistants = [192,194,196,198];
-            $assistants = [196];
+            $assistants = [192,194,196,198];
+
+            // $assistants = [196];
         } else {
             $assistants = [192,194,196,198,200];
         }
@@ -2215,6 +2233,46 @@ function refillPatternArea($setup = false)
         218 => 'deck_3'
     ];
 
+    // Define row/col mapping for all positions
+    $position_coords = [
+        208 => ["row" => 2, "col" => 2],
+        209 => ["row" => 2, "col" => 3],
+        210 => ["row" => 2, "col" => 4],
+        211 => ["row" => 2, "col" => 5],
+        212 => ["row" => 3, "col" => 2],
+        213 => ["row" => 3, "col" => 3],
+        214 => ["row" => 3, "col" => 4],
+        215 => ["row" => 3, "col" => 5],
+        216 => ["row" => 4, "col" => 2],
+        217 => ["row" => 4, "col" => 3],
+        218 => ["row" => 4, "col" => 4],
+        219 => ["row" => 4, "col" => 5],
+        220 => ["row" => 5, "col" => 2],
+        221 => ["row" => 5, "col" => 3],
+        222 => ["row" => 5, "col" => 4],
+        223 => ["row" => 5, "col" => 5],
+        224 => ["row" => 1, "col" => 2],
+        225 => ["row" => 1, "col" => 3],
+        226 => ["row" => 1, "col" => 4],
+        227 => ["row" => 1, "col" => 5],
+        228 => ["row" => 1, "col" => 6],
+        229 => ["row" => 2, "col" => 6],
+        230 => ["row" => 3, "col" => 6],
+        231 => ["row" => 4, "col" => 6],
+        232 => ["row" => 5, "col" => 6],
+        233 => ["row" => 6, "col" => 6],
+        234 => ["row" => 6, "col" => 5],
+        235 => ["row" => 6, "col" => 4],
+        236 => ["row" => 6, "col" => 3],
+        237 => ["row" => 6, "col" => 2],
+        238 => ["row" => 6, "col" => 1],
+        239 => ["row" => 5, "col" => 1],
+        240 => ["row" => 4, "col" => 1],
+        241 => ["row" => 3, "col" => 1],
+        242 => ["row" => 2, "col" => 1],
+        243 => ["row" => 1, "col" => 1]
+    ];
+
     //
     // --- PREPARE DECK AVAILABILITY ---
     //
@@ -2271,7 +2329,7 @@ function refillPatternArea($setup = false)
         if ($source === null) continue;
 
         //
-        // Pull card “virtually”
+        // Pull card "virtually"
         //
         $card_id = array_key_first($available[$source]);
         $card = $available[$source][$card_id];
@@ -2361,11 +2419,113 @@ function refillPatternArea($setup = false)
     }
 
     //
+    // ------------------------------------------------
+    // STEP C: VALIDATE ALL CARDS HAVE NEIGHBORS
+    // ------------------------------------------------
+    //
+    
+    // Get all cards in pattern_area
+    $all_cards = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", null);
+    
+    // Build a map of which positions are occupied
+    $occupied_positions = [];
+    foreach ($all_cards as $card) {
+        $occupied_positions[$card['location_arg']] = $card['id'];
+    }
+    
+    // Check each card for horizontal/vertical neighbors
+    foreach ($all_cards as $card) {
+        $loc = $card['location_arg'];
+        
+        // Skip if position not in our coords map
+        if (!isset($position_coords[$loc])) continue;
+        
+        $row = $position_coords[$loc]['row'];
+        $col = $position_coords[$loc]['col'];
+        
+        // Check for neighbors (up, down, left, right)
+        $has_neighbor = false;
+        foreach ($position_coords as $pos => $coords) {
+            // Check if adjacent horizontally or vertically
+            if (($coords['row'] == $row && abs($coords['col'] - $col) == 1) ||
+                ($coords['col'] == $col && abs($coords['row'] - $row) == 1)) {
+                if (isset($occupied_positions[$pos])) {
+                    $has_neighbor = true;
+                    break;
+                }
+            }
+        }
+        
+        // If no neighbor found, find closest valid slide locations
+        if (!$has_neighbor) {
+            $valid_slides = [];
+            
+            // Check all positions where this card could slide to have a neighbor
+            foreach ($position_coords as $target_pos => $target_coords) {
+                // Skip if position is occupied or is current position
+                if (isset($occupied_positions[$target_pos]) || $target_pos == $loc) continue;
+                
+                // Check if target position would have a neighbor
+                $target_row = $target_coords['row'];
+                $target_col = $target_coords['col'];
+                
+                $has_neighbor_at_target = false;
+                foreach ($position_coords as $neighbor_pos => $neighbor_coords) {
+                    if ($neighbor_pos == $target_pos) continue;
+                    
+                    // Check if adjacent horizontally or vertically
+                    if (($neighbor_coords['row'] == $target_row && abs($neighbor_coords['col'] - $target_col) == 1) ||
+                        ($neighbor_coords['col'] == $target_col && abs($neighbor_coords['row'] - $target_row) == 1)) {
+                        // Make sure this neighbor position is occupied (and not the current card)
+                        if (isset($occupied_positions[$neighbor_pos]) && $occupied_positions[$neighbor_pos] != $card['id']) {
+                            $has_neighbor_at_target = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if ($has_neighbor_at_target) {
+                    // Calculate Manhattan distance from current position
+                    $distance = abs($target_row - $row) + abs($target_col - $col);
+                    $valid_slides[] = [
+                        'pos' => $target_pos,
+                        'distance' => $distance
+                    ];
+                }
+            }
+            
+            if (!empty($valid_slides)) {
+                // Sort by distance
+                usort($valid_slides, function($a, $b) {
+                    return $a['distance'] - $b['distance'];
+                });
+                
+                // Get minimum distance
+                $min_distance = $valid_slides[0]['distance'];
+                
+                // Keep only positions with minimum distance
+                $closest_slides = [];
+                foreach ($valid_slides as $slide) {
+                    if ($slide['distance'] == $min_distance) {
+                        $closest_slides[] = $slide['pos'];
+                    }
+                }
+                
+                // Return the card that needs to be moved and closest locations
+                return [
+                    'card_id' => $card['id'],
+                    'current_location' => $loc,
+                    'locations' => $closest_slides
+                ];
+            }
+        }
+    }
+
+    //
     // Done
     //
     return null;
 }
-
 
 
 function executeFlip($card_id, $loc) {
@@ -2394,7 +2554,6 @@ function executeFlip($card_id, $loc) {
         ]);
     }
 }
-
 
 
     public function checkReturnAdjacency($loc) {

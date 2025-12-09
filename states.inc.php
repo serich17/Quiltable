@@ -137,7 +137,7 @@ $machinestates = [
     "type" => "activeplayer",
     "action" => "stHelper",
     "args" => "argsHelper",
-    "possibleactions" => ["actMaddieOption", "actHelperBack", "actTurnCard", "actQuiltMaster"],
+    "possibleactions" => ["actMaddieOption", "actHelperBack", "actTurnCard", "actSlideValidate", "actQuiltMaster"],
     "transitions" => ["transition" => 17, "back" => 16, "loop" => 16, "nextPlayer"=>3, "turn"=>2]
     ],
 
