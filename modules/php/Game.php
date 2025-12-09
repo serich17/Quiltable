@@ -916,7 +916,7 @@ function quiltMasterTurn() {
         return [
             "use_assistant" => $this->getGameStateValue("use_assistant"),
             "turn_num" => $this->getGameStateValue("turn_counter"),
-            "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0,
+            "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0
         ];
     }
 
