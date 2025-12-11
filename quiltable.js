@@ -493,7 +493,8 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                         );
                     }
 
-                    dojo.place('assistant_action', 'back', 'before');
+                    dojo.byId('back') && dojo.place('assistant_action', 'back', 'before');
+                    dojo.byId('pass') && dojo.place('assistant_action', 'pass', 'before');
                     dojo.style('assistant_action', 'display', 'inline-block')
                     card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0]
                     card.boundAssistant = this.assistantHandler;
@@ -602,19 +603,21 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 {
                  case 'playerTurn':
                     this.statusBar.removeActionButtons()
-                    if (this.options == "1" || this.playerCount == 1) {
-                        this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("actPlan"), {id:'plan_button'})
+                    if (!(args.use_assistant == "192" && args.turn_num == "2")) {
+                        if (this.options == "1" || this.playerCount == 1) {
+                            this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("actPlan"), {id:'plan_button'})
+                        }
+                        this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("actChoose"), {id:'choose_button'})
+                        this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("actReturn"), {id:'return_button'})
+                        this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none;'});
+                        this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
+                            this.removePatterns()
+                            // Clear previous temporary cards
+                            dojo.query('.temp-card', this.board).forEach(dojo.destroy);
+                            dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
+                        }), {id:'back', color: 'secondary', style: 'display:none;'});
+                        dojo.style('back', 'display', 'none');
                     }
-                    this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("actChoose"), {id:'choose_button'})
-                    this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("actReturn"), {id:'return_button'})
-                    this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none;'});
-                    this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
-                        this.removePatterns()
-                        // Clear previous temporary cards
-                        dojo.query('.temp-card', this.board).forEach(dojo.destroy);
-                        dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
-                    }), {id:'back', color: 'secondary', style: 'display:none;'});
-                    dojo.style('back', 'display', 'none');
                     this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), {id:'pass', color: 'secondary', style: 'display:none;'});
                     dojo.style('pass', 'display', 'none');
                     break;
@@ -2706,7 +2709,7 @@ synchronizeValidationState: function() {
         notif_sally: function(args) {
             this.selectPatterns(args, sally=true)
             this.hide_turn_buttons()
-            dojo.style('back', 'display', 'inline-block')
+            dojo.byId('back') && dojo.style('back', 'display', 'inline-block')
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose a pattern') : _('${actplayer} must choose a pattern'), "")
         },
 

@@ -104,7 +104,7 @@ $machinestates = [
         "action" => "stNextPlayer",
         "args"=>"argNextPlayer",
         "updateGameProgression" => true,
-        "transitions" => ["postEnd" => 98, "nextPlayer" => 2]
+        "transitions" => ["postEnd" => 98, "nextPlayer" => 2, "transition"=>17]
     ],
 
     13 => [
