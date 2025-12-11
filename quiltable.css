@@ -80,6 +80,13 @@
   src: url("https://fonts.googleapis.com/css2?family=Playwrite+US+Modern:wght@100..400&display=swap")
 }
 
+@font-face {
+font-family:"tekton-pro";
+src:url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
+font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
+}
+
+
 .lastTurnMarker {
     background: #ffcc00;
     color: #000;
@@ -155,7 +162,6 @@
   background-size: 150px 100px; 
   margin: 3px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.219);
-
 }
 
 .completed {
@@ -181,19 +187,41 @@ background-position: -50px -50px;
 #score_header {
   text-align: center;
   font-size: 2em;
-  font-family: "Playwrite US Modern";
 }
 
 /* Main score sheet container */
 .score-sheet-background {
-    background-image: url("img/scoring_background.jpg");
-    background-repeat: repeat;
+    position: relative;
+    overflow: hidden; /* ensures blur doesn't spill outside the border */
     border-radius: 1.5rem;
     padding: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     border: 2px solid rgba(255, 255, 255, 0.1);
     width: 100%;
     margin: 1rem 0;
+    background: none; /* remove original background so it doesn't overlap */
+}
+
+.score-sheet-background::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* same as: top:0; right:0; bottom:0; left:0; */
+    background-image:
+        linear-gradient(rgba(167, 167, 167, 0.2), rgba(167, 167, 167, 0.2)),
+        url("img/scoring_background.jpg");
+    background-repeat: repeat;
+    background-size: cover; /* adjust as needed */
+    filter: blur(3px); /* control blur amount */
+    z-index: 0; /* behind content */
+}
+
+.score-sheet-background > * {
+    position: relative;
+    z-index: 1; /* ensures content stays above blur */
+}
+
+.score-sheet-background *{
+  font-family: "tekton-pro", sans-serif;
 }
 
 /* Score sheet table */
