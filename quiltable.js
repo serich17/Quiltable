@@ -220,42 +220,47 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     document.getElementById(`my-score-sheet`), // an empty div on your template to place the score sheet on
                     {
                     animationsActive: () => this.bgaAnimationsActive(), // so the animation doesn't trigger on replay fast mode
-                    playerNameWidth: 80,
+                    playerNameWidth: 150,
                     playerNameHeight: 30,
-                    entryLabelWidth: 120,
-                    entryLabelHeight: 20,
+                    entryLabelWidth: null,
+                    entryLabelHeight: null,
                     classes: 'score-sheet-background',
                     players: scorePlayers,
                     entries: [
                         {
                         property: 'completed',
-                        label: _('Completed Quilt'),
+                        label: '<div class="icon completed"></div>',
                         labelClasses: 'entries-label',
-                        },
-                        {
-                        property: 'symmetry',
-                        label: _('Symmetrical quilt'),
-                        labelClasses: 'entries-label',
-                        },
-                        {
-                        property: 'patches',
-                        label: _('Patch points'),
-                        labelClasses: 'entries-label',
+                        scoresClasses: 'entries-label'
                         },
                         {
                         property: 'premium',
-                        label: _('Premium points'),
+                        label: '<div class="icon premium"></div>',
                         labelClasses: 'entries-label',
+                        scoresClasses: 'entries-label'
                         },
                         {
                         property: 'patterns',
-                        label: _('Pattern cards'),
+                        label: '<div class="icon patterns_icon"></div>',
                         labelClasses: 'entries-label',
+                        scoresClasses: 'entries-label'
+                        },
+                        {
+                        property: 'patches',
+                        label: '<div class="icon patches"></div>',
+                        labelClasses: 'entries-label',
+                        scoresClasses: 'entries-label'
+                        },
+                        {
+                        property: 'symmetry',
+                        label: '<div class="icon symmetry"></div>',
+                        labelClasses: 'entries-label',
+                        scoresClasses: 'entries-label'
                         },
                         {
                         property: 'total',
                         label: _('Total'),
-                        labelClasses: 'entries-label',
+                        labelClasses: 'entries-label total',
                         scoresClasses: 'total',
                         width: 80,
                         height: 40,
