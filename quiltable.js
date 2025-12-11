@@ -1255,6 +1255,11 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
         // Validate initial placement
         this.tempCards.forEach(card => this.validateTempCardPlacement(card))
         this.synchronizeValidationState()
+
+        dojo.query(".card").forEach((card) => {
+            card.classList.remove("selectable-card")
+            card.removeEventListener("click", card.boundSelectPlan)
+        })
     },
 
     // Calculate and store board dimensions for boundary checks
