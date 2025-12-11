@@ -1589,7 +1589,7 @@ function quiltMasterTurn() {
             switch ($state_name) {
                 default:
                 {
-                    $this->gamestate->nextState("zombiePass");
+                    $this->actPass();
                     break;
                 }
             }
