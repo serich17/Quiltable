@@ -134,7 +134,7 @@ $machinestates = [
 
     16 => [
     "name" => "helperAction",
-    "description" => clienttranslate('${actplayer} must decide whether to flip his assistant'),
+    "description" => clienttranslate('${actplayer} must decide whether to flip their assistant'),
     "type" => "activeplayer",
     "action" => "stHelper",
     "args" => "argsHelper",

@@ -282,6 +282,55 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 dojo.place(header, cont, "first")
             }
 
+
+            if (gamedatas.matches.matches && gamedatas.matches.matches[this.playerId]) {
+
+                    data = gamedatas.matches.matches[this.playerId].matches
+
+                    for (const key in data) {
+                        const outerArray = data[key];
+                        const patternDiv = dojo.byId(`${key}`);
+                        if (!patternDiv) continue;
+
+                        // Remove old listener if it exists
+                        if (patternDiv._zoomListener) {
+                            patternDiv.removeEventListener("click", patternDiv._zoomListener);
+                        }
+
+                        // Define the listener
+                        const listener = () => {
+                            let delay = 0;
+                            outerArray.forEach((innerArray) => {
+                                innerArray.forEach((value) => {
+                                    const card = dojo.byId(`${value}`);
+                                    if (!card) return;
+
+                                    // Zoom in
+                                    setTimeout(() => {
+                                        dojo.style(card, "transition", "transform 0.3s ease");
+                                        dojo.style(card, "transform", "scale(1.1)");
+                                    }, delay);
+
+                                    // Zoom out
+                                    setTimeout(() => {
+                                        dojo.style(card, "transform", "scale(1)");
+                                    }, delay + 500);
+                                });
+                                delay += 500;
+                            });
+                        };
+
+                        // Store the listener so we can remove it next time
+                        patternDiv._zoomListener = listener;
+                        patternDiv.addEventListener("click", listener);
+                    }
+
+
+                }
+
+
+
+
             console.log( "Ending game setup" );
         },
         destroyAnimation: function (card_id) {
@@ -423,10 +472,27 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 if (args.args.use_assistant != 0 && this.isCurrentPlayerActive() && !this.unconected) {
                     //TODO set assistant to send request on click to server to return args for specific assistant
                     if (!dojo.byId("assistant_action")) {
-                        this.statusBar.addActionButton(_('Assistant'), () => this.bgaPerformAction("actAssistantAction", { 
-                        assistant: args.args.use_assistant
-                    }), {id: 'assistant_action'});
+                        this.statusBar.addActionButton(
+                            _('Assistant'),
+                            () => {
+
+                                // Remove card listener + CSS when button is clicked
+                                const card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0];
+                                if (card && card.boundAssistant) {
+                                    card.removeEventListener("click", card.boundAssistant);
+                                    delete card.boundAssistant;
+                                    card.classList.remove("selectable-card");
+                                }
+
+                                // Now send the action
+                                this.bgaPerformAction("actAssistantAction", { 
+                                    assistant: args.args.use_assistant
+                                });
+                            },
+                            { id: 'assistant_action' }
+                        );
                     }
+
                     dojo.place('assistant_action', 'back', 'before');
                     dojo.style('assistant_action', 'display', 'inline-block')
                     card = dojo.query(`[assistant=${args.args.use_assistant}]`)[0]
@@ -572,6 +638,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     delete event.target.boundAssistant
                     event.target.classList.remove("selectable-card")
                 }
+                // Remove the button when a card is clicked
+                const btn = dojo.byId("assistant_action");
+                if (btn) btn.remove();
                 this.bgaPerformAction("actAssistantAction", { 
                         assistant: event.target.getAttribute("assistant")
                     })
@@ -2339,6 +2408,9 @@ synchronizeValidationState: function() {
 
         helper: function(args) {
             this.statusBar.removeActionButtons()
+            if (this.isSpectator || !this.isCurrentPlayerActive()) {
+                return
+            }
             this.statusBar.addActionButton(_('Allow'), () => this.bgaPerformAction("actMaddieOption", {option: 0}))
             this.statusBar.addActionButton(_('Give Pattern Instead'), () => {
                 this.statusBar.removeActionButtons()

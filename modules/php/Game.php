@@ -502,6 +502,8 @@ function quiltMasterTurn() {
         $this->setGameStateValue("main_player", (int)$player_id);
         $this->setGameStateValue("helper_player", (int)$tar_player);
 
+        $this->setGameStateValue("which_transition", 1);
+
         // Switch to helper state
         $this->gamestate->nextState("transition");
     }
@@ -1056,7 +1058,7 @@ function quiltMasterTurn() {
     $transition = $this->getGameStateValue("which_transition");
     $result = $this->refillPatternArea();
 
-    if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
+    if ($result === null && $transition==0 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
         // Go directly to next player
         $this->gamestate->nextState("nextPlayer");
         return;
@@ -1072,7 +1074,7 @@ function quiltMasterTurn() {
             ];
         }
 
-        if ($transition == 1) {
+        if ($transition == 2) {
             return [
                 "helper" => [
                     "name" => $this->getPlayerNameById($this->getGameStateValue("main_player")),
@@ -1113,20 +1115,20 @@ function quiltMasterTurn() {
 
         $result = $this->refillPatternArea();
 
-        if ($result === null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
+        if ($result === null && $transition==0 && ($this->getGameStateValue("quilt_master") != 0 || $this->getPlayersNumber()!=1)) {
             // Go directly to next player
             $this->gamestate->nextState("helperAction");
             return;
-        } else if ($result != null && $transition!=1 && ($this->getGameStateValue("quilt_master") != 0|| $this->getPlayersNumber()!=1)) {
+        } else if ($result != null && $transition==0 && ($this->getGameStateValue("quilt_master") != 0|| $this->getPlayersNumber()!=1)) {
             $this->gamestate->nextState("helperAction");
             return;
         }
 
 
-        if ($transition == 0) {
+        if ($transition == 1) {
             $helper = $this->getGameStateValue('helper_player');
             $this->gamestate->changeActivePlayer($helper);
-            $this->setGameStateValue("which_transition", 1);
+            $this->setGameStateValue("which_transition", 2);
             $this->gamestate->nextState("helperAction");
         } else {
             $main = $this->getGameStateValue('main_player');
@@ -1300,6 +1302,8 @@ function quiltMasterTurn() {
         $result["options"] = $this->getGameStateValue("game_variants");
 
         $result["master"] = ($this->getPlayersNumber() == 1) ? $this->getGameStateValue("quilt_master") : null;
+
+        $result["matches"] = $this->argNextPlayer();
 
         $result["master_num"] = ($this->getPlayersNumber() == 1) ? $this->getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE card_location = 'quiltMaster'") : null;
 
