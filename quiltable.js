@@ -783,13 +783,6 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 
                 // Here you would call your server action
                 // For example:
-                // gameui.ajaxcall(
-                //     "/yourGame/yourGame/shiftQuilt.html",
-                //     { lock: true, direction: direction },
-                //     gameui,
-                //     function(result) {},
-                //     function(is_error) {}
-                // );
                 
                 // For demonstration purposes, let's simulate updating button states
                 // In a real implementation, you would update this based on server response
@@ -1799,7 +1792,7 @@ getLocationIdFromPosition: function(row, col) {
     return baseId + ((row - 1) * 4) + col;
 },
 
-// Send placements to server with proper ajaxcall
+// Send placements to server
 sendCardPlacements: function(placements, billy) {
     console.log("Sending placements to server:", placements);
     
