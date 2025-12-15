@@ -1836,6 +1836,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 192,
         "name" => "Sneaky Sally",
+        "description"=> _("<i>(for 2 actions)</i><br>
+            You may use both actions to PLAN by
+            taking 3 patterns instead of 2. (These can
+            be from different piles.)"),
         "other_side" => 193,
         "class" => "ADS"
     ),
@@ -1844,6 +1848,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 193,
         "name" => "Big Billy",
+        "description"=> _("<i>(once per turn, for 1 action)</i><br>
+            You may CHOOSE 1–4 connected cards
+            instead of the usual 2–3 cards."),
         "other_side" => 192,
         "class" => "ADSB"
     ),
@@ -1852,6 +1859,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 194,
         "name" => "Terrific Tim",
+        "description"=> _("<i>(up to twice per turn, free)</i><br>
+            You may donate 1 pattern card to
+            another player and receive a third (or
+            fourth) action that turn."),
         "other_side" => 195,
         "class" => "ADT"
     ),
@@ -1860,6 +1871,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 195,
         "name" => "Swap Shop Sandra",
+        "description"=> _("<i>(once per turn, for 1 action)</i><br>
+            You may trade 1 block from your quilt with
+            a single quilt block from the Pattern Area."),
         "other_side" => 194,
         "class" => "ADTB"
     ),
@@ -1868,6 +1882,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 196,
         "name" => "Granny Smith",
+        "description"=> _("<i>(once per turn, for 1 action)</i><br>
+            Without checking the other side, you may
+            flip 1 of your quilt blocks and place it with
+            your other pattern cards."),
         "other_side" => 197,
         "class" => "ADU"
     ),
@@ -1876,6 +1894,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 197,
         "name" => "Uncle Sam",
+        "description"=> _("<i>(once per turn, for 1 action)</i><br>
+            You may flip 1 of your pattern cards and
+            add it to your quilt, or you may take a
+            pattern card to flip immediately."),
         "other_side" => 196,
         "class" => "ADUB"
     ),
@@ -1884,6 +1906,11 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 198,
         "name" => "Planning Peter",
+        "description"=> _("<i>(ongoing)</i><br>
+            The Single Quilt rule does not apply to
+            you. Though the 4x4 size limit still applies,
+            you may leave gaps in your quilt as you
+            CHOOSE or RETURN cards."),
         "other_side" => 199,
         "class" => "ADV"
     ),
@@ -1892,6 +1919,12 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 199,
         "name" => "Gifted Gladys",
+        "description"=> _("<i>(for 1 action)</i><br>
+            You may CHOOSE and RETURN
+            unconnected blocks. As you CHOOSE
+            blocks they must remain in the same
+            relative position. After this action your
+            quilt should still be in 1 piece."),
         "other_side" => 198,
         "class" => "ADVB"
     ),
@@ -1900,6 +1933,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 200,
         "name" => "Tricky Travis",
+        "description"=> _("<i>(for 1 action)</i><br>
+            You may switch assistant cards and
+            associated abilities with another player."),
         "other_side" => 201,
         "class" => "ADW"
     ),
@@ -1908,6 +1944,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 201,
         "name" => "Mayhem Maddie",
+        "description"=> _("<i>(once per turn, free)</i><br>
+            You may flip the assistant card of 1 other
+            player. That player may immediately give
+            you any 1 pattern card to undo it."),
         "other_side" => 200,
         "class" => "ADWB"
     ),
@@ -1940,6 +1980,7 @@ $this->quilt_cards = array(
         "type" => "turnMarker",
         "type_arg" => 205,
         "name" => "Quilt Master",
+        "description"=> _("The Quilt Master takes quilt blocks every turn, moving clockwise. At the end of the game, the cards are flipped over and the pattern cards are each scored once and added up."),
         "other_side" => 204,
         "class" => "ADYB"
     ),
@@ -1948,11 +1989,12 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 206,
         "name" => "Observant Omar",
+        "description"=> "",
         "other_side" => 207,
         "class" => "ADZ"
     ),
     // card 112 Clever Clarissa
-    207 => array("type" => "character","type_arg" => 207,"name" => "Clever Clarissa","other_side" => 206,"class" => "ADZB"),
+    207 => array("type" => "character","type_arg" => 207,"name" => "Clever Clarissa","description"=> "","other_side" => 206,"class" => "ADZB"),
 
 
     // PLAYER BOARD POSITIONS

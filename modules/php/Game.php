@@ -490,6 +490,62 @@ function quiltMasterTurn() {
             $this->gamestate->nextState("back");
         }
 
+        public function checkAssistantAvailability() {
+            $player_id = $this->getActivePlayerId();
+            $assistant = (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id");
+
+            switch ($assistant) {
+                case 192:
+                    if (!$this->checkPlanAvailablility()) {
+                        return false;
+                    }
+                    break;
+                case 193:
+                    if (!$this->checkChooseAvailablility()) {
+                        return false;
+                    }
+                    break;
+                case 194:
+                    if (count($this->cards->getCardsOfTypeInLocation("pattern", null, $this->getCurrentPlayerId(), null)) == 0) {
+                        return false;
+                    }
+                    break;
+                case 195:
+                    $board = $this->cards->getCardsOfTypeInLocation("back", null, (string)$player_id, null);
+                    $blocks = $this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", null);
+                    if (count($board) < 1 || count($blocks) < 1) {
+                        return false;
+                    }
+                        break;
+                case 196:
+                    $board = $this->cards->getCardsOfTypeInLocation("back", null, (string)$player_id, null);
+                    if (count($board) < 1) {
+                        return false;
+                    }
+                    break;
+                case 197:
+                    $patt = [];
+                    foreach($this->cards->getCardsOfTypeInLocation("pattern",null, (string)$player_id, 0) as $i => $v) {
+                        $patt[$v["id"]] = $v["id"];
+                    }
+                    $args = array_merge($this->argPlan(), $patt);
+                    if (count($args) < 1) {
+                        return false;
+                    }
+                    break;
+                case 198:
+                    break;
+                case 199:
+                    break;
+                case 200:
+                    break;
+                case 201:
+                    break;
+            }
+
+            return true;
+        }
+
 
     public function actMaddie(string $tar_player) {
         $player_id = $this->getActivePlayerId();
@@ -627,6 +683,9 @@ function quiltMasterTurn() {
         $this->notify->player((int)$this->getActivePlayerId(), "plan_args", "", $this->argPlan());
     }
     public function actChoose() {
+        if (!$this->checkChooseAvailablility()) {
+            throw new \BgaUserException('No cards left to choose');
+        }
         $this->notify->player((int)$this->getActivePlayerId(), "choose_args", "", $this->argChoose());
     }
     public function actReturn() {
@@ -941,6 +1000,10 @@ function quiltMasterTurn() {
         $player_id = $this->getActivePlayerId();
         return [
             "use_assistant" => $this->getGameStateValue("use_assistant"),
+            "plan"=> $this->checkPlanAvailablility(),
+            "choose"=> $this->checkChooseAvailablility(),
+            "return"=> (count($this->cards->getCardsOfTypeInLocation("back", null, $this->getActivePlayerId(), null)) > 0),
+            "assistant"=> $this->checkAssistantAvailability(),
             "turn_num" => $this->getGameStateValue("turn_counter"),
             "last_turn" => $this->getUniqueValueFromDB("SELECT COUNT(*) FROM player WHERE endTriggered = 1") > 0
         ];
@@ -1589,7 +1652,17 @@ function quiltMasterTurn() {
             switch ($state_name) {
                 default:
                 {
-                    $this->actPass();
+                    // Retrieve the active player ID.
+                    $player_id = (int)$this->getActivePlayerId();
+
+                    // Notify all players about the choice to pass.
+                    $this->notify->all("pass", clienttranslate('${player_name} zombie pass action'), [
+                        "player_id" => $player_id,
+                        "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
+                    ]);
+                    // at the end of the action, move to the next state
+                    $this->setGameStateValue("turn_counter", 5);
+                    $this->gamestate->nextState("nextPlayer");
                     break;
                 }
             }
@@ -2671,6 +2744,23 @@ function executeFlip($card_id, $loc) {
         }
 
         return false;
+    }
+
+    public function checkChooseAvailablility() {
+        $player_id = $this->getActivePlayerId();
+        $assistant = (int)$this->getUniqueValueFromDB("SELECT assistant FROM player WHERE player_id = $player_id");
+        $num = 0;
+        if ($assistant == 193 && $this->getGameStateValue("use_assistant") == 1) {
+            $num = 0;
+        } else {
+            $num = 1;
+        }
+
+        if (count($this->cards->getCardsOfTypeInLocation("back", null, "pattern_area", null)) > $num) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
 

@@ -86,6 +86,14 @@ src:url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/l?primer=
 font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
 }
 
+.tooltip-card-image {
+    border-radius: 5px;
+    background-size: 1101px 1000px;
+    width: var(--size);
+    height: var(--size);
+    margin-bottom: 6px;
+}
+
 
 .lastTurnMarker {
     background: #ffcc00;
@@ -471,7 +479,12 @@ background-position: 33.33% 0;
 
 }
 
-
+#back {
+  background: #c92727;
+  background: -o-linear-gradient(top,#c20b0b,#c92727);
+  border: 1px solid #b20a0a;
+  color: white;
+}
 
 .temp-card {
   border: 2px dashed #999;

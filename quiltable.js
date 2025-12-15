@@ -101,6 +101,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 master.setAttribute("type", "205")
                 pattern_area.appendChild(master)
 
+                // set tooltip
+                this.addTooltipHtml("205", this.getCardTooltip("205"))
+
                 if(gamedatas.master){
                     master.style.left = gamedatas.locations[gamedatas.master].x + "px"
                     master.style.top = gamedatas.locations[gamedatas.master].y + "px"
@@ -137,6 +140,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     this.miniCounters[player.id] = new ebg.counter();
                     this.miniCounters[player.id].create(`miniCounterValue_${player.id}`);
                     this.miniCounters[player.id].setValue(parseInt(gamedatas.master_num)); // starting value
+                    this.addTooltipHtml(`miniCounter_${player.id}`, _("Quilt Master Scoring Stack"))
                 }
 
                 // example of adding a div for each player
@@ -349,6 +353,8 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             if (assistant == 198) {
                 this.unconected = true
             }
+            assis.id = `assistant-${assistant}`
+            this.addTooltipHtml(assis.id, this.getCardTooltip(assistant))
         },
 
        setup_board_cards: function(data, playerid) {
@@ -469,7 +475,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
                 dojo.query('.selected, .selectable').forEach(dojo.destroy)
 
-                if (args.args.use_assistant != 0 && this.isCurrentPlayerActive() && !this.unconected) {
+                if (args.args.use_assistant != 0 && this.isCurrentPlayerActive() && !this.unconected && args.args.assistant) {
                     //TODO set assistant to send request on click to server to return args for specific assistant
                     if (!dojo.byId("assistant_action")) {
                         this.statusBar.addActionButton(
@@ -604,18 +610,22 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                  case 'playerTurn':
                     this.statusBar.removeActionButtons()
                     if (!(args.use_assistant == "192" && args.turn_num == "2")) {
-                        if (this.options == "1" || this.playerCount == 1) {
+                        if ((this.options == "1" || this.playerCount == 1) && args.plan) {
                             this.statusBar.addActionButton(_('Plan'), () => this.bgaPerformAction("actPlan"), {id:'plan_button'})
                         }
-                        this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("actChoose"), {id:'choose_button'})
-                        this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("actReturn"), {id:'return_button'})
+                        if (args.choose) {
+                            this.statusBar.addActionButton(_('Choose'), () => this.bgaPerformAction("actChoose"), {id:'choose_button'})
+                        }
+                        if (args.return) {
+                            this.statusBar.addActionButton(_('Return'), () => this.bgaPerformAction("actReturn"), {id:'return_button'})
+                        }
                         this.statusBar.addActionButton(_('Finalize Placement'), () => this.finalizeCardPlacement(), {id: 'confirm_placement', style: 'display:none;'});
                         this.statusBar.addActionButton(_('Back'), () => this.bgaPerformAction("actBack").then(()=>{
                             this.removePatterns()
                             // Clear previous temporary cards
                             dojo.query('.temp-card', this.board).forEach(dojo.destroy);
                             dojo.query('.card-group-controls', this.board).forEach(dojo.destroy);
-                        }), {id:'back', color: 'secondary', style: 'display:none;'});
+                        }), {id:'back', style: 'display:none;'});
                         dojo.style('back', 'display', 'none');
                     }
                     this.statusBar.addActionButton(_('Pass'), () => this.bgaPerformAction("actPass"), {id:'pass', color: 'secondary', style: 'display:none;'});
@@ -634,6 +644,17 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             script.
         
         */
+
+            getCardTooltip: function(card) {
+                return `
+                    <div class="card-tooltip">
+                        <div class="tooltip-card-image ${this.types[card].class}"></div>
+                        <h2>${this.types[card].name}</h2>
+                        <div class="tooltip-text">${this.types[card].description}</div>
+                    </div>
+                `;
+            },
+
 
             assistant: function(event) {
                 if (event.target.boundAssistant) {
@@ -969,6 +990,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             display.boundSelectAssistant = this.selectAssistant.bind(this);
             
             display.addEventListener("click", display.boundSelectAssistant)
+            this.addTooltipHtml(display.id, this.getCardTooltip(option))
         });
     
             const storage = dojo.query(".storage")[0];
@@ -986,7 +1008,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 element.classList.remove("selected")
             });
             event.target.classList.add("selected")
-            this.bgaPerformAction("actChooseAssistant", { 
+            this.bgaPerformAction("actChooseAssistant", {
                 option: value
             }).then(() => {});
 
@@ -2359,6 +2381,10 @@ synchronizeValidationState: function() {
 
                 // Update type and location attributes
                 card.setAttribute("assistant", args.other);
+
+                // update the tooltip
+                card.id = `assistant-${args.id}`
+                this.addTooltipHtml(card.id, this.getCardTooltip(args.id))
             }, 250);
 
             setTimeout(() => {
@@ -2728,7 +2754,7 @@ synchronizeValidationState: function() {
         hide_turn_buttons: function() {
             dojo.byId('plan_button') && dojo.style('plan_button', 'display', 'none')
             dojo.byId('choose_button') && dojo.style('choose_button', 'display', 'none')
-            dojo.byId('choose_button') && dojo.style('return_button', 'display', 'none')
+            dojo.byId('return_button') && dojo.style('return_button', 'display', 'none')
             dojo.byId('assistant_action') && dojo.style('assistant_action', 'display', 'none')
             dojo.byId('pass') && dojo.style('pass', 'display', 'none')
         },
