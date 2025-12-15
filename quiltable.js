@@ -233,31 +233,31 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     entries: [
                         {
                         property: 'completed',
-                        label: '<div class="icon completed"></div>',
+                        label: '<div id="c" class="icon completed"></div>',
                         labelClasses: 'entries-label',
                         scoresClasses: 'entries-label'
                         },
                         {
                         property: 'premium',
-                        label: '<div class="icon premium"></div>',
+                        label: '<div id="p" class="icon premium"></div>',
                         labelClasses: 'entries-label',
                         scoresClasses: 'entries-label'
                         },
                         {
                         property: 'patterns',
-                        label: '<div class="icon patterns_icon"></div>',
+                        label: '<div id="pa" class="icon patterns_icon"></div>',
                         labelClasses: 'entries-label',
                         scoresClasses: 'entries-label'
                         },
                         {
                         property: 'patches',
-                        label: '<div class="icon patches"></div>',
+                        label: '<div id="pat" class="icon patches"></div>',
                         labelClasses: 'entries-label',
                         scoresClasses: 'entries-label'
                         },
                         {
                         property: 'symmetry',
-                        label: '<div class="icon symmetry"></div>',
+                        label: '<div id="s" class="icon symmetry"></div>',
                         labelClasses: 'entries-label',
                         scoresClasses: 'entries-label'
                         },
@@ -277,7 +277,12 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                         }
                     },
                     }
-                );    
+                );
+                this.addTooltipHtml("c", _("Completed 4x4 quilt points"))
+                this.addTooltipHtml("p", _("Premium points"))
+                this.addTooltipHtml("pa", _("Pattern points"))
+                this.addTooltipHtml("pat", _("Patch points"))
+                this.addTooltipHtml("s", _("Symmetrical quilt points"))
 
                 cont = dojo.query("#my-score-sheet")[0]
                 const header = document.createElement("h2")
