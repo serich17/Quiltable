@@ -355,7 +355,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             assis.classList.add(`${this.types[assistant].class}`, "card")
             assis.setAttribute("assistant", assistant)
             board.appendChild(assis)
-            if (assistant == 198) {
+            if (assistant == 198 && id==this.playerId) {
                 this.unconected = true
             }
             assis.id = `assistant-${assistant}`
