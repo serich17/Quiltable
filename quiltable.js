@@ -2531,8 +2531,8 @@ synchronizeValidationState: function() {
         notif_gladys: function(args) {
             this.gladys = true
             this.hide_turn_buttons()
-            dojo.style('choose_button', 'display', 'inline-block')
-            dojo.style('return_button', 'display', 'inline-block')
+            dojo.byId('choose_button') && dojo.style('choose_button', 'display', 'inline-block')
+            dojo.byId('return_button') && dojo.style('return_button', 'display', 'inline-block')
             dojo.style('back', 'display', 'inline-block')
             
             this.statusBar.setTitle(this.isCurrentPlayerActive() ? _('${you} must choose which action to use with assistant') : _('${actplayer} must choose action'), "")
