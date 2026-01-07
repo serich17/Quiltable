@@ -1151,7 +1151,8 @@ function quiltMasterTurn() {
 
 
         // return $total / (count($players) * 16)*100;
-        return array_sum($progress) / count($progress);
+        // return array_sum($progress) / count($progress);
+        return max($progress);
     }
 
     /**
@@ -1332,7 +1333,8 @@ function quiltMasterTurn() {
                                 $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
                             }
                         } else {
-                            $this->DbQuery("UPDATE player SET player_score = $total WHERE player_id = $id");
+                            $aux = $total + (int)$this->getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id = $id");
+                            $this->DbQuery("UPDATE player SET player_score = $total, player_score_aux = $aux WHERE player_id = $id");
                         }
                     }            
 
@@ -1761,7 +1763,7 @@ function quiltMasterTurn() {
                 $location = $patch["location_arg"];
 
                 # extract card data needed
-                $name = $this->quilt_cards[$arg]["name"];
+                $name = $this->quilt_cards[$arg]["type_arg"];
                     # subtract 1 because in material file they start at 2
                 $row = $this->quilt_cards[$location]["row"]-1;
                 $col = $this->quilt_cards[$location]["col"]-1;

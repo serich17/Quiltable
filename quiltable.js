@@ -88,6 +88,9 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     card_cont.setAttribute("location", card.location_arg)
                     card_cont.setAttribute("type", card.type_arg)
                     pattern_area.appendChild(card_cont)
+                    this.addTooltipHtml(card_cont, gamedatas.type_arg[card.type_arg].name)
+                    this.addTooltipHtml(card.id, this.getCardTooltip(card.type_arg))
+
                 })
             })
          if (this.playerCount == 1) {
@@ -125,6 +128,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                 card_cont.style.left = gamedatas.locations[card.location_arg].x + "px"
                 card_cont.style.top = gamedatas.locations[card.location_arg].y + "px"
                 pattern_area.appendChild(card_cont)
+                this.addTooltipHtml(card_cont.id, gamedatas.type_arg[card.type_arg]["name"])
             })
             
             // Setting up player boards
@@ -377,9 +381,11 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
             if (card.location_arg != "0") {
                 card_cont.style.left = this.locations[card.location_arg].x + "px"
                 card_cont.style.top = this.locations[card.location_arg].y + "px"
-                player_board.appendChild(card_cont) 
+                player_board.appendChild(card_cont)
+                this.addTooltipHtml(card_cont.id, this.types[card.type_arg]["name"])
             } else {
                 patterns.appendChild(card_cont)
+                this.addTooltipHtml(card_cont.id, this.getCardTooltip(card.type_arg))
             }
         })
        },
@@ -930,6 +936,13 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                         original.style.zIndex = ""
                         original.setAttribute("type", element.flip)
                         original.setAttribute("location", element.loc)
+
+                        if (element.flip % 2 == 0) {
+                            this.addTooltipHtml(original.id, this.getCardTooltip(element.flip))
+                        } else {
+                            this.addTooltipHtml(original.id, this.types[element.flip].name)
+                        }
+
                     }, 250);  // Halfway through the animation
             
                     // Final placement and cleanup
