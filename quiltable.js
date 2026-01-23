@@ -1020,22 +1020,26 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
 
        selectAssistant: function(event) {
             child = event.target
-            parent = child.parentElement
+            console.log("3")
             value = child.getAttribute("type")
-            parent.querySelectorAll(".selected").forEach(element => {
+            console.log("4")
+            document.querySelectorAll(".selected").forEach(element => {
                 element.classList.remove("selected")
             });
+            console.log("5")
             event.target.classList.add("selected")
+            console.log("6")
             this.bgaPerformAction("actChooseAssistant", {
                 option: value
-            }).then(() => {});
+            })
+            console.log("7")
 
 
         if (event.target.boundSelectAssistant) {
                     event.target.removeEventListener('click', event.target.boundSelectAssistant);
                     delete event.target.boundSelectAssistant
         }
-
+        console.log("8")
        },
 
 
@@ -2914,6 +2918,7 @@ synchronizeValidationState: function() {
         },
 
         notif_assistant: function(args) {
+            console.log("here")
             this.setup_assistant(args.card_arg, args.player_id)
         },
         notif_shift: function(args) {
