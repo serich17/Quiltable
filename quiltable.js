@@ -808,7 +808,7 @@ function (dojo, declare, gui, counter, query, BgaScoreSheet) {
                     this.isShiftEnabled = false
                     this.bgaPerformAction("actShiftQuilt", { 
                         shiftDirection: direction
-                    }).then(() => {});
+                    })
                     }
                 
                 }
@@ -2865,24 +2865,29 @@ synchronizeValidationState: function() {
         },
         shift_animation(args) {
             return new Promise((resolveNotif) => {
-                let animations = [];
+            //     let animations = [];
                 let delay = 0;
 
                 // 1. Queue animations for deck cards
+                // animations.push(new Promise((resolve) => {
+                //     setTimeout(((resolve)=> {
+                //         resolve()
+                //     }), 500)
+                // }))
                 Object.values(args.animation).forEach(element => {
-                    animations.push(
-                        new Promise((resolveCard) => {
-                            this.animateCards(resolveCard, element, delay);
-                        })
-                    );
+                    // animations.push(
+                        // new Promise((resolveCard) => {
+                            this.animateCards(resolveNotif, element, delay);
+                        // })
+                    // );
                 });
 
-                // 2. When all deck card animations finish → animate the master
-                Promise.all(animations)
-                    .then(() => {
-                        // 3. FINAL: resolve the global notification promise
-                        resolveNotif();
-                    });
+            //     // 2. When all deck card animations finish → animate the master
+            //     Promise.all(animations)
+            //         .then(() => {
+            //             // 3. FINAL: resolve the global notification promise
+            //             resolveNotif();
+            //         });
             });
         },
 
