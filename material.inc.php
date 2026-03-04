@@ -61,12 +61,12 @@ $this->quilt_cards = array(
     0 => array("type" => "pattern",
 "name" => clienttranslate("Pattern Card"),
 "description" => $description,"type_arg" => 0,"points" => "4","other_side" => 1,"pattern" => ["pumpkin", "A", "A"],"class" => "AAA"),
-    1 => array("type" => "back","type_arg" => 1,"name" => $sunflower,"points" => "1","position" => "left","color" => "green","other_side" => 0,"class" => "AAAB"),
+    1 => array("type" => "back","type_arg" => 1,"name" => $sunflower, "nameId" => "sunflower","points" => "1","position" => "left","color" => "green","other_side" => 0,"class" => "AAAB"),
     // card 2
     2 => array("type" => "pattern",
 "name" => clienttranslate("Pattern Card"),
 "description" => $description,"type_arg" => 2,"points" => "3","other_side" => 3,"pattern" => ["pumpkin", "leaf"],"class" => "AAB"),
-    3 => array("type" => "back","type_arg" => 3,"name" => $sunflower,"points" => "0","position" => "left","color" => "yellow","other_side" => 2,"class" => "AABB"),
+    3 => array("type" => "back","type_arg" => 3,"name" => $sunflower, "nameId" => "sunflower","points" => "0","position" => "left","color" => "yellow","other_side" => 2,"class" => "AABB"),
     // card 3
     4 => array(
         "type" => "pattern",
@@ -81,7 +81,7 @@ $this->quilt_cards = array(
     5 => array(
         "type" => "back",
         "type_arg" => 5,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -102,7 +102,7 @@ $this->quilt_cards = array(
     7 => array(
         "type" => "back",
         "type_arg" => 7,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -123,7 +123,7 @@ $this->quilt_cards = array(
     9 => array(
         "type" => "back",
         "type_arg" => 9,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -144,7 +144,7 @@ $this->quilt_cards = array(
     11 => array(
         "type" => "back",
         "type_arg" => 11,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -165,7 +165,7 @@ $this->quilt_cards = array(
     13 => array(
         "type" => "back",
         "type_arg" => 13,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -186,7 +186,7 @@ $this->quilt_cards = array(
     15 => array(
         "type" => "back",
         "type_arg" => 15,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -207,7 +207,7 @@ $this->quilt_cards = array(
     17 => array(
         "type" => "back",
         "type_arg" => 17,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -228,7 +228,7 @@ $this->quilt_cards = array(
     19 => array(
         "type" => "back",
         "type_arg" => 19,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -249,7 +249,7 @@ $this->quilt_cards = array(
     21 => array(
         "type" => "back",
         "type_arg" => 21,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -270,7 +270,7 @@ $this->quilt_cards = array(
     23 => array(
         "type" => "back",
         "type_arg" => 23,
-        "name" => $sunflower,
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -291,7 +291,7 @@ $this->quilt_cards = array(
     25 => array(
         "type" => "back",
         "type_arg" => 25,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -312,7 +312,7 @@ $this->quilt_cards = array(
     27 => array(
         "type" => "back",
         "type_arg" => 27,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -333,7 +333,7 @@ $this->quilt_cards = array(
     29 => array(
         "type" => "back",
         "type_arg" => 29,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -354,7 +354,7 @@ $this->quilt_cards = array(
     31 => array(
         "type" => "back",
         "type_arg" => 31,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -375,7 +375,7 @@ $this->quilt_cards = array(
     33 => array(
         "type" => "back",
         "type_arg" => 33,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -396,7 +396,7 @@ $this->quilt_cards = array(
     35 => array(
         "type" => "back",
         "type_arg" => 35,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -417,7 +417,7 @@ $this->quilt_cards = array(
     37 => array(
         "type" => "back",
         "type_arg" => 37,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -438,7 +438,7 @@ $this->quilt_cards = array(
     39 => array(
         "type" => "back",
         "type_arg" => 39,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -459,7 +459,7 @@ $this->quilt_cards = array(
     41 => array(
         "type" => "back",
         "type_arg" => 41,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -480,7 +480,7 @@ $this->quilt_cards = array(
     43 => array(
         "type" => "back",
         "type_arg" => 43,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -501,7 +501,7 @@ $this->quilt_cards = array(
     45 => array(
         "type" => "back",
         "type_arg" => 45,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -522,7 +522,7 @@ $this->quilt_cards = array(
     47 => array(
         "type" => "back",
         "type_arg" => 47,
-        "name" => $leaf,
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -543,7 +543,7 @@ $this->quilt_cards = array(
     49 => array(
         "type" => "back",
         "type_arg" => 49,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -564,7 +564,7 @@ $this->quilt_cards = array(
     51 => array(
         "type" => "back",
         "type_arg" => 51,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -585,7 +585,7 @@ $this->quilt_cards = array(
     53 => array(
         "type" => "back",
         "type_arg" => 53,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -606,7 +606,7 @@ $this->quilt_cards = array(
     55 => array(
         "type" => "back",
         "type_arg" => 55,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -627,7 +627,7 @@ $this->quilt_cards = array(
     57 => array(
         "type" => "back",
         "type_arg" => 57,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -648,7 +648,7 @@ $this->quilt_cards = array(
     59 => array(
         "type" => "back",
         "type_arg" => 59,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -669,7 +669,7 @@ $this->quilt_cards = array(
     61 => array(
         "type" => "back",
         "type_arg" => 61,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -690,7 +690,7 @@ $this->quilt_cards = array(
     63 => array(
         "type" => "back",
         "type_arg" => 63,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -711,7 +711,7 @@ $this->quilt_cards = array(
     65 => array(
         "type" => "back",
         "type_arg" => 65,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -732,7 +732,7 @@ $this->quilt_cards = array(
     67 => array(
         "type" => "back",
         "type_arg" => 67,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -753,7 +753,7 @@ $this->quilt_cards = array(
     69 => array(
         "type" => "back",
         "type_arg" => 69,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -774,7 +774,7 @@ $this->quilt_cards = array(
     71 => array(
         "type" => "back",
         "type_arg" => 71,
-        "name" => $corn,
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -795,7 +795,7 @@ $this->quilt_cards = array(
     73 => array(
         "type" => "back",
         "type_arg" => 73,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -816,7 +816,7 @@ $this->quilt_cards = array(
     75 => array(
         "type" => "back",
         "type_arg" => 75,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -837,7 +837,7 @@ $this->quilt_cards = array(
     77 => array(
         "type" => "back",
         "type_arg" => 77,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -858,7 +858,7 @@ $this->quilt_cards = array(
     79 => array(
         "type" => "back",
         "type_arg" => 79,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -879,7 +879,7 @@ $this->quilt_cards = array(
     81 => array(
         "type" => "back",
         "type_arg" => 81,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -900,7 +900,7 @@ $this->quilt_cards = array(
     83 => array(
         "type" => "back",
         "type_arg" => 83,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -921,7 +921,7 @@ $this->quilt_cards = array(
     85 => array(
         "type" => "back",
         "type_arg" => 85,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -942,7 +942,7 @@ $this->quilt_cards = array(
     87 => array(
         "type" => "back",
         "type_arg" => 87,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -963,7 +963,7 @@ $this->quilt_cards = array(
     89 => array(
         "type" => "back",
         "type_arg" => 89,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -984,7 +984,7 @@ $this->quilt_cards = array(
     91 => array(
         "type" => "back",
         "type_arg" => 91,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1005,7 +1005,7 @@ $this->quilt_cards = array(
     93 => array(
         "type" => "back",
         "type_arg" => 93,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1026,7 +1026,7 @@ $this->quilt_cards = array(
     95 => array(
         "type" => "back",
         "type_arg" => 95,
-        "name" => $pie,
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1047,7 +1047,7 @@ $this->quilt_cards = array(
     97 => array(
         "type" => "back",
         "type_arg" => 97,
-        "name" => $apple, #changed from pie
+        "name" => $apple, "nameId" => "apple", #changed from pie
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1068,7 +1068,7 @@ $this->quilt_cards = array(
     99 => array(
         "type" => "back",
         "type_arg" => 99,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1089,7 +1089,7 @@ $this->quilt_cards = array(
     101 => array(
         "type" => "back",
         "type_arg" => 101,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1110,7 +1110,7 @@ $this->quilt_cards = array(
     103 => array(
         "type" => "back",
         "type_arg" => 103,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1131,7 +1131,7 @@ $this->quilt_cards = array(
     105 => array(
         "type" => "back",
         "type_arg" => 105,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1152,7 +1152,7 @@ $this->quilt_cards = array(
     107 => array(
         "type" => "back",
         "type_arg" => 107,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1173,7 +1173,7 @@ $this->quilt_cards = array(
     109 => array(
         "type" => "back",
         "type_arg" => 109,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1194,7 +1194,7 @@ $this->quilt_cards = array(
     111 => array(
         "type" => "back",
         "type_arg" => 111,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1215,7 +1215,7 @@ $this->quilt_cards = array(
     113 => array(
         "type" => "back",
         "type_arg" => 113,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1236,7 +1236,7 @@ $this->quilt_cards = array(
     115 => array(
         "type" => "back",
         "type_arg" => 115,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1257,7 +1257,7 @@ $this->quilt_cards = array(
     117 => array(
         "type" => "back",
         "type_arg" => 117,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1278,7 +1278,7 @@ $this->quilt_cards = array(
     119 => array(
         "type" => "back",
         "type_arg" => 119,
-        "name" => $apple,
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1299,7 +1299,7 @@ $this->quilt_cards = array(
     121 => array(
         "type" => "back",
         "type_arg" => 121,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1320,7 +1320,7 @@ $this->quilt_cards = array(
     123 => array(
         "type" => "back",
         "type_arg" => 123,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1341,7 +1341,7 @@ $this->quilt_cards = array(
     125 => array(
         "type" => "back",
         "type_arg" => 125,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1362,7 +1362,7 @@ $this->quilt_cards = array(
     127 => array(
         "type" => "back",
         "type_arg" => 127,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1383,7 +1383,7 @@ $this->quilt_cards = array(
     129 => array(
         "type" => "back",
         "type_arg" => 129,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1404,7 +1404,7 @@ $this->quilt_cards = array(
     131 => array(
         "type" => "back",
         "type_arg" => 131,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1425,7 +1425,7 @@ $this->quilt_cards = array(
     133 => array(
         "type" => "back",
         "type_arg" => 133,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1446,7 +1446,7 @@ $this->quilt_cards = array(
     135 => array(
         "type" => "back",
         "type_arg" => 135,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1467,7 +1467,7 @@ $this->quilt_cards = array(
     137 => array(
         "type" => "back",
         "type_arg" => 137,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1488,7 +1488,7 @@ $this->quilt_cards = array(
     139 => array(
         "type" => "back",
         "type_arg" => 139,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1509,7 +1509,7 @@ $this->quilt_cards = array(
     141 => array(
         "type" => "back",
         "type_arg" => 141,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1530,7 +1530,7 @@ $this->quilt_cards = array(
     143 => array(
         "type" => "back",
         "type_arg" => 143,
-        "name" => $pumpkin,
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1551,7 +1551,7 @@ $this->quilt_cards = array(
     145 => array(
         "type" => "back",
         "type_arg" => 145,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1572,7 +1572,7 @@ $this->quilt_cards = array(
     147 => array(
         "type" => "back",
         "type_arg" => 147,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1593,7 +1593,7 @@ $this->quilt_cards = array(
     149 => array(
         "type" => "back",
         "type_arg" => 149,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1614,7 +1614,7 @@ $this->quilt_cards = array(
     151 => array(
         "type" => "back",
         "type_arg" => 151,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1635,7 +1635,7 @@ $this->quilt_cards = array(
     153 => array(
         "type" => "back",
         "type_arg" => 153,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1656,7 +1656,7 @@ $this->quilt_cards = array(
     155 => array(
         "type" => "back",
         "type_arg" => 155,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1677,7 +1677,7 @@ $this->quilt_cards = array(
     157 => array(
         "type" => "back",
         "type_arg" => 157,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1698,7 +1698,7 @@ $this->quilt_cards = array(
     159 => array(
         "type" => "back",
         "type_arg" => 159,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1719,7 +1719,7 @@ $this->quilt_cards = array(
     161 => array(
         "type" => "back",
         "type_arg" => 161,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1740,7 +1740,7 @@ $this->quilt_cards = array(
     163 => array(
         "type" => "back",
         "type_arg" => 163,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1761,7 +1761,7 @@ $this->quilt_cards = array(
     165 => array(
         "type" => "back",
         "type_arg" => 165,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1782,7 +1782,7 @@ $this->quilt_cards = array(
     167 => array(
         "type" => "back",
         "type_arg" => 167,
-        "name" => $cottage,
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1803,7 +1803,7 @@ $this->quilt_cards = array(
     169 => array(
         "type" => "back",
         "type_arg" => 169,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1824,7 +1824,7 @@ $this->quilt_cards = array(
     171 => array(
         "type" => "back",
         "type_arg" => 171,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1845,7 +1845,7 @@ $this->quilt_cards = array(
     173 => array(
         "type" => "back",
         "type_arg" => 173,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1866,7 +1866,7 @@ $this->quilt_cards = array(
     175 => array(
         "type" => "back",
         "type_arg" => 175,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1887,7 +1887,7 @@ $this->quilt_cards = array(
     177 => array(
         "type" => "back",
         "type_arg" => 177,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1908,7 +1908,7 @@ $this->quilt_cards = array(
     179 => array(
         "type" => "back",
         "type_arg" => 179,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1929,7 +1929,7 @@ $this->quilt_cards = array(
     181 => array(
         "type" => "back",
         "type_arg" => 181,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1950,7 +1950,7 @@ $this->quilt_cards = array(
     183 => array(
         "type" => "back",
         "type_arg" => 183,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1971,7 +1971,7 @@ $this->quilt_cards = array(
     185 => array(
         "type" => "back",
         "type_arg" => 185,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1992,7 +1992,7 @@ $this->quilt_cards = array(
     187 => array(
         "type" => "back",
         "type_arg" => 187,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -2013,7 +2013,7 @@ $this->quilt_cards = array(
     189 => array(
         "type" => "back",
         "type_arg" => 189,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -2034,7 +2034,7 @@ $this->quilt_cards = array(
     191 => array(
         "type" => "back",
         "type_arg" => 191,
-        "name" => $acorn,
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "brown",

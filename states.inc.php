@@ -54,15 +54,15 @@ $machinestates = [
 
     // The initial state. Please do not modify.
 
-    1 => array(
-        "name" => "gameSetup",
-        "description" => "",
-        "type" => "manager",
-        "action" => "stGameSetup",
-        "transitions" => [
-            "" => 50
-            ]
-    ),
+    // 1 => array(
+    //     "name" => "gameSetup",
+    //     "description" => "",
+    //     "type" => "manager",
+    //     "action" => "stGameSetup",
+    //     "transitions" => [
+    //         "" => 50
+    //         ]
+    // ),
 
     50 => array(
         "name" => "chooseAssistant",
@@ -160,13 +160,13 @@ $machinestates = [
 
     // Final state.
     // Please do not modify (and do not overload action/args methods).
-    99 => [
-        "name" => "gameEnd",
-        "description" => clienttranslate("End of game"),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd"
-    ],
+    // 99 => [
+    //     "name" => "gameEnd",
+    //     "description" => clienttranslate("End of game"),
+    //     "type" => "manager",
+    //     "action" => "stGameEnd",
+    //     "args" => "argGameEnd"
+    // ],
 
 ];
 
