@@ -69,7 +69,8 @@
 
 :root {
     --gap: 3px;
-    --size: 100px
+    --size: 100px;
+    --scale: 1;
 }
 
 @font-face {
@@ -84,6 +85,15 @@
 font-family:"tekton-pro";
 src:url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/368ec8/00000000000000007735d5cf/31/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
 font-display:auto;font-style:normal;font-weight:700;font-stretch:normal;
+}
+
+.tooltip-card-image {
+    --scale: 1.5;
+    border-radius: 5px;
+    background-size: calc(1101px * var(--scale)) calc(1000px * var(--scale));
+    width: calc(var(--size) * var(--scale));
+    height: calc(var(--size) * var(--scale));
+    margin-bottom: 6px;
 }
 
 
@@ -471,7 +481,12 @@ background-position: 33.33% 0;
 
 }
 
-
+#back {
+  background: #c92727;
+  background: -o-linear-gradient(top,#c20b0b,#c92727);
+  border: 1px solid #b20a0a;
+  color: white;
+}
 
 .temp-card {
   border: 2px dashed #999;
@@ -646,10 +661,10 @@ background-position: 33.33% 0;
     position: absolute;
     box-sizing: border-box;
     border-radius: 5px;
-    background-size: 1101px 1000px;
     z-index: 2;
-    width: var(--size);
-    height: var(--size);
+    width: calc(var(--size) * var(--scale));
+    height: calc(var(--size) * var(--scale));
+    background-size: calc(1101px * var(--scale)) calc(1000px * var(--scale));
   }
 .logcard {
     --size: 40px;
@@ -696,14 +711,14 @@ background-position: 33.33% 0;
 /* card 1 */
 .AAA {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAAB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -711,14 +726,14 @@ background-position: 33.33% 0;
 /* card 2 */
 .AAB {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AABB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -726,14 +741,14 @@ background-position: 33.33% 0;
 /* card 3 */
 .AAC {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AACB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -741,14 +756,14 @@ background-position: 33.33% 0;
 /* card 4 */
 .AAD {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AADB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -756,14 +771,14 @@ background-position: 33.33% 0;
 /* card 5 */
 .AAE {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAEB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -771,14 +786,14 @@ background-position: 33.33% 0;
 /* card 6 */
 .AAF {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAFB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -786,14 +801,14 @@ background-position: 33.33% 0;
 /* card 7 */
 .AAG {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAGB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -801,14 +816,14 @@ background-position: 33.33% 0;
 /* card 8 */
 .AAH {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAHB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -816,14 +831,14 @@ background-position: 33.33% 0;
 /* card 9 */
 .AAI {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAIB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -831,14 +846,14 @@ background-position: 33.33% 0;
 /* card 10 */
 .AAJ {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAJB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -846,14 +861,14 @@ background-position: 33.33% 0;
 /* card 11 */
 .AAK {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
 
 .AAKB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-0 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-0 * var(--size) * var(--scale));
   
   
 }
@@ -861,14 +876,14 @@ background-position: 33.33% 0;
 /* card 12 */
 .AAL {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AALB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -876,14 +891,14 @@ background-position: 33.33% 0;
 /* card 13 */
 .AAM {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAMB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -891,14 +906,14 @@ background-position: 33.33% 0;
 /* card 14 */
 .AAN {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AANB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -906,14 +921,14 @@ background-position: 33.33% 0;
 /* card 15 */
 .AAO {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAOB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -921,14 +936,14 @@ background-position: 33.33% 0;
 /* card 16 */
 .AAP {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAPB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -936,14 +951,14 @@ background-position: 33.33% 0;
 /* card 17 */
 .AAQ {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAQB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -951,14 +966,14 @@ background-position: 33.33% 0;
 /* card 18 */
 .AAR {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AARB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -966,14 +981,14 @@ background-position: 33.33% 0;
 /* card 19 */
 .AAS {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AASB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -981,14 +996,14 @@ background-position: 33.33% 0;
 /* card 20 */
 .AAT {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AATB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -996,14 +1011,14 @@ background-position: 33.33% 0;
 /* card 21 */
 .AAU {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAUB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -1011,14 +1026,14 @@ background-position: 33.33% 0;
 /* card 22 */
 .AAV {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
 
 .AAVB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-1 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-1 * var(--size) * var(--scale));
   
   
 }
@@ -1026,14 +1041,14 @@ background-position: 33.33% 0;
 /* card 23 */
 .AAW {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .AAWB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1041,14 +1056,14 @@ background-position: 33.33% 0;
 /* card 24 */
 .AAX {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .AAXB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1056,14 +1071,14 @@ background-position: 33.33% 0;
 /* card 25 */
 .AAY {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .AAYB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1071,14 +1086,14 @@ background-position: 33.33% 0;
 /* card 26 */
 .AAZ {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .AAZB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1086,14 +1101,14 @@ background-position: 33.33% 0;
 /* card 27 */
 .ABA {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABAB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1101,14 +1116,14 @@ background-position: 33.33% 0;
 /* card 28 */
 .ABB {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABBB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1116,14 +1131,14 @@ background-position: 33.33% 0;
 /* card 29 */
 .ABC {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABCB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1131,14 +1146,14 @@ background-position: 33.33% 0;
 /* card 30 */
 .ABD {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABDB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1146,14 +1161,14 @@ background-position: 33.33% 0;
 /* card 31 */
 .ABE {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABEB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1161,14 +1176,14 @@ background-position: 33.33% 0;
 /* card 32 */
 .ABF {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABFB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1176,14 +1191,14 @@ background-position: 33.33% 0;
 /* card 33 */
 .ABG {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
 
 .ABGB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-2 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-2 * var(--size) * var(--scale));
   
   
 }
@@ -1191,14 +1206,14 @@ background-position: 33.33% 0;
 /* card 34 */
 .ABH {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABHB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1206,14 +1221,14 @@ background-position: 33.33% 0;
 /* card 35 */
 .ABI {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABIB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1221,14 +1236,14 @@ background-position: 33.33% 0;
 /* card 36 */
 .ABJ {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABJB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1236,14 +1251,14 @@ background-position: 33.33% 0;
 /* card 37 */
 .ABK {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABKB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1251,14 +1266,14 @@ background-position: 33.33% 0;
 /* card 38 */
 .ABL {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABLB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1266,14 +1281,14 @@ background-position: 33.33% 0;
 /* card 39 */
 .ABM {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABMB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1281,14 +1296,14 @@ background-position: 33.33% 0;
 /* card 40 */
 .ABN {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABNB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1296,14 +1311,14 @@ background-position: 33.33% 0;
 /* card 41 */
 .ABO {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABOB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1311,14 +1326,14 @@ background-position: 33.33% 0;
 /* card 42 */
 .ABP {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABPB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1326,14 +1341,14 @@ background-position: 33.33% 0;
 /* card 43 */
 .ABQ {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABQB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1341,14 +1356,14 @@ background-position: 33.33% 0;
 /* card 44 */
 .ABR {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
 
 .ABRB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-3 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-3 * var(--size) * var(--scale));
   
   
 }
@@ -1356,14 +1371,14 @@ background-position: 33.33% 0;
 /* card 45 */
 .ABS {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABSB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1371,14 +1386,14 @@ background-position: 33.33% 0;
 /* card 46 */
 .ABT {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABTB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1386,14 +1401,14 @@ background-position: 33.33% 0;
 /* card 47 */
 .ABU {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABUB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1401,14 +1416,14 @@ background-position: 33.33% 0;
 /* card 48 */
 .ABV {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABVB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1416,14 +1431,14 @@ background-position: 33.33% 0;
 /* card 49 */
 .ABW {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABWB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1431,14 +1446,14 @@ background-position: 33.33% 0;
 /* card 50 */
 .ABX {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABXB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1446,14 +1461,14 @@ background-position: 33.33% 0;
 /* card 51 */
 .ABY {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABYB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1461,14 +1476,14 @@ background-position: 33.33% 0;
 /* card 52 */
 .ABZ {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ABZB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1476,14 +1491,14 @@ background-position: 33.33% 0;
 /* card 53 */
 .ACA {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ACAB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1491,14 +1506,14 @@ background-position: 33.33% 0;
 /* card 54 */
 .ACB {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ACBB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1506,14 +1521,14 @@ background-position: 33.33% 0;
 /* card 55 */
 .ACC {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
 
 .ACCB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-4 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-4 * var(--size) * var(--scale));
   
   
 }
@@ -1521,14 +1536,14 @@ background-position: 33.33% 0;
 /* card 56 */
 .ACD {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACDB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1536,14 +1551,14 @@ background-position: 33.33% 0;
 /* card 57 */
 .ACE {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACEB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1551,14 +1566,14 @@ background-position: 33.33% 0;
 /* card 58 */
 .ACF {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACFB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1566,14 +1581,14 @@ background-position: 33.33% 0;
 /* card 59 */
 .ACG {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACGB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1581,14 +1596,14 @@ background-position: 33.33% 0;
 /* card 60 */
 .ACH {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACHB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1596,14 +1611,14 @@ background-position: 33.33% 0;
 /* card 61 */
 .ACI {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACIB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1611,14 +1626,14 @@ background-position: 33.33% 0;
 /* card 62 */
 .ACJ {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACJB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1626,14 +1641,14 @@ background-position: 33.33% 0;
 /* card 63 */
 .ACK {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACKB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1641,14 +1656,14 @@ background-position: 33.33% 0;
 /* card 64 */
 .ACL {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACLB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1656,14 +1671,14 @@ background-position: 33.33% 0;
 /* card 65 */
 .ACM {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACMB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1671,14 +1686,14 @@ background-position: 33.33% 0;
 /* card 66 */
 .ACN {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
 
 .ACNB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-5 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-5 * var(--size) * var(--scale));
   
   
 }
@@ -1686,14 +1701,14 @@ background-position: 33.33% 0;
 /* card 67 */
 .ACO {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACOB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1701,14 +1716,14 @@ background-position: 33.33% 0;
 /* card 68 */
 .ACP {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACPB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1716,14 +1731,14 @@ background-position: 33.33% 0;
 /* card 69 */
 .ACQ {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACQB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1731,14 +1746,14 @@ background-position: 33.33% 0;
 /* card 70 */
 .ACR {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACRB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1746,14 +1761,14 @@ background-position: 33.33% 0;
 /* card 71 */
 .ACS {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACSB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1761,14 +1776,14 @@ background-position: 33.33% 0;
 /* card 72 */
 .ACT {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACTB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1776,14 +1791,14 @@ background-position: 33.33% 0;
 /* card 73 */
 .ACU {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACUB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1791,14 +1806,14 @@ background-position: 33.33% 0;
 /* card 74 */
 .ACV {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACVB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1806,14 +1821,14 @@ background-position: 33.33% 0;
 /* card 75 */
 .ACW {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACWB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1821,14 +1836,14 @@ background-position: 33.33% 0;
 /* card 76 */
 .ACX {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACXB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1836,14 +1851,14 @@ background-position: 33.33% 0;
 /* card 77 */
 .ACY {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
 
 .ACYB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-6 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-6 * var(--size) * var(--scale));
   
   
 }
@@ -1851,14 +1866,14 @@ background-position: 33.33% 0;
 /* card 78 */
 .ACZ {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ACZB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1866,14 +1881,14 @@ background-position: 33.33% 0;
 /* card 79 */
 .ADA {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADAB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1881,14 +1896,14 @@ background-position: 33.33% 0;
 /* card 80 */
 .ADB {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADBB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1896,14 +1911,14 @@ background-position: 33.33% 0;
 /* card 81 */
 .ADC {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADCB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1911,14 +1926,14 @@ background-position: 33.33% 0;
 /* card 82 */
 .ADD {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADDB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1926,14 +1941,14 @@ background-position: 33.33% 0;
 /* card 83 */
 .ADE {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADEB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1941,14 +1956,14 @@ background-position: 33.33% 0;
 /* card 84 */
 .ADF {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADFB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1956,14 +1971,14 @@ background-position: 33.33% 0;
 /* card 85 */
 .ADG {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADGB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1971,14 +1986,14 @@ background-position: 33.33% 0;
 /* card 86 */
 .ADH {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADHB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -1986,14 +2001,14 @@ background-position: 33.33% 0;
 /* card 87 */
 .ADI {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADIB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -2001,14 +2016,14 @@ background-position: 33.33% 0;
 /* card 88 */
 .ADJ {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
 
 .ADJB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-7 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-7 * var(--size) * var(--scale));
   
   
 }
@@ -2016,14 +2031,14 @@ background-position: 33.33% 0;
 /* card 89 */
 .ADK {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADKB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2031,14 +2046,14 @@ background-position: 33.33% 0;
 /* card 90 */
 .ADL {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADLB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2046,14 +2061,14 @@ background-position: 33.33% 0;
 /* card 91 */
 .ADM {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADMB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2061,14 +2076,14 @@ background-position: 33.33% 0;
 /* card 92 */
 .ADN {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADNB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2076,14 +2091,14 @@ background-position: 33.33% 0;
 /* card 93 */
 .ADO {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADOB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2091,14 +2106,14 @@ background-position: 33.33% 0;
 /* card 94 */
 .ADP {
   background-image: url(img/front.png);
-  background-position: calc(-5 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADPB {
   background-image: url(img/back.png);
-  background-position: calc(-5 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-5 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2106,14 +2121,14 @@ background-position: 33.33% 0;
 /* card 95 */
 .ADQ {
   background-image: url(img/front.png);
-  background-position: calc(-6 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADQB {
   background-image: url(img/back.png);
-  background-position: calc(-6 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-6 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2121,14 +2136,14 @@ background-position: 33.33% 0;
 /* card 96 */
 .ADR {
   background-image: url(img/front.png);
-  background-position: calc(-7 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADRB {
   background-image: url(img/back.png);
-  background-position: calc(-7 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-7 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2136,14 +2151,14 @@ background-position: 33.33% 0;
 /* card 97 */
 .ADS {
   background-image: url(img/front.png);
-  background-position: calc(-8 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADSB {
   background-image: url(img/back.png);
-  background-position: calc(-8 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-8 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2151,14 +2166,14 @@ background-position: 33.33% 0;
 /* card 98 */
 .ADT {
   background-image: url(img/front.png);
-  background-position: calc(-9 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADTB {
   background-image: url(img/back.png);
-  background-position: calc(-9 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-9 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2166,14 +2181,14 @@ background-position: 33.33% 0;
 /* card 99 */
 .ADU {
   background-image: url(img/front.png);
-  background-position: calc(-10 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
 
 .ADUB {
   background-image: url(img/back.png);
-  background-position: calc(-10 * var(--size)) calc(-8 * var(--size));
+  background-position: calc(-10 * var(--size) * var(--scale)) calc(-8 * var(--size) * var(--scale));
   
   
 }
@@ -2181,14 +2196,14 @@ background-position: 33.33% 0;
 /* card 100 */
 .ADV {
   background-image: url(img/front.png);
-  background-position: calc(-0 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
 
 .ADVB {
   background-image: url(img/back.png);
-  background-position: calc(-0 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-0 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
@@ -2196,14 +2211,14 @@ background-position: 33.33% 0;
 /* card 101 */
 .ADW {
   background-image: url(img/front.png);
-  background-position: calc(-1 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
 
 .ADWB {
   background-image: url(img/back.png);
-  background-position: calc(-1 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-1 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
@@ -2211,14 +2226,14 @@ background-position: 33.33% 0;
 /* card 102 */
 .ADX {
   background-image: url(img/front.png);
-  background-position: calc(-2 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
 
 .ADXB {
   background-image: url(img/back.png);
-  background-position: calc(-2 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-2 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
@@ -2226,27 +2241,27 @@ background-position: 33.33% 0;
 /* card 103 */
 .ADY {
   background-image: url(img/front.png);
-  background-position: calc(-3 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
 
 .ADYB {
   background-image: url(img/back.png);
-  background-position: calc(-3 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-3 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
 }
 
 /* card 104 */
 .ADZ {
   background-image: url(img/front.png);
-  background-position: calc(-4 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }
 
 .ADZB {
   background-image: url(img/back.png);
-  background-position: calc(-4 * var(--size)) calc(-9 * var(--size));
+  background-position: calc(-4 * var(--size) * var(--scale)) calc(-9 * var(--size) * var(--scale));
   
   
 }

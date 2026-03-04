@@ -38,16 +38,40 @@ $size = 100;
 // GRID GAP IN PX (MUST BE THE SAME AS IN THE CSS FILE)
 $gap = 3;
 
+$description = clienttranslate("<i>(When you click on a pattern in your table you will see all matches found in your quilt)</i><br>
+            All unique pattern matches are counted at the end of the game.
+            That means that when there is a match that partially overlaps another
+            match of the same pattern, only one will be counted.
+            When you have patterns with letters (i.e. A,B,C) they
+            can be any card, but have to be a distinct card from another 
+            letter.");
+
+$sunflower = clienttranslate("sunflower");
+$leaf = clienttranslate("leaf");
+$corn = clienttranslate("corn");
+$pie = clienttranslate("pie");
+$apple = clienttranslate("apple");
+$pumpkin = clienttranslate("pumpkin");
+$cottage = clienttranslate("cottage");
+$acorn = clienttranslate("acorn");
+
+
 $this->quilt_cards = array(
     // card 1
-    0 => array("type" => "pattern","type_arg" => 0,"points" => "4","other_side" => 1,"pattern" => ["pumpkin", "A", "A"],"class" => "AAA"),
-    1 => array("type" => "back","type_arg" => 1,"name" => "sunflower","points" => "1","position" => "left","color" => "green","other_side" => 0,"class" => "AAAB"),
+    0 => array("type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,"type_arg" => 0,"points" => "4","other_side" => 1,"pattern" => ["pumpkin", "A", "A"],"class" => "AAA"),
+    1 => array("type" => "back","type_arg" => 1,"name" => $sunflower, "nameId" => "sunflower","points" => "1","position" => "left","color" => "green","other_side" => 0,"class" => "AAAB"),
     // card 2
-    2 => array("type" => "pattern","type_arg" => 2,"points" => "3","other_side" => 3,"pattern" => ["pumpkin", "leaf"],"class" => "AAB"),
-    3 => array("type" => "back","type_arg" => 3,"name" => "sunflower","points" => "0","position" => "left","color" => "yellow","other_side" => 2,"class" => "AABB"),
+    2 => array("type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,"type_arg" => 2,"points" => "3","other_side" => 3,"pattern" => ["pumpkin", "leaf"],"class" => "AAB"),
+    3 => array("type" => "back","type_arg" => 3,"name" => $sunflower, "nameId" => "sunflower","points" => "0","position" => "left","color" => "yellow","other_side" => 2,"class" => "AABB"),
     // card 3
     4 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 4,
         "points" => "3",
         "other_side" => 5,
@@ -57,7 +81,7 @@ $this->quilt_cards = array(
     5 => array(
         "type" => "back",
         "type_arg" => 5,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -67,6 +91,8 @@ $this->quilt_cards = array(
     // card 4
     6 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 6,
         "points" => "8",
         "other_side" => 7,
@@ -76,7 +102,7 @@ $this->quilt_cards = array(
     7 => array(
         "type" => "back",
         "type_arg" => 7,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -86,6 +112,8 @@ $this->quilt_cards = array(
     // card 5
     8 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 8,
         "points" => "5",
         "other_side" => 9,
@@ -95,7 +123,7 @@ $this->quilt_cards = array(
     9 => array(
         "type" => "back",
         "type_arg" => 9,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -105,6 +133,8 @@ $this->quilt_cards = array(
     // card 6
     10 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 10,
         "points" => "6",
         "other_side" => 11,
@@ -114,7 +144,7 @@ $this->quilt_cards = array(
     11 => array(
         "type" => "back",
         "type_arg" => 11,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -124,6 +154,8 @@ $this->quilt_cards = array(
     // card 7
     12 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 12,
         "points" => "4",
         "other_side" => 13,
@@ -133,7 +165,7 @@ $this->quilt_cards = array(
     13 => array(
         "type" => "back",
         "type_arg" => 13,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -143,6 +175,8 @@ $this->quilt_cards = array(
     // card 8
     14 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 14,
         "points" => "3",
         "other_side" => 15,
@@ -152,7 +186,7 @@ $this->quilt_cards = array(
     15 => array(
         "type" => "back",
         "type_arg" => 15,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -162,6 +196,8 @@ $this->quilt_cards = array(
     // card 9
     16 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 16,
         "points" => "3",
         "other_side" => 17,
@@ -171,7 +207,7 @@ $this->quilt_cards = array(
     17 => array(
         "type" => "back",
         "type_arg" => 17,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -181,6 +217,8 @@ $this->quilt_cards = array(
     // card 10
     18 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 18,
         "points" => "6",
         "other_side" => 19,
@@ -190,7 +228,7 @@ $this->quilt_cards = array(
     19 => array(
         "type" => "back",
         "type_arg" => 19,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -200,6 +238,8 @@ $this->quilt_cards = array(
     // card 11
     20 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 20,
         "points" => "6",
         "other_side" => 21,
@@ -209,7 +249,7 @@ $this->quilt_cards = array(
     21 => array(
         "type" => "back",
         "type_arg" => 21,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -219,6 +259,8 @@ $this->quilt_cards = array(
     // card 12
     22 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 22,
         "points" => "7",
         "other_side" => 23,
@@ -228,7 +270,7 @@ $this->quilt_cards = array(
     23 => array(
         "type" => "back",
         "type_arg" => 23,
-        "name" => "sunflower",
+        "name" => $sunflower, "nameId" => "sunflower",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -238,6 +280,8 @@ $this->quilt_cards = array(
     // card 13
     24 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 24,
         "points" => "4",
         "other_side" => 25,
@@ -247,7 +291,7 @@ $this->quilt_cards = array(
     25 => array(
         "type" => "back",
         "type_arg" => 25,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -257,6 +301,8 @@ $this->quilt_cards = array(
     // card 14
     26 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 26,
         "points" => "3",
         "other_side" => 27,
@@ -266,7 +312,7 @@ $this->quilt_cards = array(
     27 => array(
         "type" => "back",
         "type_arg" => 27,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -276,6 +322,8 @@ $this->quilt_cards = array(
     // card 15
     28 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 28,
         "points" => "3",
         "other_side" => 29,
@@ -285,7 +333,7 @@ $this->quilt_cards = array(
     29 => array(
         "type" => "back",
         "type_arg" => 29,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -295,6 +343,8 @@ $this->quilt_cards = array(
     // card 16
     30 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 30,
         "points" => "8",
         "other_side" => 31,
@@ -304,7 +354,7 @@ $this->quilt_cards = array(
     31 => array(
         "type" => "back",
         "type_arg" => 31,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -314,6 +364,8 @@ $this->quilt_cards = array(
     // card 17
     32 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 32,
         "points" => "5",
         "other_side" => 33,
@@ -323,7 +375,7 @@ $this->quilt_cards = array(
     33 => array(
         "type" => "back",
         "type_arg" => 33,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -333,6 +385,8 @@ $this->quilt_cards = array(
     // card 18
     34 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 34,
         "points" => "6",
         "other_side" => 35,
@@ -342,7 +396,7 @@ $this->quilt_cards = array(
     35 => array(
         "type" => "back",
         "type_arg" => 35,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -352,6 +406,8 @@ $this->quilt_cards = array(
     // card 19
     36 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 36,
         "points" => "4",
         "other_side" => 37,
@@ -361,7 +417,7 @@ $this->quilt_cards = array(
     37 => array(
         "type" => "back",
         "type_arg" => 37,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -371,6 +427,8 @@ $this->quilt_cards = array(
     // card 20
     38 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 38,
         "points" => "3",
         "other_side" => 39,
@@ -380,7 +438,7 @@ $this->quilt_cards = array(
     39 => array(
         "type" => "back",
         "type_arg" => 39,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -390,6 +448,8 @@ $this->quilt_cards = array(
     // card 21
     40 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 40,
         "points" => "3",
         "other_side" => 41,
@@ -399,7 +459,7 @@ $this->quilt_cards = array(
     41 => array(
         "type" => "back",
         "type_arg" => 41,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -409,6 +469,8 @@ $this->quilt_cards = array(
     // card 22
     42 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 42,
         "points" => "6",
         "other_side" => 43,
@@ -418,7 +480,7 @@ $this->quilt_cards = array(
     43 => array(
         "type" => "back",
         "type_arg" => 43,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -428,6 +490,8 @@ $this->quilt_cards = array(
     // card 23
     44 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 44,
         "points" => "6",
         "other_side" => 45,
@@ -437,7 +501,7 @@ $this->quilt_cards = array(
     45 => array(
         "type" => "back",
         "type_arg" => 45,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -447,6 +511,8 @@ $this->quilt_cards = array(
     // card 24
     46 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 46,
         "points" => "8",
         "other_side" => 47,
@@ -456,7 +522,7 @@ $this->quilt_cards = array(
     47 => array(
         "type" => "back",
         "type_arg" => 47,
-        "name" => "leaf",
+        "name" => $leaf, "nameId" => "leaf",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -466,6 +532,8 @@ $this->quilt_cards = array(
     // card 25
     48 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 48,
         "points" => "4",
         "other_side" => 49,
@@ -475,7 +543,7 @@ $this->quilt_cards = array(
     49 => array(
         "type" => "back",
         "type_arg" => 49,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -485,6 +553,8 @@ $this->quilt_cards = array(
     // card 26
     50 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 50,
         "points" => "3",
         "other_side" => 51,
@@ -494,7 +564,7 @@ $this->quilt_cards = array(
     51 => array(
         "type" => "back",
         "type_arg" => 51,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -504,6 +574,8 @@ $this->quilt_cards = array(
     // card 27
     52 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 52,
         "points" => "3",
         "other_side" => 53,
@@ -513,7 +585,7 @@ $this->quilt_cards = array(
     53 => array(
         "type" => "back",
         "type_arg" => 53,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -523,6 +595,8 @@ $this->quilt_cards = array(
     // card 28
     54 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 54,
         "points" => "8",
         "other_side" => 55,
@@ -532,7 +606,7 @@ $this->quilt_cards = array(
     55 => array(
         "type" => "back",
         "type_arg" => 55,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -542,6 +616,8 @@ $this->quilt_cards = array(
     // card 29
     56 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 56,
         "points" => "5",
         "other_side" => 57,
@@ -551,7 +627,7 @@ $this->quilt_cards = array(
     57 => array(
         "type" => "back",
         "type_arg" => 57,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -561,6 +637,8 @@ $this->quilt_cards = array(
     // card 30
     58 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 58,
         "points" => "6",
         "other_side" => 59,
@@ -570,7 +648,7 @@ $this->quilt_cards = array(
     59 => array(
         "type" => "back",
         "type_arg" => 59,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -580,6 +658,8 @@ $this->quilt_cards = array(
     // card 31
     60 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 60,
         "points" => "4",
         "other_side" => 61,
@@ -589,7 +669,7 @@ $this->quilt_cards = array(
     61 => array(
         "type" => "back",
         "type_arg" => 61,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -599,6 +679,8 @@ $this->quilt_cards = array(
     // card 32
     62 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 62,
         "points" => "3",
         "other_side" => 63,
@@ -608,7 +690,7 @@ $this->quilt_cards = array(
     63 => array(
         "type" => "back",
         "type_arg" => 63,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -618,6 +700,8 @@ $this->quilt_cards = array(
     // card 33
     64 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 64,
         "points" => "3",
         "other_side" => 65,
@@ -627,7 +711,7 @@ $this->quilt_cards = array(
     65 => array(
         "type" => "back",
         "type_arg" => 65,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -637,6 +721,8 @@ $this->quilt_cards = array(
     // card 34
     66 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 66,
         "points" => "6",
         "other_side" => 67,
@@ -646,7 +732,7 @@ $this->quilt_cards = array(
     67 => array(
         "type" => "back",
         "type_arg" => 67,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -656,6 +742,8 @@ $this->quilt_cards = array(
     // card 35
     68 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 68,
         "points" => "6",
         "other_side" => 69,
@@ -665,7 +753,7 @@ $this->quilt_cards = array(
     69 => array(
         "type" => "back",
         "type_arg" => 69,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -675,6 +763,8 @@ $this->quilt_cards = array(
     // card 36
     70 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 70,
         "points" => "7",
         "other_side" => 71,
@@ -684,7 +774,7 @@ $this->quilt_cards = array(
     71 => array(
         "type" => "back",
         "type_arg" => 71,
-        "name" => "corn",
+        "name" => $corn, "nameId" => "corn",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -694,6 +784,8 @@ $this->quilt_cards = array(
     // card 37
     72 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 72,
         "points" => "4",
         "other_side" => 73,
@@ -703,7 +795,7 @@ $this->quilt_cards = array(
     73 => array(
         "type" => "back",
         "type_arg" => 73,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -713,6 +805,8 @@ $this->quilt_cards = array(
     // card 38
     74 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 74,
         "points" => "3",
         "other_side" => 75,
@@ -722,7 +816,7 @@ $this->quilt_cards = array(
     75 => array(
         "type" => "back",
         "type_arg" => 75,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -732,6 +826,8 @@ $this->quilt_cards = array(
     // card 39
     76 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 76,
         "points" => "3",
         "other_side" => 77,
@@ -741,7 +837,7 @@ $this->quilt_cards = array(
     77 => array(
         "type" => "back",
         "type_arg" => 77,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -751,6 +847,8 @@ $this->quilt_cards = array(
     // card 40
     78 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 78,
         "points" => "8",
         "other_side" => 79,
@@ -760,7 +858,7 @@ $this->quilt_cards = array(
     79 => array(
         "type" => "back",
         "type_arg" => 79,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -770,6 +868,8 @@ $this->quilt_cards = array(
     // card 41
     80 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 80,
         "points" => "5",
         "other_side" => 81,
@@ -779,7 +879,7 @@ $this->quilt_cards = array(
     81 => array(
         "type" => "back",
         "type_arg" => 81,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -789,6 +889,8 @@ $this->quilt_cards = array(
     // card 42
     82 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 82,
         "points" => "6",
         "other_side" => 83,
@@ -798,7 +900,7 @@ $this->quilt_cards = array(
     83 => array(
         "type" => "back",
         "type_arg" => 83,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -808,6 +910,8 @@ $this->quilt_cards = array(
     // card 43
     84 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 84,
         "points" => "4",
         "other_side" => 85,
@@ -817,7 +921,7 @@ $this->quilt_cards = array(
     85 => array(
         "type" => "back",
         "type_arg" => 85,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -827,6 +931,8 @@ $this->quilt_cards = array(
     // card 44
     86 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 86,
         "points" => "3",
         "other_side" => 87,
@@ -836,7 +942,7 @@ $this->quilt_cards = array(
     87 => array(
         "type" => "back",
         "type_arg" => 87,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -846,6 +952,8 @@ $this->quilt_cards = array(
     // card 45
     88 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 88,
         "points" => "3",
         "other_side" => 89,
@@ -855,7 +963,7 @@ $this->quilt_cards = array(
     89 => array(
         "type" => "back",
         "type_arg" => 89,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -865,6 +973,8 @@ $this->quilt_cards = array(
     // card 46
     90 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 90,
         "points" => "6",
         "other_side" => 91,
@@ -874,7 +984,7 @@ $this->quilt_cards = array(
     91 => array(
         "type" => "back",
         "type_arg" => 91,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -884,6 +994,8 @@ $this->quilt_cards = array(
     // card 47
     92 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 92,
         "points" => "6",
         "other_side" => 93,
@@ -893,7 +1005,7 @@ $this->quilt_cards = array(
     93 => array(
         "type" => "back",
         "type_arg" => 93,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -903,6 +1015,8 @@ $this->quilt_cards = array(
     // card 48
     94 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 94,
         "points" => "8",
         "other_side" => 95,
@@ -912,7 +1026,7 @@ $this->quilt_cards = array(
     95 => array(
         "type" => "back",
         "type_arg" => 95,
-        "name" => "pie",
+        "name" => $pie, "nameId" => "pie",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -922,6 +1036,8 @@ $this->quilt_cards = array(
     // card 49
     96 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 96,
         "points" => "4",
         "other_side" => 97,
@@ -931,7 +1047,7 @@ $this->quilt_cards = array(
     97 => array(
         "type" => "back",
         "type_arg" => 97,
-        "name" => "apple", #changed from pie
+        "name" => $apple, "nameId" => "apple", #changed from pie
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -941,6 +1057,8 @@ $this->quilt_cards = array(
     // card 50
     98 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 98,
         "points" => "3",
         "other_side" => 99,
@@ -950,7 +1068,7 @@ $this->quilt_cards = array(
     99 => array(
         "type" => "back",
         "type_arg" => 99,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -960,6 +1078,8 @@ $this->quilt_cards = array(
     // card 51
     100 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 100,
         "points" => "3",
         "other_side" => 101,
@@ -969,7 +1089,7 @@ $this->quilt_cards = array(
     101 => array(
         "type" => "back",
         "type_arg" => 101,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -979,6 +1099,8 @@ $this->quilt_cards = array(
     // card 52
     102 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 102,
         "points" => "8",
         "other_side" => 103,
@@ -988,7 +1110,7 @@ $this->quilt_cards = array(
     103 => array(
         "type" => "back",
         "type_arg" => 103,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -998,6 +1120,8 @@ $this->quilt_cards = array(
     // card 53
     104 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 104,
         "points" => "5",
         "other_side" => 105,
@@ -1007,7 +1131,7 @@ $this->quilt_cards = array(
     105 => array(
         "type" => "back",
         "type_arg" => 105,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1017,6 +1141,8 @@ $this->quilt_cards = array(
     // card 54
     106 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 106,
         "points" => "7",
         "other_side" => 107,
@@ -1026,7 +1152,7 @@ $this->quilt_cards = array(
     107 => array(
         "type" => "back",
         "type_arg" => 107,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1036,6 +1162,8 @@ $this->quilt_cards = array(
     // card 55
     108 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 108,
         "points" => "4",
         "other_side" => 109,
@@ -1045,7 +1173,7 @@ $this->quilt_cards = array(
     109 => array(
         "type" => "back",
         "type_arg" => 109,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1055,6 +1183,8 @@ $this->quilt_cards = array(
     // card 56
     110 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 110,
         "points" => "3",
         "other_side" => 111,
@@ -1064,7 +1194,7 @@ $this->quilt_cards = array(
     111 => array(
         "type" => "back",
         "type_arg" => 111,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1074,6 +1204,8 @@ $this->quilt_cards = array(
     // card 57
     112 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 112,
         "points" => "3",
         "other_side" => 113,
@@ -1083,7 +1215,7 @@ $this->quilt_cards = array(
     113 => array(
         "type" => "back",
         "type_arg" => 113,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1093,6 +1225,8 @@ $this->quilt_cards = array(
     // card 58
     114 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 114,
         "points" => "6",
         "other_side" => 115,
@@ -1102,7 +1236,7 @@ $this->quilt_cards = array(
     115 => array(
         "type" => "back",
         "type_arg" => 115,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1112,6 +1246,8 @@ $this->quilt_cards = array(
     // card 59
     116 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 116,
         "points" => "6",
         "other_side" => 117,
@@ -1121,7 +1257,7 @@ $this->quilt_cards = array(
     117 => array(
         "type" => "back",
         "type_arg" => 117,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1131,6 +1267,8 @@ $this->quilt_cards = array(
     // card 60
     118 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 118,
         "points" => "8",
         "other_side" => 119,
@@ -1140,7 +1278,7 @@ $this->quilt_cards = array(
     119 => array(
         "type" => "back",
         "type_arg" => 119,
-        "name" => "apple",
+        "name" => $apple, "nameId" => "apple",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1150,6 +1288,8 @@ $this->quilt_cards = array(
     // card 61
     120 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 120,
         "points" => "4",
         "other_side" => 121,
@@ -1159,7 +1299,7 @@ $this->quilt_cards = array(
     121 => array(
         "type" => "back",
         "type_arg" => 121,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1169,6 +1309,8 @@ $this->quilt_cards = array(
     // card 62
     122 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 122,
         "points" => "3",
         "other_side" => 123,
@@ -1178,7 +1320,7 @@ $this->quilt_cards = array(
     123 => array(
         "type" => "back",
         "type_arg" => 123,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1188,6 +1330,8 @@ $this->quilt_cards = array(
     // card 63
     124 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 124,
         "points" => "3",
         "other_side" => 125,
@@ -1197,7 +1341,7 @@ $this->quilt_cards = array(
     125 => array(
         "type" => "back",
         "type_arg" => 125,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1207,6 +1351,8 @@ $this->quilt_cards = array(
     // card 64
     126 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 126,
         "points" => "8",
         "other_side" => 127,
@@ -1216,7 +1362,7 @@ $this->quilt_cards = array(
     127 => array(
         "type" => "back",
         "type_arg" => 127,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1226,6 +1372,8 @@ $this->quilt_cards = array(
     // card 65
     128 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 128,
         "points" => "5",
         "other_side" => 129,
@@ -1235,7 +1383,7 @@ $this->quilt_cards = array(
     129 => array(
         "type" => "back",
         "type_arg" => 129,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1245,6 +1393,8 @@ $this->quilt_cards = array(
     // card 66
     130 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 130,
         "points" => "6",
         "other_side" => 131,
@@ -1254,7 +1404,7 @@ $this->quilt_cards = array(
     131 => array(
         "type" => "back",
         "type_arg" => 131,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1264,6 +1414,8 @@ $this->quilt_cards = array(
     // card 67
     132 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 132,
         "points" => "4",
         "other_side" => 133,
@@ -1273,7 +1425,7 @@ $this->quilt_cards = array(
     133 => array(
         "type" => "back",
         "type_arg" => 133,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1283,6 +1435,8 @@ $this->quilt_cards = array(
     // card 68
     134 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 134,
         "points" => "3",
         "other_side" => 135,
@@ -1292,7 +1446,7 @@ $this->quilt_cards = array(
     135 => array(
         "type" => "back",
         "type_arg" => 135,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1302,6 +1456,8 @@ $this->quilt_cards = array(
     // card 69
     136 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 136,
         "points" => "3",
         "other_side" => 137,
@@ -1311,7 +1467,7 @@ $this->quilt_cards = array(
     137 => array(
         "type" => "back",
         "type_arg" => 137,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1321,6 +1477,8 @@ $this->quilt_cards = array(
     // card 70
     138 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 138,
         "points" => "6",
         "other_side" => 139,
@@ -1330,7 +1488,7 @@ $this->quilt_cards = array(
     139 => array(
         "type" => "back",
         "type_arg" => 139,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1340,6 +1498,8 @@ $this->quilt_cards = array(
     // card 71
     140 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 140,
         "points" => "6",
         "other_side" => 141,
@@ -1349,7 +1509,7 @@ $this->quilt_cards = array(
     141 => array(
         "type" => "back",
         "type_arg" => 141,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1359,6 +1519,8 @@ $this->quilt_cards = array(
     // card 72
     142 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 142,
         "points" => "8",
         "other_side" => 143,
@@ -1368,7 +1530,7 @@ $this->quilt_cards = array(
     143 => array(
         "type" => "back",
         "type_arg" => 143,
-        "name" => "pumpkin",
+        "name" => $pumpkin, "nameId" => "pumpkin",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1378,6 +1540,8 @@ $this->quilt_cards = array(
     // card 73
     144 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 144,
         "points" => "4",
         "other_side" => 145,
@@ -1387,7 +1551,7 @@ $this->quilt_cards = array(
     145 => array(
         "type" => "back",
         "type_arg" => 145,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1397,6 +1561,8 @@ $this->quilt_cards = array(
     // card 74
     146 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 146,
         "points" => "3",
         "other_side" => 147,
@@ -1406,7 +1572,7 @@ $this->quilt_cards = array(
     147 => array(
         "type" => "back",
         "type_arg" => 147,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1416,6 +1582,8 @@ $this->quilt_cards = array(
     // card 75
     148 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 148,
         "points" => "3",
         "other_side" => 149,
@@ -1425,7 +1593,7 @@ $this->quilt_cards = array(
     149 => array(
         "type" => "back",
         "type_arg" => 149,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1435,6 +1603,8 @@ $this->quilt_cards = array(
     // card 76
     150 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 150,
         "points" => "8",
         "other_side" => 151,
@@ -1444,7 +1614,7 @@ $this->quilt_cards = array(
     151 => array(
         "type" => "back",
         "type_arg" => 151,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1454,6 +1624,8 @@ $this->quilt_cards = array(
     // card 77
     152 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 152,
         "points" => "5",
         "other_side" => 153,
@@ -1463,7 +1635,7 @@ $this->quilt_cards = array(
     153 => array(
         "type" => "back",
         "type_arg" => 153,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1473,6 +1645,8 @@ $this->quilt_cards = array(
     // card 78
     154 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 154,
         "points" => "7",
         "other_side" => 155,
@@ -1482,7 +1656,7 @@ $this->quilt_cards = array(
     155 => array(
         "type" => "back",
         "type_arg" => 155,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1492,6 +1666,8 @@ $this->quilt_cards = array(
     // card 79
     156 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 156,
         "points" => "4",
         "other_side" => 157,
@@ -1501,7 +1677,7 @@ $this->quilt_cards = array(
     157 => array(
         "type" => "back",
         "type_arg" => 157,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1511,6 +1687,8 @@ $this->quilt_cards = array(
     // card 80
     158 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 158,
         "points" => "3",
         "other_side" => 159,
@@ -1520,7 +1698,7 @@ $this->quilt_cards = array(
     159 => array(
         "type" => "back",
         "type_arg" => 159,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1530,6 +1708,8 @@ $this->quilt_cards = array(
     // card 81
     160 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 160,
         "points" => "3",
         "other_side" => 161,
@@ -1539,7 +1719,7 @@ $this->quilt_cards = array(
     161 => array(
         "type" => "back",
         "type_arg" => 161,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1549,6 +1729,8 @@ $this->quilt_cards = array(
     // card 82
     162 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 162,
         "points" => "6",
         "other_side" => 163,
@@ -1558,7 +1740,7 @@ $this->quilt_cards = array(
     163 => array(
         "type" => "back",
         "type_arg" => 163,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1568,6 +1750,8 @@ $this->quilt_cards = array(
     // card 83
     164 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 164,
         "points" => "6",
         "other_side" => 165,
@@ -1577,7 +1761,7 @@ $this->quilt_cards = array(
     165 => array(
         "type" => "back",
         "type_arg" => 165,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1587,6 +1771,8 @@ $this->quilt_cards = array(
     // card 84
     166 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 166,
         "points" => "8",
         "other_side" => 167,
@@ -1596,7 +1782,7 @@ $this->quilt_cards = array(
     167 => array(
         "type" => "back",
         "type_arg" => 167,
-        "name" => "cottage",
+        "name" => $cottage, "nameId" => "cottage",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1606,6 +1792,8 @@ $this->quilt_cards = array(
     // card 85
     168 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 168,
         "points" => "4",
         "other_side" => 169,
@@ -1615,7 +1803,7 @@ $this->quilt_cards = array(
     169 => array(
         "type" => "back",
         "type_arg" => 169,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "left",
         "color" => "green",
@@ -1625,6 +1813,8 @@ $this->quilt_cards = array(
     // card 86
     170 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 170,
         "points" => "3",
         "other_side" => 171,
@@ -1634,7 +1824,7 @@ $this->quilt_cards = array(
     171 => array(
         "type" => "back",
         "type_arg" => 171,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "yellow",
@@ -1644,6 +1834,8 @@ $this->quilt_cards = array(
     // card 87
     172 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 172,
         "points" => "3",
         "other_side" => 173,
@@ -1653,7 +1845,7 @@ $this->quilt_cards = array(
     173 => array(
         "type" => "back",
         "type_arg" => 173,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "orange",
@@ -1663,6 +1855,8 @@ $this->quilt_cards = array(
     // card 88
     174 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 174,
         "points" => "8",
         "other_side" => 175,
@@ -1672,7 +1866,7 @@ $this->quilt_cards = array(
     175 => array(
         "type" => "back",
         "type_arg" => 175,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "left",
         "color" => "brown",
@@ -1682,6 +1876,8 @@ $this->quilt_cards = array(
     // card 89
     176 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 176,
         "points" => "5",
         "other_side" => 177,
@@ -1691,7 +1887,7 @@ $this->quilt_cards = array(
     177 => array(
         "type" => "back",
         "type_arg" => 177,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "green",
@@ -1701,6 +1897,8 @@ $this->quilt_cards = array(
     // card 90
     178 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 178,
         "points" => "6",
         "other_side" => 179,
@@ -1710,7 +1908,7 @@ $this->quilt_cards = array(
     179 => array(
         "type" => "back",
         "type_arg" => 179,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "yellow",
@@ -1720,6 +1918,8 @@ $this->quilt_cards = array(
     // card 91
     180 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 180,
         "points" => "4",
         "other_side" => 181,
@@ -1729,7 +1929,7 @@ $this->quilt_cards = array(
     181 => array(
         "type" => "back",
         "type_arg" => 181,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "middle",
         "color" => "orange",
@@ -1739,6 +1939,8 @@ $this->quilt_cards = array(
     // card 92
     182 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 182,
         "points" => "3",
         "other_side" => 183,
@@ -1748,7 +1950,7 @@ $this->quilt_cards = array(
     183 => array(
         "type" => "back",
         "type_arg" => 183,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "middle",
         "color" => "brown",
@@ -1758,6 +1960,8 @@ $this->quilt_cards = array(
     // card 93
     184 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 184,
         "points" => "3",
         "other_side" => 185,
@@ -1767,7 +1971,7 @@ $this->quilt_cards = array(
     185 => array(
         "type" => "back",
         "type_arg" => 185,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "0",
         "position" => "right",
         "color" => "green",
@@ -1777,6 +1981,8 @@ $this->quilt_cards = array(
     // card 94
     186 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 186,
         "points" => "6",
         "other_side" => 187,
@@ -1786,7 +1992,7 @@ $this->quilt_cards = array(
     187 => array(
         "type" => "back",
         "type_arg" => 187,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "yellow",
@@ -1796,6 +2002,8 @@ $this->quilt_cards = array(
     // card 95
     188 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 188,
         "points" => "6",
         "other_side" => 189,
@@ -1805,7 +2013,7 @@ $this->quilt_cards = array(
     189 => array(
         "type" => "back",
         "type_arg" => 189,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "orange",
@@ -1815,6 +2023,8 @@ $this->quilt_cards = array(
     // card 96
     190 => array(
         "type" => "pattern",
+"name" => clienttranslate("Pattern Card"),
+"description" => $description,
         "type_arg" => 190,
         "points" => "8",
         "other_side" => 191,
@@ -1824,7 +2034,7 @@ $this->quilt_cards = array(
     191 => array(
         "type" => "back",
         "type_arg" => 191,
-        "name" => "acorn",
+        "name" => $acorn, "nameId" => "acorn",
         "points" => "1",
         "position" => "right",
         "color" => "brown",
@@ -1836,6 +2046,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 192,
         "name" => "Sneaky Sally",
+        "description"=> clienttranslate("<i>(for 2 actions)</i><br>
+            You may use both actions to PLAN by
+            taking 3 patterns instead of 2. (These can
+            be from different piles.)"),
         "other_side" => 193,
         "class" => "ADS"
     ),
@@ -1844,6 +2058,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 193,
         "name" => "Big Billy",
+        "description"=> clienttranslate("<i>(once per turn, for 1 action)</i><br>
+            You may CHOOSE 1–4 connected cards
+            instead of the usual 2–3 cards."),
         "other_side" => 192,
         "class" => "ADSB"
     ),
@@ -1852,6 +2069,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 194,
         "name" => "Terrific Tim",
+        "description"=> clienttranslate("<i>(up to twice per turn, free)</i><br>
+            You may donate 1 pattern card to
+            another player and receive a third (or
+            fourth) action that turn."),
         "other_side" => 195,
         "class" => "ADT"
     ),
@@ -1860,6 +2081,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 195,
         "name" => "Swap Shop Sandra",
+        "description"=> clienttranslate("<i>(once per turn, for 1 action)</i><br>
+            You may trade 1 block from your quilt with
+            a single quilt block from the Pattern Area."),
         "other_side" => 194,
         "class" => "ADTB"
     ),
@@ -1868,6 +2092,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 196,
         "name" => "Granny Smith",
+        "description"=> clienttranslate("<i>(once per turn, for 1 action)</i><br>
+            Without checking the other side, you may
+            flip 1 of your quilt blocks and place it with
+            your other pattern cards."),
         "other_side" => 197,
         "class" => "ADU"
     ),
@@ -1876,6 +2104,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 197,
         "name" => "Uncle Sam",
+        "description"=> clienttranslate("<i>(once per turn, for 1 action)</i><br>
+            You may flip 1 of your pattern cards and
+            add it to your quilt, or you may take a
+            pattern card to flip immediately."),
         "other_side" => 196,
         "class" => "ADUB"
     ),
@@ -1884,6 +2116,11 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 198,
         "name" => "Planning Peter",
+        "description"=> clienttranslate("<i>(ongoing)</i><br>
+            The Single Quilt rule does not apply to
+            you. Though the 4x4 size limit still applies,
+            you may leave gaps in your quilt as you
+            CHOOSE or RETURN cards."),
         "other_side" => 199,
         "class" => "ADV"
     ),
@@ -1892,6 +2129,12 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 199,
         "name" => "Gifted Gladys",
+        "description"=> clienttranslate("<i>(for 1 action)</i><br>
+            You may CHOOSE and RETURN
+            unconnected blocks. As you CHOOSE
+            blocks they must remain in the same
+            relative position. After this action your
+            quilt should still be in 1 piece."),
         "other_side" => 198,
         "class" => "ADVB"
     ),
@@ -1900,6 +2143,9 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 200,
         "name" => "Tricky Travis",
+        "description"=> clienttranslate("<i>(for 1 action)</i><br>
+            You may switch assistant cards and
+            associated abilities with another player."),
         "other_side" => 201,
         "class" => "ADW"
     ),
@@ -1908,6 +2154,10 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 201,
         "name" => "Mayhem Maddie",
+        "description"=> clienttranslate("<i>(once per turn, free)</i><br>
+            You may flip the assistant card of 1 other
+            player. That player may immediately give
+            you any 1 pattern card to undo it."),
         "other_side" => 200,
         "class" => "ADWB"
     ),
@@ -1940,6 +2190,7 @@ $this->quilt_cards = array(
         "type" => "turnMarker",
         "type_arg" => 205,
         "name" => "Quilt Master",
+        "description"=> clienttranslate("The Quilt Master takes quilt blocks every turn, moving clockwise. At the end of the game, the cards are flipped over and the pattern cards are each scored once and added up."),
         "other_side" => 204,
         "class" => "ADYB"
     ),
@@ -1948,11 +2199,12 @@ $this->quilt_cards = array(
         "type" => "character",
         "type_arg" => 206,
         "name" => "Observant Omar",
+        "description"=> "",
         "other_side" => 207,
         "class" => "ADZ"
     ),
     // card 112 Clever Clarissa
-    207 => array("type" => "character","type_arg" => 207,"name" => "Clever Clarissa","other_side" => 206,"class" => "ADZB"),
+    207 => array("type" => "character","type_arg" => 207,"name" => "Clever Clarissa","description"=> "","other_side" => 206,"class" => "ADZB"),
 
 
     // PLAYER BOARD POSITIONS
