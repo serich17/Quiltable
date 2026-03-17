@@ -1839,31 +1839,23 @@ function quiltMasterTurn() {
                     }
                 }
                 # 2. create a new list "overlap" with all patterns with at least 1 critical point overlap
-                $maxValue = 5;
-                while ($maxValue > 0) {
-                    if (empty($matches)) {
+                $best = [];
+                for ($size = count($matches); $size > 0; $size--) {
+                    if (count($best) >= $size) {
                         break;
                     }
-                    $overlap = [];
-                    for ($i=0;$i<count($matches);$i++) {
-                        $overlap[$i] = 0;
+                    $combos = $this->getCombinations($matches, $size);
+                    foreach ($combos as $combo) {
+                        if ($this->isCompatibleSet($combo)) {
+                            $best = $combo;
+                            break;
+                        }
                     }
-                    foreach ($matches as $index1 => $match1) {
-                        foreach($matches as $index2 => $match2) {
-                            #skip itself
-                            if ($index1 == $index2) {continue;}
-                            # add number of overlaps with this match
-                            $overlap[$index1] += $this->overlaps($match1, $match2);
-                        } 
+                    if (!empty($best)) {
+                        break;
                     }
-                     # 3. select first pattern match in "overlap" with the max number of critical points overlapped with other matches
-                    #  Then remove from "allMatches"
-                    $maxIndex = array_keys($overlap, max($overlap))[0];
-                    $maxValue = $overlap[$maxIndex];
-                    if ($maxValue <= 0) {break;}
-                    unset($matches[$maxIndex]);
-                    $matches = array_values($matches);
                 }
+                $matches = $best;
                 # 5. Add count("allMatches")*patternPoint to total points to be returned
                 $total += intval($card["points"])*count($matches);
                 $m = [];
@@ -1891,16 +1883,40 @@ function quiltMasterTurn() {
         }
         #helper
         function overlaps($match1, $match2) {
-            $overlap = 0;
-            foreach ($match1 as $point1) {
-                foreach($match2 as $point2) {
-                    if ($point1["row"] == $point2["row"] && $point1["col"] == $point2["col"]) {
-                        $overlap++;
+            $set1 = array_map(fn($p) => $p["row"] . "," . $p["col"], $match1);
+            $set2 = array_map(fn($p) => $p["row"] . "," . $p["col"], $match2);
+            return count(array_intersect($set1, $set2));
+        }
+
+        function isCompatibleSet($subset) {
+            for ($i = 0; $i < count($subset); $i++) {
+                for ($j = $i + 1; $j < count($subset); $j++) {
+                    if ($this->overlaps($subset[$i], $subset[$j]) > 0) {
+                        return false;
                     }
                 }
             }
-            return $overlap;
+            return true;
         }
+
+        function getCombinations($matches, $size) {
+            $results = [];
+            $combo = [];
+
+            $this->helperinner($matches, $size, 0, $combo, $results);
+            return $results;
+        }
+        function helperinner($matches, $size, $start, &$combo, &$results) {
+                if (count($combo) == $size) {
+                    $results[] = $combo;
+                    return;
+                }
+                for ($i = $start; $i < count($matches); $i++) {
+                    $combo[] = $matches[$i];
+                    $this->helperinner($matches, $size, $i + 1, $combo, $results);
+                    array_pop($combo);
+                }
+            }
 
         #helper function
         function getPatternRotations($pattern, $type) {
