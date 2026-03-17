@@ -1881,7 +1881,7 @@ function quiltMasterTurn() {
             return ["total"=> "-", "matches"=>null];
         }
         }
-        #helper
+        
         function overlaps($match1, $match2) {
             $set1 = array_map(fn($p) => $p["row"] . "," . $p["col"], $match1);
             $set2 = array_map(fn($p) => $p["row"] . "," . $p["col"], $match2);
